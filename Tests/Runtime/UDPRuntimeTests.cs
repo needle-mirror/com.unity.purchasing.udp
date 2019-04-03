@@ -17,21 +17,21 @@ public class UDPRuntimeTests
         Assert.That(
             () =>
             {
-                StoreService.Purchase("test.product", "test.order", "test.developerPayload", new PurchaseListener());
-            }, Throws.TypeOf<Exception>());
+                StoreService.Purchase("test.product", "test.developerPayload", new PurchaseListener());
+            }, Throws.TypeOf<NullReferenceException>());
     }
 
     [Test]
     public void PlayModeTestQueryInventoryFails()
     {
-        Assert.That(() => { StoreService.QueryInventory(new PurchaseListener()); }, Throws.TypeOf<Exception>());
+        Assert.That(() => { StoreService.QueryInventory(new PurchaseListener()); }, Throws.TypeOf<NullReferenceException>());
     }
 
     [Test]
     public void PlayModeTestConsumePurchaseFails()
     {
         Assert.That(() => { StoreService.ConsumePurchase(new PurchaseInfo(), new PurchaseListener()); },
-            Throws.TypeOf<Exception>());
+            Throws.TypeOf<NullReferenceException>());
     }
 
     [Test]

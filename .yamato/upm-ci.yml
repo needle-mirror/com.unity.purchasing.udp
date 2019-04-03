@@ -1,6 +1,5 @@
 editors:
   - version: 2019.1.0a13
-  - version: trunk
 platforms:
   - name: win
     type: Unity::VM
@@ -26,7 +25,9 @@ platforms:
   triggers:
     branches:
       only:
-        - master
+      - "/.*/"
+      except:
+      - master
   artifacts:
     logs.zip:
       paths:

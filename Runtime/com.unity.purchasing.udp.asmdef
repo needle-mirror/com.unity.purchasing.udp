@@ -1,0 +1,10 @@
+{
+    "name": "com.unity.purchasing.udp",
+    "references": [
+    ],
+    "optionalUnityReferences": [
+    ],
+    "includePlatforms": [
+    ],
+    "excludePlatforms": []
+}

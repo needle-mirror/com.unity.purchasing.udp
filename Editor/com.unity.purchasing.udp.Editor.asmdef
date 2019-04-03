@@ -1,0 +1,8 @@
+{
+    "name": "com.unity.purchasing.udp.Editor",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}

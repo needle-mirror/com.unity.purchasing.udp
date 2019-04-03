@@ -1,9 +1,9 @@
 {
 	"name": "com.unity.purchasing.udp",
 	"displayName": "Purchasing UDP SDK",
-	"version": "1.0.0-preview.1",
+	"version": "1.0.3-preview.2",
 	"unity": "2018.2",
-	"description": "Unity Distribution Portal (UDP) is a IAP-focused product from Unity which lets you distribute a single game build to multiple Android app stores. UDP repacks your Android build with each store’s dedicated IAP SDK, and lets you manage all your submissions on the UDP portal. UDP handles all the heavy lifting and provides you with a streamlined distribution flow by integrating with the app stores. UDP is currently in private Beta.",
+	"description": "Unity Distribution Portal (UDP) streamlines your distribution process. UDP allows you to only build one version of your game, centralize the management of your marketing assets and metadata, and submit your content to multiple app stores, all in the same workflow.",
 	"keywords": [
 		"android",
 		"purchasing",

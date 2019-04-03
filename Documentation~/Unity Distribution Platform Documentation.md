@@ -1,1 +1,0 @@
-Please see https://unitytech.github.io/udp/ for more details.

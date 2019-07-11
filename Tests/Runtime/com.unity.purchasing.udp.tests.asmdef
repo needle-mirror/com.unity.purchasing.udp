@@ -6,5 +6,8 @@
         "TestAssemblies"
     ],
     "includePlatforms": [],
+    "precompiledReferences": [
+        "UDP.dll"
+    ],
     "excludePlatforms": []
 }

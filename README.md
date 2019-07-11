@@ -1,4 +1,4 @@
-# Unity Distribution Platform SDK 
+# Unity Distribution Portal SDK 
 Please check the document in Documentation folder.
 
 ## Prerequisites

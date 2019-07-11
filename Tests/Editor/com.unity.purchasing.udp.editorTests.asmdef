@@ -8,5 +8,8 @@
     "includePlatforms": [
         "Editor"
     ],
+     "precompiledReferences": [
+        "UDP.dll"
+    ],
     "excludePlatforms": []
 }

@@ -1,4 +1,9 @@
 # Changelog
+## [1.1.0] - 2019-06-27
+- Optimize the procedure of generating clients.
+- Remove annoying NPE error log.
+- Some little bug fixes
+- Add custom UDP Application class: `UdpExtendedApplication`. If you want to make your own Application class, please extend `UdpExtendedApplication`.
 
 ## [1.0.3] - 2019-02-22
 - Merge the IAP catalog and GameSettings together. 

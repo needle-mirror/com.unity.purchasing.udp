@@ -21,7 +21,6 @@ namespace UnityEngine.UDP.Editor.Analytics
 
             if (request != null && request.isDone)
             {
-               
             }
             else
             {

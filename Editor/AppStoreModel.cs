@@ -12,20 +12,6 @@ namespace UnityEngine.UDP.Editor
         public string ClientSecret { get; set; }
     }
 
-    public class RolePermission
-    {
-        public bool owner { get; set; }
-        public bool manager { get; set; }
-        public bool user { get; set; }
-
-        public RolePermission()
-        {
-            owner = false;
-            manager = false;
-            user = false;
-        }
-    }
-
     public class TestAccount
     {
         public string email;
@@ -66,7 +52,7 @@ namespace UnityEngine.UDP.Editor
         private bool CheckEmailAddr()
         {
             string pattern =
-                            @"^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$";
+                @"^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$";
             return new Regex(pattern, RegexOptions.IgnoreCase).IsMatch(email);
         }
     }
@@ -132,12 +118,10 @@ namespace UnityEngine.UDP.Editor
 
     public class UnityIapItemUpdateResponse : GeneralResponse
     {
-
     }
 
     public class UnityIapItemCreateResponse : GeneralResponse
     {
-
     }
 
     [Serializable]
@@ -211,6 +195,7 @@ namespace UnityEngine.UDP.Editor
         public string status = "STAGE";
         public string ownerId;
         public string ownerType = "ORGANIZATION";
+
         public PriceSets priceSets = new PriceSets();
         //public Locales locales;
 
@@ -223,25 +208,30 @@ namespace UnityEngine.UDP.Editor
             {
                 return -1;
             }
+
             if (string.IsNullOrEmpty(name))
             {
                 return -2;
             }
+
             if (string.IsNullOrEmpty(masterItemSlug))
             {
                 return -3;
             }
+
             if (priceSets == null || priceSets.PurchaseFee == null
-            || priceSets.PurchaseFee.priceMap == null
-            || priceSets.PurchaseFee.priceMap.DEFAULT.Count.Equals(0)
-            || string.IsNullOrEmpty(priceSets.PurchaseFee.priceMap.DEFAULT[0].price))
+                                  || priceSets.PurchaseFee.priceMap == null
+                                  || priceSets.PurchaseFee.priceMap.DEFAULT.Count.Equals(0)
+                                  || string.IsNullOrEmpty(priceSets.PurchaseFee.priceMap.DEFAULT[0].price))
             {
                 return -4;
             }
+
             if (properties == null || string.IsNullOrEmpty(properties.description))
             {
                 return -6;
             }
+
             return 0;
         }
 
@@ -419,5 +409,4 @@ namespace UnityEngine.UDP.Editor
     public class PlayerChangePasswordResponse : GeneralResponse
     {
     }
-
 }

@@ -1294,7 +1294,7 @@ namespace UnityEngine.UDP.Editor
 
                                 IapItem item = _iapItems[pos];
                                 _iapItemsFoldout[pos] = EditorGUILayout.Foldout(_iapItemsFoldout[pos],
-                                    "Product: " + (item.name), true, new GUIStyle(EditorStyles.foldout){wordWrap = false, clipping = TextClipping.Clip});
+                                    "Product: " + (item.name), true, new GUIStyle(EditorStyles.foldout){wordWrap = false, clipping = TextClipping.Clip, fixedWidth = currentRect.xMax -95});
                                 if (_iapItemsFoldout[pos])
                                 {
                                     if (_iapValidationMsg[pos] != "")

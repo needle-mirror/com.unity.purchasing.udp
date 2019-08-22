@@ -1,4 +1,4 @@
-## Reporting 
+# Reporting 
 
 Monitor the performance of your published games from the **Reporting** section in the top navigation bar:
 

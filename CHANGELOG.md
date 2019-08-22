@@ -1,4 +1,15 @@
 # Changelog
+## [1.1.3] - 2019-07-29
+- UI refine.
+- Enable delete testAccount.
+- Validate IAP fields.
+
+## [1.1.2] - 2019-07-11
+- Fix the init failure on some devices.
+
+## [1.1.1] - 2019-07-07
+- Small bug fix
+
 ## [1.1.0] - 2019-06-27
 - Optimize the procedure of generating clients.
 - Remove annoying NPE error log.

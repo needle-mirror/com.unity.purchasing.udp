@@ -232,6 +232,32 @@ namespace UnityEngine.UDP.Editor
                 return -6;
             }
 
+            var price = priceSets.PurchaseFee.priceMap.DEFAULT[0].price;
+            if (!Regex.IsMatch(price, @"(^[0-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)"))
+            {
+                return -7;
+            }
+
+            if (price.Length > 60)
+            {
+                return -8;
+            }
+
+            if (slug.Length > 128)
+            {
+                return -9;
+            }
+
+            if (name.Length > 128)
+            {
+                return -10;
+            }
+
+            if (properties.description.Length > 600)
+            {
+                return -11;
+            }
+
             return 0;
         }
 
@@ -251,9 +277,31 @@ namespace UnityEngine.UDP.Editor
                     return "Price cannot be null";
                 case -6:
                     return "Description cannot be null";
+                case -7:
+                    return "Invalid price format";
+                case -8:
+                    return "Price max length:60";
+                case -9:
+                    return "Slug max length:128";
+                case -10:
+                    return "Name max length:128";
+                case -11:
+                    return "Description max length:600";
+
                 default:
-                    return "Unknown erorr, please retry";
+                    return "Unknown error, please retry";
             }
+        }
+
+        public string SlugValidate(HashSet<string> slugs)
+        {
+            if (slugs.Contains(slug))
+            {
+                return "Slug occupied by another item";
+            }
+
+            slugs.Add(slug);
+            return "";
         }
     }
 

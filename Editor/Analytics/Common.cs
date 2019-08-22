@@ -17,7 +17,7 @@ namespace UnityEngine.UDP.Editor.Analytics
         private const string k_EventTypeValue = "editor";
         private const string k_UnityVersion = "unity_version";
         private const string k_SdkVersion = "sdk_version";
-        private const string k_DeviceId = "deviceID";
+        private const string k_DeviceId = "device_id";
         private const string k_SdkDist = "sdk_dist";
 
         // specific keys

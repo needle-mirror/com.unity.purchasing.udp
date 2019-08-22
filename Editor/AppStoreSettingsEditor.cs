@@ -19,7 +19,7 @@ namespace UnityEngine.UDP.Editor
             {
                 AppStoreSettings existedAppStoreSettings = CreateInstance<AppStoreSettings>();
                 existedAppStoreSettings =
-                    (AppStoreSettings)AssetDatabase.LoadAssetAtPath(AppStoreSettings.appStoreSettingsAssetPath,
+                    (AppStoreSettings) AssetDatabase.LoadAssetAtPath(AppStoreSettings.appStoreSettingsAssetPath,
                         typeof(AppStoreSettings));
                 EditorUtility.FocusProjectWindow();
                 Selection.activeObject = existedAppStoreSettings;
@@ -77,6 +77,7 @@ namespace UnityEngine.UDP.Editor
             public string targetStep;
             public string eventName;
             public IapItem curIapItem;
+            public TestAccount currTestAccount;
             public int arrayPos;
             public UnityWebRequest request;
             public GeneralResponse resp;
@@ -94,6 +95,7 @@ namespace UnityEngine.UDP.Editor
 
         private bool _isOperationRunning = false; // Lock all panels
         private bool _isIapUpdating = false; // Lock iap part.
+        private bool _isTestAccountUpdating = false; // Lock testAccount part.
         private State _currentState = State.Success;
 
         void OnEnable()
@@ -185,6 +187,8 @@ namespace UnityEngine.UDP.Editor
                     else
                     {
                         _isOperationRunning = false;
+                        _isIapUpdating = false;
+                        _isTestAccountUpdating = false;
                         ErrorResponse response = JsonUtility.FromJson<ErrorResponse>(request.downloadHandler.text);
 
                         #region Analytics Fails
@@ -284,7 +288,7 @@ namespace UnityEngine.UDP.Editor
                         else
                         {
                             EditorUtility.DisplayDialog("Error",
-                                "Unknown error",
+                                "Network error, no response received",
                                 "OK");
                         }
 
@@ -297,25 +301,25 @@ namespace UnityEngine.UDP.Editor
                     {
                         // LinkProject & Get Role (later action) will result in this response.
                         resp = JsonUtility.FromJson<UnityClientResponse>(request.downloadHandler.text);
-                        _unityClientId.stringValue = ((UnityClientResponse)resp).client_id;
-                        _unityClientKey.stringValue = ((UnityClientResponse)resp).client_secret;
-                        _unityClientRsaPublicKey.stringValue = ((UnityClientResponse)resp).channel.publicRSAKey;
-                        _unityProjectId.stringValue = ((UnityClientResponse)resp).channel.projectGuid;
-                        _clientSecretInMemory = ((UnityClientResponse)resp).channel.channelSecret;
-                        _callbackUrlInMemory = ((UnityClientResponse)resp).channel.callbackUrl;
+                        _unityClientId.stringValue = ((UnityClientResponse) resp).client_id;
+                        _unityClientKey.stringValue = ((UnityClientResponse) resp).client_secret;
+                        _unityClientRsaPublicKey.stringValue = ((UnityClientResponse) resp).channel.publicRSAKey;
+                        _unityProjectId.stringValue = ((UnityClientResponse) resp).channel.projectGuid;
+                        _clientSecretInMemory = ((UnityClientResponse) resp).channel.channelSecret;
+                        _callbackUrlInMemory = ((UnityClientResponse) resp).channel.callbackUrl;
                         _callbackUrlLast = _callbackUrlInMemory;
-                        AppStoreOnboardApi.tps = ((UnityClientResponse)resp).channel.thirdPartySettings;
-                        AppStoreOnboardApi.updateRev = ((UnityClientResponse)resp).rev;
+                        AppStoreOnboardApi.tps = ((UnityClientResponse) resp).channel.thirdPartySettings;
+                        AppStoreOnboardApi.updateRev = ((UnityClientResponse) resp).rev;
                         serializedObject.ApplyModifiedProperties();
                         this.Repaint();
                         AssetDatabase.SaveAssets();
-                        saveGameSettingsProps(((UnityClientResponse)resp).client_id);
+                        saveGameSettingsProps(((UnityClientResponse) resp).client_id);
 
                         if (request.method == UnityWebRequest.kHttpVerbPOST) // Generated Client
                         {
                             UnityWebRequest analyticsRequest =
                                 EditorAnalyticsApi.ClientEvent(EditorAnalyticsApi.k_ClientCreateEventName,
-                                    ((UnityClientResponse)resp).client_id, null);
+                                    ((UnityClientResponse) resp).client_id, null);
 
                             ReqStruct analyticsReqStruct = new ReqStruct
                             {
@@ -330,7 +334,7 @@ namespace UnityEngine.UDP.Editor
                         {
                             UnityWebRequest analyticsRequest =
                                 EditorAnalyticsApi.ClientEvent(EditorAnalyticsApi.k_ClientUpdateEventName,
-                                    ((UnityClientResponse)resp).client_id, null);
+                                    ((UnityClientResponse) resp).client_id, null);
 
                             ReqStruct analyticsReqStruct = new ReqStruct
                             {
@@ -401,7 +405,7 @@ namespace UnityEngine.UDP.Editor
                     else if (resp.GetType() == typeof(UserIdResponse))
                     {
                         resp = JsonUtility.FromJson<UserIdResponse>(request.downloadHandler.text);
-                        AppStoreOnboardApi.userId = ((UserIdResponse)resp).sub;
+                        AppStoreOnboardApi.userId = ((UserIdResponse) resp).sub;
                         UnityWebRequest newRequest = AppStoreOnboardApi.GetOrgId(Application.cloudProjectId);
                         OrgIdResponse orgIdResp = new OrgIdResponse();
                         ReqStruct newReqStruct = new ReqStruct();
@@ -413,7 +417,7 @@ namespace UnityEngine.UDP.Editor
                     else if (resp.GetType() == typeof(OrgIdResponse))
                     {
                         resp = JsonUtility.FromJson<OrgIdResponse>(request.downloadHandler.text);
-                        AppStoreOnboardApi.orgId = ((OrgIdResponse)resp).org_foreign_key;
+                        AppStoreOnboardApi.orgId = ((OrgIdResponse) resp).org_foreign_key;
 
                         if (reqStruct.targetStep == STEP_GET_CLIENT)
                         {
@@ -472,7 +476,7 @@ namespace UnityEngine.UDP.Editor
                         string raw = "{ \"array\": " + request.downloadHandler.text + "}";
                         resp = JsonUtility.FromJson<UnityClientResponseWrapper>(raw);
                         // only one element in the list
-                        if (((UnityClientResponseWrapper)resp).array.Length > 0)
+                        if (((UnityClientResponseWrapper) resp).array.Length > 0)
                         {
                             if (reqStruct.targetStep != null && reqStruct.targetStep == "CheckUpdate")
                             {
@@ -481,7 +485,7 @@ namespace UnityEngine.UDP.Editor
                             }
                             else
                             {
-                                UnityClientResponse unityClientResp = ((UnityClientResponseWrapper)resp).array[0];
+                                UnityClientResponse unityClientResp = ((UnityClientResponseWrapper) resp).array[0];
                                 AppStoreOnboardApi.tps = unityClientResp.channel.thirdPartySettings;
                                 _unityClientId.stringValue = unityClientResp.client_id;
                                 _unityClientKey.stringValue = unityClientResp.client_secret;
@@ -542,25 +546,25 @@ namespace UnityEngine.UDP.Editor
                     else if (resp.GetType() == typeof(UnityClientResponse))
                     {
                         resp = JsonUtility.FromJson<UnityClientResponse>(request.downloadHandler.text);
-                        _unityClientId.stringValue = ((UnityClientResponse)resp).client_id;
-                        _unityClientKey.stringValue = ((UnityClientResponse)resp).client_secret;
-                        _unityClientRsaPublicKey.stringValue = ((UnityClientResponse)resp).channel.publicRSAKey;
-                        _unityProjectId.stringValue = ((UnityClientResponse)resp).channel.projectGuid;
-                        _clientSecretInMemory = ((UnityClientResponse)resp).channel.channelSecret;
-                        _callbackUrlInMemory = ((UnityClientResponse)resp).channel.callbackUrl;
+                        _unityClientId.stringValue = ((UnityClientResponse) resp).client_id;
+                        _unityClientKey.stringValue = ((UnityClientResponse) resp).client_secret;
+                        _unityClientRsaPublicKey.stringValue = ((UnityClientResponse) resp).channel.publicRSAKey;
+                        _unityProjectId.stringValue = ((UnityClientResponse) resp).channel.projectGuid;
+                        _clientSecretInMemory = ((UnityClientResponse) resp).channel.channelSecret;
+                        _callbackUrlInMemory = ((UnityClientResponse) resp).channel.callbackUrl;
                         _callbackUrlLast = _callbackUrlInMemory;
-                        AppStoreOnboardApi.tps = ((UnityClientResponse)resp).channel.thirdPartySettings;
-                        AppStoreOnboardApi.updateRev = ((UnityClientResponse)resp).rev;
+                        AppStoreOnboardApi.tps = ((UnityClientResponse) resp).channel.thirdPartySettings;
+                        AppStoreOnboardApi.updateRev = ((UnityClientResponse) resp).rev;
                         serializedObject.ApplyModifiedProperties();
                         this.Repaint();
                         AssetDatabase.SaveAssets();
-                        saveGameSettingsProps(((UnityClientResponse)resp).client_id);
+                        saveGameSettingsProps(((UnityClientResponse) resp).client_id);
 
                         if (request.method == UnityWebRequest.kHttpVerbPOST) // Generated Client
                         {
                             UnityWebRequest analyticsRequest =
                                 EditorAnalyticsApi.ClientEvent(EditorAnalyticsApi.k_ClientCreateEventName,
-                                    ((UnityClientResponse)resp).client_id, null);
+                                    ((UnityClientResponse) resp).client_id, null);
 
                             ReqStruct analyticsReqStruct = new ReqStruct
                             {
@@ -575,7 +579,7 @@ namespace UnityEngine.UDP.Editor
                         {
                             UnityWebRequest analyticsRequest =
                                 EditorAnalyticsApi.ClientEvent(EditorAnalyticsApi.k_ClientUpdateEventName,
-                                    ((UnityClientResponse)resp).client_id, null);
+                                    ((UnityClientResponse) resp).client_id, null);
 
                             ReqStruct analyticsReqStruct = new ReqStruct
                             {
@@ -643,19 +647,19 @@ namespace UnityEngine.UDP.Editor
                     else if (resp.GetType() == typeof(AppItemResponse))
                     {
                         resp = JsonUtility.FromJson<AppItemResponse>(request.downloadHandler.text);
-                        _appItemId.stringValue = ((AppItemResponse)resp).id;
-                        _appName.stringValue = ((AppItemResponse)resp).name;
-                        _appSlug.stringValue = ((AppItemResponse)resp).slug;
-                        _currentAppItem.id = ((AppItemResponse)resp).id;
-                        _currentAppItem.name = ((AppItemResponse)resp).name;
-                        _currentAppItem.slug = ((AppItemResponse)resp).slug;
-                        _currentAppItem.ownerId = ((AppItemResponse)resp).ownerId;
-                        _currentAppItem.ownerType = ((AppItemResponse)resp).ownerType;
-                        _currentAppItem.status = ((AppItemResponse)resp).status;
-                        _currentAppItem.type = ((AppItemResponse)resp).type;
-                        _currentAppItem.clientId = ((AppItemResponse)resp).clientId;
-                        _currentAppItem.packageName = ((AppItemResponse)resp).packageName;
-                        _currentAppItem.revision = ((AppItemResponse)resp).revision;
+                        _appItemId.stringValue = ((AppItemResponse) resp).id;
+                        _appName.stringValue = ((AppItemResponse) resp).name;
+                        _appSlug.stringValue = ((AppItemResponse) resp).slug;
+                        _currentAppItem.id = ((AppItemResponse) resp).id;
+                        _currentAppItem.name = ((AppItemResponse) resp).name;
+                        _currentAppItem.slug = ((AppItemResponse) resp).slug;
+                        _currentAppItem.ownerId = ((AppItemResponse) resp).ownerId;
+                        _currentAppItem.ownerType = ((AppItemResponse) resp).ownerType;
+                        _currentAppItem.status = ((AppItemResponse) resp).status;
+                        _currentAppItem.type = ((AppItemResponse) resp).type;
+                        _currentAppItem.clientId = ((AppItemResponse) resp).clientId;
+                        _currentAppItem.packageName = ((AppItemResponse) resp).packageName;
+                        _currentAppItem.revision = ((AppItemResponse) resp).revision;
                         serializedObject.ApplyModifiedProperties();
                         AssetDatabase.SaveAssets();
 
@@ -677,7 +681,7 @@ namespace UnityEngine.UDP.Editor
                             {
                                 eventName = eventName,
                                 request = EditorAnalyticsApi.AppEvent(eventName, _currentAppItem.clientId,
-                                    (AppItemResponse)resp, null),
+                                    (AppItemResponse) resp, null),
                                 resp = new EventRequestResponse(),
                             };
 
@@ -699,7 +703,7 @@ namespace UnityEngine.UDP.Editor
                     {
                         AppStoreOnboardApi.loaded = true;
                         resp = JsonUtility.FromJson<AppItemPublishResponse>(request.downloadHandler.text);
-                        _currentAppItem.revision = ((AppItemPublishResponse)resp).revision;
+                        _currentAppItem.revision = ((AppItemPublishResponse) resp).revision;
                         _currentAppItem.status = "PUBLIC";
                         if (!(reqStruct.targetStep == STEP_UPDATE_GAME_TITLE))
                         {
@@ -711,7 +715,7 @@ namespace UnityEngine.UDP.Editor
                     else if (resp.GetType() == typeof(AppItemResponseWrapper))
                     {
                         resp = JsonUtility.FromJson<AppItemResponseWrapper>(request.downloadHandler.text);
-                        if (((AppItemResponseWrapper)resp).total < 1)
+                        if (((AppItemResponseWrapper) resp).total < 1)
                         {
                             // generate app
                             _currentAppItem.clientId = _unityClientId.stringValue;
@@ -727,7 +731,7 @@ namespace UnityEngine.UDP.Editor
                         }
                         else
                         {
-                            var appItemResp = ((AppItemResponseWrapper)resp).results[0];
+                            var appItemResp = ((AppItemResponseWrapper) resp).results[0];
                             _appName.stringValue = appItemResp.name;
                             _appSlug.stringValue = appItemResp.slug;
                             _appItemId.stringValue = appItemResp.id;
@@ -760,7 +764,7 @@ namespace UnityEngine.UDP.Editor
                     {
                         resp = JsonUtility.FromJson<PlayerResponse>(request.downloadHandler.text);
 
-                        var playerId = ((PlayerResponse)resp).id;
+                        var playerId = ((PlayerResponse) resp).id;
 
                         _testAccounts[reqStruct.arrayPos].playerId = playerId;
                         _testAccounts[reqStruct.arrayPos].password = "******";
@@ -781,9 +785,9 @@ namespace UnityEngine.UDP.Editor
                         resp = JsonUtility.FromJson<PlayerResponseWrapper>(request.downloadHandler.text);
                         _testAccounts = new List<TestAccount>();
                         AppStoreStyles.kTestAccountBoxHeight = 25;
-                        if (((PlayerResponseWrapper)resp).total > 0)
+                        if (((PlayerResponseWrapper) resp).total > 0)
                         {
-                            var exists = ((PlayerResponseWrapper)resp).results;
+                            var exists = ((PlayerResponseWrapper) resp).results;
                             for (int i = 0; i < exists.Length; i++)
                             {
                                 TestAccount existed = new TestAccount
@@ -817,16 +821,17 @@ namespace UnityEngine.UDP.Editor
                     }
                     else if (resp.GetType() == typeof(PlayerDeleteResponse))
                     {
-                        EditorUtility.DisplayDialog("Hint",
-                            "Test account deleted successfully.",
-                            "OK");
-                        ListPlayers();
+                        _isTestAccountUpdating = false;
+                        EditorUtility.DisplayDialog("Success",
+                            "TestAccount " + reqStruct.currTestAccount.playerId + " has been Deleted.", "OK");
+                        RemoveTestAccountLocally(reqStruct.arrayPos);
+                        this.Repaint();
                     }
                     else if (resp.GetType() == typeof(TokenInfo))
                     {
                         resp = JsonUtility.FromJson<TokenInfo>(request.downloadHandler.text);
-                        AppStoreOnboardApi.tokenInfo.access_token = ((TokenInfo)resp).access_token;
-                        AppStoreOnboardApi.tokenInfo.refresh_token = ((TokenInfo)resp).refresh_token;
+                        AppStoreOnboardApi.tokenInfo.access_token = ((TokenInfo) resp).access_token;
+                        AppStoreOnboardApi.tokenInfo.refresh_token = ((TokenInfo) resp).refresh_token;
                         UnityWebRequest newRequest = AppStoreOnboardApi.GetUserId();
                         UserIdResponse userIdResp = new UserIdResponse();
                         ReqStruct newReqStruct = new ReqStruct();
@@ -838,7 +843,7 @@ namespace UnityEngine.UDP.Editor
                     else if (resp.GetType() == typeof(UserIdResponse))
                     {
                         resp = JsonUtility.FromJson<UserIdResponse>(request.downloadHandler.text);
-                        AppStoreOnboardApi.userId = ((UserIdResponse)resp).sub;
+                        AppStoreOnboardApi.userId = ((UserIdResponse) resp).sub;
                         UnityWebRequest newRequest = AppStoreOnboardApi.GetOrgId(Application.cloudProjectId);
                         OrgIdResponse orgIdResp = new OrgIdResponse();
                         ReqStruct newReqStruct = new ReqStruct();
@@ -850,7 +855,7 @@ namespace UnityEngine.UDP.Editor
                     else if (resp.GetType() == typeof(OrgIdResponse))
                     {
                         resp = JsonUtility.FromJson<OrgIdResponse>(request.downloadHandler.text);
-                        AppStoreOnboardApi.orgId = ((OrgIdResponse)resp).org_foreign_key;
+                        AppStoreOnboardApi.orgId = ((OrgIdResponse) resp).org_foreign_key;
                         UnityWebRequest newRequest = AppStoreOnboardApi.GetOrgRoles();
                         OrgRoleResponse orgRoleResp = new OrgRoleResponse();
                         ReqStruct newReqStruct = new ReqStruct();
@@ -917,7 +922,7 @@ namespace UnityEngine.UDP.Editor
                 return;
             }
 
-            // Start initialization. 
+            // Start initialization.
             _isOperationRunning = true;
             UnityWebRequest newRequest = AppStoreOnboardApi.GetUnityClientInfo(Application.cloudProjectId);
             UnityClientResponseWrapper clientRespWrapper = new UnityClientResponseWrapper();
@@ -938,7 +943,7 @@ namespace UnityEngine.UDP.Editor
         private List<IapItem> _iapItems = new List<IapItem>();
         private List<bool> _iapItemDirty = new List<bool>();
         private List<string> _iapValidationMsg = new List<string>();
-        private readonly string[] _iapItemTypeOptions = { "Consumable", "Non consumable" };
+        private readonly string[] _iapItemTypeOptions = {"Consumable", "Non consumable"};
         private string _clientIdToBeLinked = "UDP client ID";
         private bool _callbackUrlChanged = false;
         private string _updateClientErrorMsg = "";
@@ -948,7 +953,7 @@ namespace UnityEngine.UDP.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            GUIStyle labelStyle = new GUIStyle(GUI.skin.label) { wordWrap = true };
+            GUIStyle labelStyle = new GUIStyle(GUI.skin.label) {wordWrap = true};
             EditorGUI.BeginDisabledGroup(_isOperationRunning || pushRequestList.Count > 0);
 
             switch (_currentState)
@@ -956,12 +961,12 @@ namespace UnityEngine.UDP.Editor
                 case State.CannotUseOAuth:
                     _showingMsg =
                         "UDP editor extension can only work on Unity 5.6.1+. Please check your Unity version and retry.";
-                    EditorGUILayout.LabelField(_showingMsg, new GUIStyle(GUI.skin.label) { wordWrap = true });
+                    EditorGUILayout.LabelField(_showingMsg, new GUIStyle(GUI.skin.label) {wordWrap = true});
                     break;
                 case State.CannotGetCloudProjectId:
                     _showingMsg =
                         "To use the Unity distribution portal your project will need a Unity project ID. You can create a new project ID or link to an existing one in the Services window.";
-                    EditorGUILayout.LabelField(_showingMsg, new GUIStyle(GUI.skin.label) { wordWrap = true });
+                    EditorGUILayout.LabelField(_showingMsg, new GUIStyle(GUI.skin.label) {wordWrap = true});
 
                     if (GUILayout.Button("Go to the Services Window"))
                     {
@@ -996,7 +1001,7 @@ namespace UnityEngine.UDP.Editor
                     EditorGUILayout.EndHorizontal();
 
                     EditorGUILayout.LabelField("or",
-                        new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter });
+                        new GUIStyle(GUI.skin.label) {alignment = TextAnchor.MiddleCenter});
 
                     GUILayout.BeginHorizontal();
                     GUILayout.FlexibleSpace();
@@ -1054,6 +1059,9 @@ namespace UnityEngine.UDP.Editor
 
                     if (GUILayout.Button("Push", GUILayout.Width(AppStoreStyles.kAppStoreSettingsButtonWidth)))
                     {
+                        // Slug check locally
+                        var slugs = new HashSet<String>();
+
                         // Update IAP Items
                         for (int i = 0; i < _iapItemDirty.Count; i++)
                         {
@@ -1062,10 +1070,14 @@ namespace UnityEngine.UDP.Editor
                             {
                                 //Check validation
                                 _iapValidationMsg[pos] = _iapItems[pos].Validate();
+                                if (_iapValidationMsg[pos] == "")
+                                {
+                                    _iapValidationMsg[pos] = _iapItems[pos].SlugValidate(slugs);
+                                }
 
                                 if (_iapValidationMsg[pos] == "")
                                 {
-                                    // If check suceeds
+                                    // If check succeeds
                                     if (!string.IsNullOrEmpty(_iapItems[pos].id))
                                     {
                                         UpdateIAPItem(_iapItems[pos], pos);
@@ -1143,51 +1155,52 @@ namespace UnityEngine.UDP.Editor
 
                     #region Title & ProjectID
 
+                {
+                    EditorGUILayout.LabelField("Game Title");
+                    if (_updateGameTitleErrorMsg != "")
                     {
-                        EditorGUILayout.LabelField("Game Title");
-                        if (_updateGameTitleErrorMsg != "")
-                        {
-                            GUIStyle textStyle = new GUIStyle(GUI.skin.label);
-                            textStyle.wordWrap = true;
-                            textStyle.normal.textColor = Color.red;
-                            EditorGUILayout.LabelField(_updateGameTitleErrorMsg, textStyle);
-                        }
-
-                        EditorGUI.BeginChangeCheck();
-                        _currentAppItem.name = EditorGUILayout.TextField(_currentAppItem.name);
-
-                        if (GUI.changed)
-                        {
-                            _gameTitleChanged = true;
-                        }
-
-                        EditorGUI.EndChangeCheck();
+                        GUIStyle textStyle = new GUIStyle(GUI.skin.label);
+                        textStyle.wordWrap = true;
+                        textStyle.normal.textColor = Color.red;
+                        EditorGUILayout.LabelField(_updateGameTitleErrorMsg, textStyle);
                     }
 
-                    {
-                        EditorGUILayout.LabelField("Unity Project ID");
-                        EditorGUILayout.BeginHorizontal();
-                        SelectableLabel(_cloudProjectId);
-                        if (GUILayout.Button("Copy", GUILayout.Width(AppStoreStyles.kCopyButtonWidth)))
-                        {
-                            TextEditor te = new TextEditor();
-                            te.text = _cloudProjectId;
-                            te.SelectAll();
-                            te.Copy();
-                        }
+                    EditorGUI.BeginChangeCheck();
+                    _currentAppItem.name = EditorGUILayout.TextField(_currentAppItem.name);
 
-                        EditorGUILayout.EndHorizontal();
-                        GuiLine();
+                    if (GUI.changed)
+                    {
+                        _gameTitleChanged = true;
                     }
+
+                    EditorGUI.EndChangeCheck();
+                }
+
+                {
+                    EditorGUILayout.LabelField("Unity Project ID");
+                    EditorGUILayout.BeginHorizontal();
+                    SelectableLabel(_cloudProjectId);
+                    if (GUILayout.Button("Copy", GUILayout.Width(AppStoreStyles.kCopyButtonWidth)))
+                    {
+                        TextEditor te = new TextEditor();
+                        te.text = _cloudProjectId;
+                        te.SelectAll();
+                        te.Copy();
+                    }
+
+                    EditorGUILayout.EndHorizontal();
+                    GuiLine();
+                }
 
                     #endregion
 
                     #region In App Purchase Configuration
-                    #pragma warning disable CS0162
+
+#pragma warning disable CS0162
                     if (BuildConfig.IAP_VERSION)
                     {
                         EditorGUILayout.BeginVertical();
-                        _inAppPurchaseFoldout = EditorGUILayout.Foldout(_inAppPurchaseFoldout, "IAP Catalog",
+                        _inAppPurchaseFoldout = EditorGUILayout.Foldout(_inAppPurchaseFoldout, "IAP Catalog", true,
                             AppStoreStyles.KAppStoreSettingsHeaderGuiStyle);
                         if (_inAppPurchaseFoldout)
                         {
@@ -1196,9 +1209,9 @@ namespace UnityEngine.UDP.Editor
                                 EditorGUILayout.BeginHorizontal();
                                 GUILayout.FlexibleSpace();
                                 if (GUILayout.Button("Open Catalog", new GUIStyle(GUI.skin.button)
-                                {
-                                    fontSize = AppStoreStyles.kAddNewIapButtonFontSize
-                                },
+                                    {
+                                        fontSize = AppStoreStyles.kAddNewIapButtonFontSize
+                                    },
                                     GUILayout.Height(EditorGUIUtility.singleLineHeight *
                                                      AppStoreStyles.kAddNewIapButtonRatio),
                                     GUILayout.Width(EditorGUIUtility.currentViewWidth / 2)))
@@ -1216,17 +1229,16 @@ namespace UnityEngine.UDP.Editor
                     }
                     else
                     {
-
                         EditorGUI.BeginDisabledGroup(_isIapUpdating);
                         var currentRect = EditorGUILayout.BeginVertical();
-                        _inAppPurchaseFoldout = EditorGUILayout.Foldout(_inAppPurchaseFoldout, "IAP Catalog",
+                        _inAppPurchaseFoldout = EditorGUILayout.Foldout(_inAppPurchaseFoldout, "IAP Catalog", true,
                             AppStoreStyles.KAppStoreSettingsHeaderGuiStyle);
                         if (_inAppPurchaseFoldout)
                         {
                             EditorGUI.indentLevel++;
                             EditorGUI.LabelField(new Rect(currentRect.xMax - 120, currentRect.yMin, 120, 20),
                                 string.Format("{0} total ({1} edited)", _iapItems.Count, EditedIAPCount()),
-                                new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleRight });
+                                new GUIStyle(GUI.skin.label) {alignment = TextAnchor.MiddleRight});
                             for (int i = 0; i < _iapItemsFoldout.Count; i++)
                             {
                                 currentRect = EditorGUILayout.BeginVertical();
@@ -1235,7 +1247,7 @@ namespace UnityEngine.UDP.Editor
                                 if (_iapItemDirty[pos])
                                 {
                                     EditorGUI.LabelField(new Rect(currentRect.xMax - 95, currentRect.yMin, 80, 20),
-                                        "(edited)", new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperRight });
+                                        "(edited)", new GUIStyle(GUI.skin.label) {alignment = TextAnchor.UpperRight});
                                 }
 
                                 if (GUI.Button(new Rect(currentRect.xMax - 15, currentRect.yMin, 15, 15), "\u2261"))
@@ -1248,8 +1260,8 @@ namespace UnityEngine.UDP.Editor
                                             _iapValidationMsg[pos] = _iapItems[pos].Validate();
                                             if (string.IsNullOrEmpty(_iapValidationMsg[pos]))
                                             {
-                                            // If check suceeds
-                                            if (!string.IsNullOrEmpty(_iapItems[pos].id))
+                                                // If check suceeds
+                                                if (!string.IsNullOrEmpty(_iapItems[pos].id))
                                                 {
                                                     UpdateIAPItem(_iapItems[pos], pos);
                                                 }
@@ -1282,7 +1294,7 @@ namespace UnityEngine.UDP.Editor
 
                                 IapItem item = _iapItems[pos];
                                 _iapItemsFoldout[pos] = EditorGUILayout.Foldout(_iapItemsFoldout[pos],
-                                    "Product: " + (item.name));
+                                    "Product: " + (item.name), true, new GUIStyle(EditorStyles.foldout){wordWrap = false, clipping = TextClipping.Clip});
                                 if (_iapItemsFoldout[pos])
                                 {
                                     if (_iapValidationMsg[pos] != "")
@@ -1299,7 +1311,8 @@ namespace UnityEngine.UDP.Editor
                                     item.name = LabelWithTextField("Name", item.name);
 
                                     GUILayout.BeginHorizontal();
-                                    EditorGUILayout.LabelField("Type", GUILayout.Width(AppStoreStyles.kClientLabelWidth));
+                                    EditorGUILayout.LabelField("Type",
+                                        GUILayout.Width(AppStoreStyles.kClientLabelWidth));
                                     int index = item.consumable ? 0 : 1;
                                     index = EditorGUILayout.Popup(index, _iapItemTypeOptions);
                                     item.consumable = index == 0;
@@ -1332,9 +1345,9 @@ namespace UnityEngine.UDP.Editor
                                 EditorGUILayout.BeginHorizontal();
                                 GUILayout.FlexibleSpace();
                                 if (GUILayout.Button("Add new IAP", new GUIStyle(GUI.skin.button)
-                                {
-                                    fontSize = AppStoreStyles.kAddNewIapButtonFontSize
-                                },
+                                    {
+                                        fontSize = AppStoreStyles.kAddNewIapButtonFontSize
+                                    },
                                     GUILayout.Height(EditorGUIUtility.singleLineHeight *
                                                      AppStoreStyles.kAddNewIapButtonRatio),
                                     GUILayout.Width(EditorGUIUtility.currentViewWidth / 2)))
@@ -1355,12 +1368,11 @@ namespace UnityEngine.UDP.Editor
                         GuiLine();
                     }
 
-
                     #endregion
 
                     #region UDP Client Settings
 
-                    _udpClientSettingsFoldout = EditorGUILayout.Foldout(_udpClientSettingsFoldout, "Settings",
+                    _udpClientSettingsFoldout = EditorGUILayout.Foldout(_udpClientSettingsFoldout, "Settings", true,
                         AppStoreStyles.KAppStoreSettingsHeaderGuiStyle);
                     if (_udpClientSettingsFoldout)
                     {
@@ -1400,7 +1412,10 @@ namespace UnityEngine.UDP.Editor
 
                     #region Test Accounts
 
+                    EditorGUI.BeginDisabledGroup(_isTestAccountUpdating);
+
                     _testAccountFoldout = EditorGUILayout.Foldout(_testAccountFoldout, "UDP Sandbox Test Accounts",
+                        true,
                         AppStoreStyles.KAppStoreSettingsHeaderGuiStyle);
 
                     if (_testAccountFoldout)
@@ -1430,6 +1445,25 @@ namespace UnityEngine.UDP.Editor
 
                             EditorGUI.EndChangeCheck();
 
+                            //delete action
+                            if (GUILayout.Button("\u2212", new GUIStyle(GUI.skin.button)
+                                {
+                                    fontSize = AppStoreStyles.kAddNewIapButtonFontSize,
+                                    margin = new RectOffset(0, 0, 2, 0)
+                                },
+                                GUILayout.Height(15),
+                                GUILayout.Width(15)))
+                            {
+                                if ((string.IsNullOrEmpty(_testAccounts[pos].playerId)))
+                                {
+                                    RemoveTestAccountLocally(pos);
+                                }
+                                else
+                                {
+                                    DeleteTestAccount(_testAccounts[pos], pos);
+                                }
+                            }
+
                             EditorGUILayout.EndHorizontal();
                         }
 
@@ -1438,9 +1472,9 @@ namespace UnityEngine.UDP.Editor
                             EditorGUILayout.BeginHorizontal();
                             GUILayout.FlexibleSpace();
                             if (GUILayout.Button("Add new test account", new GUIStyle(GUI.skin.button)
-                            {
-                                fontSize = AppStoreStyles.kAddNewIapButtonFontSize
-                            },
+                                {
+                                    fontSize = AppStoreStyles.kAddNewIapButtonFontSize
+                                },
                                 GUILayout.Height(EditorGUIUtility.singleLineHeight *
                                                  AppStoreStyles.kAddNewIapButtonRatio),
                                 GUILayout.Width(EditorGUIUtility.currentViewWidth / 2)))
@@ -1461,21 +1495,22 @@ namespace UnityEngine.UDP.Editor
                     }
 
                     GuiLine();
+                    EditorGUI.EndDisabledGroup();
 
                     #endregion
 
                     #region Go to Portal
 
+                {
+                    EditorGUILayout.BeginHorizontal();
+
+                    if (GUILayout.Button("Go to UDP console", GUILayout.Width(AppStoreStyles.kGoToPortalButtonWidth)))
                     {
-                        EditorGUILayout.BeginHorizontal();
-
-                        if (GUILayout.Button("Go to UDP console", GUILayout.Width(AppStoreStyles.kGoToPortalButtonWidth)))
-                        {
-                            Application.OpenURL(BuildConfig.CONSOLE_URL);
-                        }
-
-                        EditorGUILayout.EndHorizontal();
+                        Application.OpenURL(BuildConfig.CONSOLE_URL);
                     }
+
+                    EditorGUILayout.EndHorizontal();
+                }
 
                     #endregion
 
@@ -1507,7 +1542,7 @@ namespace UnityEngine.UDP.Editor
                 try
                 {
                     getAuthorizationCodeAsyncMethodInfo.Invoke(null,
-                        new object[] { AppStoreOnboardApi.oauthClientId, performDelegate });
+                        new object[] {AppStoreOnboardApi.oauthClientId, performDelegate});
                 }
                 catch (TargetInvocationException ex)
                 {
@@ -1536,8 +1571,8 @@ namespace UnityEngine.UDP.Editor
         {
             var authCodePropertyInfo = response.GetType().GetProperty("AuthCode");
             var exceptionPropertyInfo = response.GetType().GetProperty("Exception");
-            string authCode = (string)authCodePropertyInfo.GetValue(response, null);
-            Exception exception = (Exception)exceptionPropertyInfo.GetValue(response, null);
+            string authCode = (string) authCodePropertyInfo.GetValue(response, null);
+            Exception exception = (Exception) exceptionPropertyInfo.GetValue(response, null);
 
             if (authCode != null)
             {
@@ -1695,6 +1730,13 @@ namespace UnityEngine.UDP.Editor
             _iapValidationMsg.RemoveAt(pos);
         }
 
+        private void RemoveTestAccountLocally(int pos)
+        {
+            _testAccounts.RemoveAt(pos);
+            _testAccountsDirty.RemoveAt(pos);
+            _testAccountsValidationMsg.RemoveAt(pos);
+        }
+
         private void ClearIapItems()
         {
             _iapItems = new List<IapItem>();
@@ -1737,6 +1779,21 @@ namespace UnityEngine.UDP.Editor
                 resp = clientResp,
                 arrayPos = pos,
                 curIapItem = iapItem
+            };
+            _requestQueue.Enqueue(reqStruct);
+        }
+
+        private void DeleteTestAccount(TestAccount account, int pos)
+        {
+            _isTestAccountUpdating = true;
+            UnityWebRequest request = AppStoreOnboardApi.DeleteTestAccount(account.playerId);
+            PlayerDeleteResponse response = new PlayerDeleteResponse();
+            ReqStruct reqStruct = new ReqStruct
+            {
+                request = request,
+                resp = response,
+                arrayPos = pos,
+                currTestAccount = account
             };
             _requestQueue.Enqueue(reqStruct);
         }

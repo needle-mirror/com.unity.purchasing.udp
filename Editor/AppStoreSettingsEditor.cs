@@ -270,10 +270,10 @@ namespace UnityEngine.UDP.Editor
                         if (response != null && response.message != null && response.details != null &&
                             response.details.Length != 0)
                         {
+                            Debug.LogError("[UDP] " + response.details[0].field + ": " + response.message);
                             EditorUtility.DisplayDialog("Error",
                                 response.details[0].field + ": " + response.message,
                                 "OK");
-
                             if (response.message == "Project not found")
                             {
                                 _currentState = State.CannotGetCloudProjectId;
@@ -281,12 +281,14 @@ namespace UnityEngine.UDP.Editor
                         }
                         else if (response != null && response.message != null)
                         {
+                            Debug.LogError("[UDP] " + response.message);
                             EditorUtility.DisplayDialog("Error",
                                 response.message,
                                 "OK");
                         }
                         else
                         {
+                            Debug.LogError("[UDP] Network error, no response received.");
                             EditorUtility.DisplayDialog("Error",
                                 "Network error, no response received",
                                 "OK");
@@ -1042,6 +1044,7 @@ namespace UnityEngine.UDP.Editor
 
                     if (GUILayout.Button("Pull", GUILayout.Width(AppStoreStyles.kAppStoreSettingsButtonWidth)))
                     {
+                        GUI.FocusControl(null);
                         if (AnythingChanged())
                         {
                             if (EditorUtility.DisplayDialog("Local changes may be overwritten",
@@ -1548,6 +1551,7 @@ namespace UnityEngine.UDP.Editor
                 {
                     if (ex.InnerException is InvalidOperationException)
                     {
+                        Debug.LogError("[UDP] You must login with Unity ID first.");
                         EditorUtility.DisplayDialog("Error", "You must login with Unity ID first.", "OK");
                         _currentState = State.CannotGetCloudProjectId;
                         _isOperationRunning = false;
@@ -1586,6 +1590,7 @@ namespace UnityEngine.UDP.Editor
             }
             else
             {
+                Debug.LogError("[UDP] " + "Failed: " + exception.ToString());
                 EditorUtility.DisplayDialog("Error", "Failed: " + exception.ToString(), "OK");
                 _currentState = State.CannotGetCloudProjectId;
                 _isOperationRunning = false;

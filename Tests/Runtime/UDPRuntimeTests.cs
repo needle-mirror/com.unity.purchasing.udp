@@ -14,18 +14,24 @@ public class UDPRuntimeTests
     [Test]
     public void PlayModeTestPurchaseFails()
     {
+        AppInfo appInfo = new AppInfo();
+        StoreService.Initialize(new InitListener(), appInfo);
         StoreService.ConsumePurchase(new PurchaseInfo(), new PurchaseListener());
     }
 
     [Test]
     public void PlayModeTestQueryInventoryFails()
     {
+        AppInfo appInfo = new AppInfo();
+        StoreService.Initialize(new InitListener(), appInfo);
         StoreService.ConsumePurchase(new PurchaseInfo(), new PurchaseListener());
     }
 
     [Test]
     public void PlayModeTestConsumePurchaseFails()
     {
+        AppInfo appInfo = new AppInfo();
+        StoreService.Initialize(new InitListener(), appInfo);
         StoreService.ConsumePurchase(new PurchaseInfo(), new PurchaseListener());
     }
 

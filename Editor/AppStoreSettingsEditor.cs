@@ -1092,6 +1092,11 @@ namespace UnityEngine.UDP.Editor
 
                                     AddPushRequests(_iapItems[pos].slug);
                                 }
+                                else
+                                {
+                                    Debug.LogError(
+                                        "[UDP] Iap:" + _iapItems[pos].slug + " " + _iapValidationMsg[pos]);
+                                }
                             }
                         }
 
@@ -1145,6 +1150,11 @@ namespace UnityEngine.UDP.Editor
                                     }
 
                                     AddPushRequests(_testAccounts[pos].email);
+                                }
+                                else
+                                {
+                                    Debug.LogError(
+                                        "[UDP] TestAccount:" + _testAccounts[pos].email + " " + _testAccountsValidationMsg[pos]);
                                 }
                             }
                         }
@@ -1261,6 +1271,12 @@ namespace UnityEngine.UDP.Editor
                                         if (_iapItemDirty[pos])
                                         {
                                             _iapValidationMsg[pos] = _iapItems[pos].Validate();
+                                            if (!string.IsNullOrEmpty(_iapValidationMsg[pos]))
+                                            {
+                                                Debug.LogError(
+                                                    "[UDP] Iap:" + _iapItems[pos].slug + " " + _iapValidationMsg[pos]);
+                                            }
+
                                             if (string.IsNullOrEmpty(_iapValidationMsg[pos]))
                                             {
                                                 // If check suceeds
@@ -1297,7 +1313,12 @@ namespace UnityEngine.UDP.Editor
 
                                 IapItem item = _iapItems[pos];
                                 _iapItemsFoldout[pos] = EditorGUILayout.Foldout(_iapItemsFoldout[pos],
-                                    "Product: " + (item.name), true, new GUIStyle(EditorStyles.foldout){wordWrap = false, clipping = TextClipping.Clip, fixedWidth = currentRect.xMax -95});
+                                    "Product: " + (item.name), true,
+                                    new GUIStyle(EditorStyles.foldout)
+                                    {
+                                        wordWrap = false, clipping = TextClipping.Clip,
+                                        fixedWidth = currentRect.xMax - 95
+                                    });
                                 if (_iapItemsFoldout[pos])
                                 {
                                     if (_iapValidationMsg[pos] != "")
@@ -1439,7 +1460,7 @@ namespace UnityEngine.UDP.Editor
                             EditorGUILayout.BeginHorizontal();
                             EditorGUI.BeginChangeCheck();
                             _testAccounts[pos].email = EditorGUILayout.TextField(_testAccounts[pos].email);
-                            _testAccounts[pos].password = EditorGUILayout.TextField(_testAccounts[pos].password);
+                            _testAccounts[pos].password = EditorGUILayout.PasswordField(_testAccounts[pos].password);
 
                             if (GUI.changed)
                             {

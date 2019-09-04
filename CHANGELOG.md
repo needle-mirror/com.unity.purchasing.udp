@@ -3,6 +3,7 @@
 - UI refine.
 - Enable delete testAccount.
 - Validate IAP fields.
+- Add PayToDownload Service
 
 ## [1.1.2] - 2019-07-11
 - Fix the init failure on some devices.

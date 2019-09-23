@@ -1,9 +1,10 @@
 # Changelog
 ## [1.1.3] - 2019-07-29
-- UI refine.
-- Enable delete testAccount.
-- Validate IAP fields.
-- Add PayToDownload Service
+- ability to delete Sandbox Test Accounts; 
+- added syntax check of IAP Product ID fields;
+- user permissions aligned between Unity editor and UDP console; 
+- improved security around the transmission of telemetry data (the data you see in your reporting dashboard) between the repacked games and the UDP backend;
+- misc bugfixes to meet verified-package quality expectations (though package remains in preview)
 
 ## [1.1.2] - 2019-07-11
 - Fix the init failure on some devices.

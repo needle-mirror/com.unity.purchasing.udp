@@ -14,7 +14,7 @@ Your game can query UDP about orders by calling an HTTP GET request.
 Querying UDP about orders：
 
 ```
-/udp/developer/api/order?orderQueryToken=<orderQueryToken>&orderId=<orderId>&clientId=<clientId>&sign=<sign>
+https://distribute.dashboard.unity.com/udp/developer/api/order?orderQueryToken=<orderQueryToken>&orderId=<orderId>&clientId=<clientId>&sign=<sign>
 ```
 
 

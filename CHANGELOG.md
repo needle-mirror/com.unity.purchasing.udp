@@ -1,4 +1,8 @@
 # Changelog
+## [1.2.0] - 2019-09-10
+- injection of SDK version information into app manifest; 
+- premium game support.
+
 ## [1.1.3] - 2019-07-29
 - ability to delete Sandbox Test Accounts; 
 - added syntax check of IAP Product ID fields;

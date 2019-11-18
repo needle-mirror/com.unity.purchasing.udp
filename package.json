@@ -1,7 +1,7 @@
 {
   "name": "com.unity.purchasing.udp",
   "displayName": "Unity Distribution Portal",
-  "version": "1.2.0-preview.2",
+  "version": "1.2.0-preview.3",
   "unity": "2018.2",
   "description": "Unity Distribution Portal (UDP) streamlines your distribution process. UDP allows you to only build one version of your game, centralize the management of your marketing assets and metadata, and submit your content to multiple app stores, all in the same workflow.",
   "keywords": [
@@ -13,6 +13,6 @@
   "repository": {
     "type": "git",
     "url": "git@github.cds.internal.unity3d.com:unity/com.unity.purchasing.udp.git",
-    "revision": "5711ec8106ff52045abeb20ee37d9acdca43e584"
+    "revision": "99678d12a57a141892792a4c58927aa885afdb17"
   }
 }

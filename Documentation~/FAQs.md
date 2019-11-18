@@ -4,29 +4,29 @@
 
 **- Which Unity versions does UDP support?**
 
-Unity 5.6.1 and above. We recommend using 2018.x as that’s where UDP uses the latest instrumentation and editor functionalities.
+Unity 5.6.1 and above, though we recommend that you choose a version covered by Unity support (2017.4 and above as of October 2019).
 
 **- Should I use the UDP Package or implement via Unity IAP?**
 
 If your game already uses Unity IAP you are better off implementing UDP with Unity IAP.
 
-The UDP Package implementation is similar to that of Google Play in-app Billing, and is recommended  if you are porting from such a project, or simply if you’re more familiar with that implementation.
+The UDP Package implementation is similar to that of Google Play in-app Billing, and is recommended if you are porting from such a project, or simply if you’re more familiar with that implementation.
 
-In terms of output, both will let you build a Android package for UDP. The implementation is however different. 
+In terms of output, both will let you build an Android package for UDP, however the implementation is different. 
 
-More information on this topic [here](Getting_Started.md)
+For more information on this topic, see [Two different ways to implement UDP](Getting_Started.md)
 
 **- As UDP is available in Unity IAP from version 1.22, how do I check that I have Unity IAP 1.22 and above?**
 
-In the Unity Editor, go to the top menu and select **Window > Unity IAP > IAP Updates**. The window that pops up shows the version number of your Unity IAP package. Check [here](UDP_via_Unity_IAP.md) for more details
+In the Unity Editor, go to the top menu and select **Window > Unity IAP > IAP Updates**. The window that pops up shows the version number of your Unity IAP package. For more information, see [How do I get Unity IAP set up with UDP?](UDP_via_Unity_IAP.md) for more details
 
 **- How do I know that UDP is installed?**
 
-If you’re implementing the UDP package, check [this section](Editor_UI_elements_for_UDP_implementation_via_UDP_Package.md).
+If you’re implementing the UDP package, see [Editor UI elements for UDP implementation via UDP Package](Editor_UI_elements_for_UDP_implementation_via_UDP_Package.md).
 
-If you’re implementing via Unity IAP, check [that section](Editor_UI_elements_for_UDP_implementation_via_Unity_IAP.md).
+If you’re implementing via Unity IAP, see [Editor UI elements for UDP implementation via Unity IAP](Editor_UI_elements_for_UDP_implementation_via_Unity_IAP.md).
 
-Check also [this section of the Troubleshooting guide](Do_not_mix_the_implementations.md) to make sure you havent mixed implementations up.
+Also, make sure you [Don't mix the implementations](Do_not_mix_the_implementations.md).
 
 **- Do I need to enable Unity Analytics to use UDP?**
 
@@ -34,11 +34,7 @@ Yes. The UDP console reports IAP and game start metrics which are routed through
 
 **- When is a good time to implement UDP in my game development cycle?**
 
-Once you have settled what your game’s purchasable in-app products will be. That’s typically towards the end of the dev cycle. It also means it’s easy to implement UDP in your back-catalogue games to give them a new lease of life on new app stores.
-
-**- I encounter an error message “Error: Permission Denied” when trying to generate the game client” in UDP Settings. What’s the problem?**
-
-Generating the client needs you to be the Owner of the organization. Manager and User can retrieve the client but cannot generate it.
+Once you have decided what your game’s purchasable in-app products will be. That’s typically towards the end of the dev cycle. It also means it’s easy to implement UDP in your back-catalogue games to give them a new lease of life on new app stores.
 
 **- Do I need to rebuild my game when stores update their SDKs, or when new stores become available on UDP?**
 
@@ -46,27 +42,27 @@ No. The UDP build has a generic IAP implementation, like a placeholder. When you
 
 **- Can I only set IAP prices in USD?**
 
-In the Editor’s IAP Catalog, yes. But when you’ll prepare your game for submission on the UDP console, you will be able to set different IAP prices in different currencies. These new currencies will however not sync with the Editor component, which will always only reflect the USD price. 
+In the Editor’s IAP Catalog, yes. But when you prepare your game for submission on the UDP console, you can set different IAP prices in different currencies. However, these new currencies do not sync with the Editor component, which only reflects the USD price. 
 
-Note: as of March 2019 the stores connected to UDP only accept IAP prices in USD and we therefore disabled other currencies until the setting becomes relevant.
+**Note**: Certain stores only accept IAP prices in specific currencies (e.g. onestore requests IAP prices in KRW).
 
 **- How do I build my UDP package?**
 
-The same way you would for an Android package. If you are implementing via Unity IAP, make sure you choose UDP as the build target. You can build locally (build window) or via CloudBuild. 
+The same way you would for an Android package. If you are implementing via Unity IAP, make sure you choose UDP as the build target.
 
 **- How do I deploy my game to the UDP console?**
 
-There are 3 ways:
+You can deploy your game to the UDP console in the following ways:
 
-- you build locally, upload to CloudBuild, deploy via CloudBuild
-- you build via CloudBuild, and deploy via CloudBuild
-- you build locally, and upload your APK directly on the UDP console
+- Build locally, upload to CloudBuild, deploy via CloudBuild
+- Build via CloudBuild, and deploy via CloudBuild
+- Build locally, and upload your APK directly on the UDP console
 
 **- If I don’t have a paid CloudBuild subscription, is my only option to build locally and upload on the UDP console?**
 
 No. The subscription is only required to build via CloudBuild. If you want to Upload to CloudBuild, and then deploy via CloudBuild, you don’t need a paid CloudBuild subscription – it is free.
 
-**- Can I give my UDP build to stores directly, bypassing the Portal part?**
+**- Can I give my UDP build to stores directly, bypassing the UDP console?**
 
 No. This build is only an artefact created during the course of the UDP build-and-submit process. It only works with the Unity sandbox. It is calling stubbed payment APIs and is not capable of making any transaction on any of the UDP stores’ billing systems. To be used, this build needs to be repacked with the store’s specific SDK. This is automatically done on the UDP console during the game submission process.
 
@@ -74,7 +70,7 @@ No. This build is only an artefact created during the course of the UDP build-an
 
 **- How do I access the UDP console?**
 
-This is the URL: <https://distribute.dashboard.unity.com/>. You will also find a link to the UDP console in the UDP Settings inspector window, as well as in the Cloud Build panel for the games which were successfully pushed to UDP.
+This is the URL: <https://distribute.dashboard.unity.com/>. You can also find a link to the UDP console in the **UDP Settings** inspector window, as well as in the Cloud Build panel for the games which were successfully pushed to UDP.
 
 **- Is the UDP console workflow different for implementations via UDP Package or UDP with Unity IAP?**
 
@@ -82,7 +78,7 @@ No. Both implementations give you a generic UDP build. This build is pushed to t
 
 **- Is the “Game Information” data going to be used for all the stores I’ll submit to?**
 
-Yes that’s the idea. We recommend that you enter all the languages, assets and currencies relevant to your distribution plans at this stage, so that everything is set when you select the stores you will distribute your game to.
+Yes that’s the idea. We recommend that you enter all the languages, assets and currencies relevant to your distribution plans at this stage, so that everything is set when you select the stores you will distribute your game to. We recommend you build a superset of assets that can easily address all stores; if anything is missing UDP will flag it during the Publish process (and before your submission goes through).
 
 **- Which information is synced between the Unity Editor and the UDP console?**
 
@@ -90,7 +86,7 @@ The Game Title, all the IAP information, the integration information (specifical
 
 **- Can I tweak submissions for specific stores?**
 
-Yes. You can do that in the Publish tab; each store features an Advanced section where you can do the changes before you submit your game.
+Yes. You can do that in the Publish tab; each store features an Advanced section where you can make changes before you submit your game.
 
 **- Will my screenshots be compatible for all stores?**
 
@@ -108,7 +104,7 @@ No. If you change them in the general Game Info section of the UDP console, the 
 
 **- Can I submit Premium games?**
 
-Not yet. There is a Price field in the Game Information section for the pay-to-download price of your game, but we disabled it for now as no connected store supports pay-to-download yet.
+Yes. There is a Price field in the Game Information section for the pay-to-download price of your game, and a method to call in your game to check whether your game was purchased; for more details see [Implementing a Premium price](implementing_a_premium_price.md). Note that not all stores accept Premium games; the stores which do, carry a “Pay-to-Download” label (in the **Publish** tab). If you try to submit a Premium game to a store which doesn’t support them, you will be warned before the submission can go through. 
 
 **- In my team who can do what on UDP?**
 
@@ -136,19 +132,15 @@ Check you’re under the same Organization as when you first signed up. If you�
 
 **- Who do the submitted games belong to?**
 
-Games are tied to your Organization and will be visible to all the users under that Organization.
+Games are tied to your Organization and are visible to all the users under that Organization.
 
 **- My game is showing up on the UDP console but there are no IAPs. Why is that?**
 
 This can happen if you forget to Push your IAP Catalog information from the Editor.
 
-**- I cannot create a Release without IAPs. Why is that?**
-
-UDP stores expect games that implement in-app purchases. Having at least an IAP product is therefore a requirement to submit a game to the stores.
-
 **- How do the Revisions work?**
 
-Among all your changes to the game, build (APK file), IAP settings and game metadata can increment the revision. The moment you alter one of these elements, your store submission will be different, therefore a new revision must created. The revision system is incremental (++1 each time) and is managed by UDP. You cannot create custom revision numbers. Revision notes (entered when you release a new revision) will help you keep track of revisions.
+Among all your changes to the game, build (APK file), IAP settings and game metadata can increment the revision. The moment you alter one of these elements, your store submission will be different, therefore a new revision must be created. The revision system is incremental (++1 each time) and is managed by UDP. You cannot create custom revision numbers. Revision notes (entered when you release a new revision) will help you keep track of revisions.
 
 **- I pushed a new build, this created a new revision. Will I have to re-enter all the metadata from scratch on the UDP console?**
 
@@ -198,13 +190,11 @@ Once your game has been successfully synced to the store’s beta environment, a
 
 No. When they do, there will be a step called “Push to Test” in the Publish flow.
 
-My game was repacked for Catappult but the wallet doesn’t appear when i test the IAPs. Did I miss something?
+**- When repacking I get an error “Packing Failed: No UDP SDK detected”**
 
-Catappult users need to install the AppCoins Wallet on their device in order to make purchases using the store’s currency. [Download it](https://play.google.com/store/apps/details?id=com.appcoins.wallet) and install it on your test device too.
+This can happen with an implementation via Unity IAP, if you forget to set UDP as the build target.
 
-**- When repacking I get an error “No SDK detected”**
-
-This can happen with implementation via Unity IAP, if you forget to set UDP as a build target.
+It can also happen if you use the Minify option while building your APK; UDP may not able to find files/directories that it needs because of it. Keep UDP-related packages in a customised proguard file (or disable Minify option) and rebuild your game.
 
 **- I signed up to the store already. Why do I need to register my game before submitting it?**
 

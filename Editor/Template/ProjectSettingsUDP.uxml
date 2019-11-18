@@ -1,0 +1,85 @@
+<UXML xmlns="UnityEngine.UIElements">
+
+    <VisualElement class="project-settings-header-container">
+        <VisualElement class="project-settings-service-specific-container">
+            <VisualElement class="project-settings-title-container main-title">
+                <VisualElement class="service-data-container">
+                    <VisualElement class="service-title-container">
+                        <TextElement class="service-title" text="Unity Distribution Portal"/>
+                    </VisualElement>
+                </VisualElement>
+            </VisualElement>
+        </VisualElement>
+    </VisualElement>
+
+    <VisualElement class="udp-op-block udp-block">
+      <VisualElement class="udp-description">
+        <Label text="UDP settings are saved on the server side; changes are not saved locally." class="note-tag"/>
+        <Label text="'Push' will save your changes to the UDP server." class="note-tag"/>
+        <Label text="'Pull' will retrieve your settings from the UDP server." class="note-tag"/>
+      </VisualElement>
+      <VisualElement class="button-container" name="UDPOperationBlock">
+        <Button name="PullBtn" text="Pull" class="submit-button"/>
+        <Button name="PushBtn" text="Push" class="submit-button"/>
+      </VisualElement>
+    </VisualElement>
+
+    <VisualElement class="separator"/>
+  <VisualElement name="UDPSettingsWindow">
+
+    <VisualElement class="udp-basic-block udp-block" name="UDPBasicInfoBlock">
+      <Label name="UdpGameErrorMessage" class="warning-message"/>
+      <VisualElement>
+        <Label text="Game Title"/>
+        <TextField name="UdpGameTitle" multiline="false"/>
+      </VisualElement>
+      <VisualElement>
+        <Label text="Unity Project ID"/>
+        <VisualElement class="udp-input-submit">
+          <TextField name="UdpUnityProjectId" multiline="false" readonly="true"/>
+          <VisualElement >
+            <Button text="Copy" class="submit-button"  name="CopyProjectIdBtn"/>
+          </VisualElement>
+        </VisualElement>
+      </VisualElement>
+    </VisualElement>
+
+    <VisualElement class="separator"/>
+
+    <VisualElement class="udp-client-part udp-block" name="UDPClientSettingsBlock">
+      <Label name="UdpClientErrorMessage" class="warning-message"/>
+      <Foldout text="Settings" class="udp-foldout" value="true">
+        <TextField name="UdpGameId" label="Game ID" multiline="false" readonly="true" text="N/A"/>
+        <TextField name="UdpClientId" label="Client ID" multiline="false" readonly="true" text="N/A"/>
+        <TextField name="UdpClientKey" label="Client Key" multiline="false" readonly="true" text="N/A"/>
+        <TextField name="UdpRSAPublicKey" label="RSA Public Key" multiline="false" readonly="true" text="N/A"/>
+        <TextField name="UdpClientSecret" label="Client Secret" multiline="false" readonly="true" text="N/A"/>
+        <TextField name="UdpClientCallbackUrl" label="Callback URL" multiline="false" />
+      </Foldout>
+    </VisualElement>
+    
+    <VisualElement class="separator"/>
+
+    <VisualElement class="udp-player-block udp-block" name="UDPPlayerBlock">
+      <Foldout text="UDP Sandbox Text Accounts" value="true">
+        <VisualElement class="players" name="UDPPlayers">
+        </VisualElement>
+          <Button text="Add new test account" class="submit-button-medium" name="AddNewPlayerBtn"/>
+      </Foldout>
+    </VisualElement>
+    
+    <VisualElement class="separator"/>
+ 
+  </VisualElement>
+  
+  <VisualElement class="udp-link-block udp-block" name="UDPExternalLinkBlock">
+      <VisualElement name="GoToUDPDashboard" class="field-block link-button">
+        <TextElement text="Go to Console" class="link-text"/>
+        <VisualElement class="external-link-icon"/>
+      </VisualElement>
+      <VisualElement name="GoToIAPCatalog" class="field-block link-button">
+        <TextElement text="Go to IAP Catalog" class="link-text"/>
+        <VisualElement class="external-link-icon"/>
+      </VisualElement>
+    </VisualElement>
+</UXML>

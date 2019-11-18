@@ -2,7 +2,7 @@
 
 So you have [Unity IAP 1.22 installed](How do I get Unity IAP set up with UDP.md).
 
-It is NORMAL you have both “Unity IAP” and “Unity Distribution Portal” in the **Window** menu, as Unity IAP 1.22 includes a UDP implementation.
+It is NORMAL you have both “Unity IAP” and “Unity Distribution Portal” in the **Window** menu, as Unity IAP 1.22 includes a UDP implementation.</br>
 ![img](images/image_42.png)
 
 - **Unity Distribution Portal** > gives you access to the UDP Settings window specific to the Unity IAP implementation. 

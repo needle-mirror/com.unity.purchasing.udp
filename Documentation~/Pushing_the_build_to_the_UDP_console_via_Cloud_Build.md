@@ -11,10 +11,14 @@ You can upload your game build to the build history of your Project, and push it
 In the **Cloud Build Services window**, if you haven't uploaded any build before, select **Upload Build**. 
 ![img](images/image_14.png)
 
-In **FILE**, choose the APK of your UDP build, enter a useful **LABEL**, and set the **PLATFORM** field to Android.
+In **FILE**: 
+
+- Choose the APK of your UDP build, 
+- Enter a useful **LABEL**, 
+- Set the **PLATFORM** field to Android.
 
 ![img](images/image_15.png)
-Select **UPLOAD** , and let it complete the upload process.
+Select **UPLOAD**, and let it complete the upload process.
 
 **Step 2 - Push your build to UDP**
 
@@ -35,9 +39,10 @@ Uploading a build via the Cloud Build Developer Dashboard.
 
 **Step 2 - Push the build to UDP**
 
-From your Project’s **Cloud Build History,**
+From your Project’s **Cloud Build History:**
 
-Click the arrow next to **Download .APK file** to expand the drop-down menu, then select **Push to Unity Distribution Portal.**
+- Click the arrow next to **Download .APK file** to expand the drop-down menu, 
+- Select **Push to Unity Distribution Portal.**
 
 ![img](images/image_18.png)
 

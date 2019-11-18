@@ -19,5 +19,5 @@ The **Reporting** dashboard tracks the following data from the UDP stores your g
 You can filter the information presented on the Reporting dashboard by game and by store.
 ![img](images/image_36.png)
 
-**Important note**: revenue data on the Reporting dashboard is estimated; definite numbers must be sought directly from the stores.
+> **Note**: revenue data on the Reporting dashboard is estimated; definite numbers must be sought directly from the stores.
 

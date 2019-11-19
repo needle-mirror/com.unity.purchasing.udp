@@ -1,3 +1,5 @@
+#if (UNITY_2020_1_OR_NEWER)
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +17,6 @@ using UnityEngine.UDP.Editor.Analytics;
 namespace UnityEngine.UDP.Editor
 {
 
-#if (UNITY_2020_1_OR_NEWER)
     internal class AppStoreProjectSettingsEditor : ServicesProjectSettings
     {
         protected override Notification.Topic[] notificationTopicsToSubscribe => new[] { Notification.Topic.UDPService };
@@ -1850,5 +1851,6 @@ namespace UnityEngine.UDP.Editor
 
         #endregion
     }
-#endif
 }
+
+#endif

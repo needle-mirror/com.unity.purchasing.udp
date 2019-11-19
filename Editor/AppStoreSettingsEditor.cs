@@ -1275,7 +1275,7 @@ namespace UnityEngine.UDP.Editor
 #endif
     #region In App Purchase Configuration
 
-#pragma warning disable CS0162
+#pragma warning disable
                     if (BuildConfig.IAP_VERSION)
                     {
                         EditorGUILayout.BeginVertical();
@@ -1457,6 +1457,8 @@ namespace UnityEngine.UDP.Editor
                         EditorGUI.EndDisabledGroup();
                         GuiLine();
                     }
+
+#pragma warning restore
 
     #endregion
 

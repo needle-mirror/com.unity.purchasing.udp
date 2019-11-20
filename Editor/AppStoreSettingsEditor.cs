@@ -1138,12 +1138,12 @@ namespace UnityEngine.UDP.Editor
                             {
                                 //Check validation
                                 m_IapValidationMsg[pos] = m_IapItems[pos].Validate();
-                                if (m_IapValidationMsg[pos] == "")
+                                if (string.IsNullOrEmpty(m_IapValidationMsg[pos]))
                                 {
                                     m_IapValidationMsg[pos] = m_IapItems[pos].SlugValidate(slugs);
                                 }
 
-                                if (m_IapValidationMsg[pos] == "")
+                                if (string.IsNullOrEmpty(m_IapValidationMsg[pos]))
                                 {
                                     // If check succeeds
                                     if (!string.IsNullOrEmpty(m_IapItems[pos].id))
@@ -1203,7 +1203,7 @@ namespace UnityEngine.UDP.Editor
                             if (m_TestAccountsDirty[pos])
                             {
                                 m_TestAccountsValidationMsg[pos] = m_TestAccounts[pos].Validate();
-                                if (m_TestAccountsValidationMsg[pos] == "")
+                                if (string.IsNullOrEmpty(m_TestAccountsValidationMsg[pos]))
                                 {
                                     if (string.IsNullOrEmpty(m_TestAccounts[pos].playerId))
                                     {
@@ -1236,7 +1236,7 @@ namespace UnityEngine.UDP.Editor
 
                 {
                     EditorGUILayout.LabelField("Game Title");
-                    if (m_UpdateGameTitleErrorMsg != "")
+                    if (!string.IsNullOrEmpty(m_UpdateGameTitleErrorMsg))
                     {
                         GUIStyle textStyle = new GUIStyle(GUI.skin.label);
                         textStyle.wordWrap = true;
@@ -1387,7 +1387,7 @@ namespace UnityEngine.UDP.Editor
                                     });
                                 if (m_IapItemsFoldout[pos])
                                 {
-                                    if (m_IapValidationMsg[pos] != "")
+                                    if (!string.IsNullOrEmpty(m_IapValidationMsg[pos]))
                                     {
                                         GUIStyle textStyle = new GUIStyle(GUI.skin.label);
                                         textStyle.wordWrap = true;
@@ -1471,7 +1471,7 @@ namespace UnityEngine.UDP.Editor
                     {
                         EditorGUI.indentLevel++;
 
-                        if (m_UpdateClientErrorMsg != "")
+                        if (!string.IsNullOrEmpty(m_UpdateClientErrorMsg))
                         {
                             GUIStyle textStyle = new GUIStyle(GUI.skin.label);
                             textStyle.wordWrap = true;
@@ -1517,7 +1517,7 @@ namespace UnityEngine.UDP.Editor
                         {
                             int pos = i;
 
-                            if (m_TestAccountsValidationMsg[pos] != "")
+                            if (!string.IsNullOrEmpty(m_TestAccountsValidationMsg[pos]))
                             {
                                 GUIStyle textStyle = new GUIStyle(GUI.skin.label);
                                 textStyle.wordWrap = true;
@@ -1841,8 +1841,24 @@ namespace UnityEngine.UDP.Editor
             m_IapValidationMsg = new List<string>();
         }
 
+#if (!UNITY_2020_1_OR_NEWER)
+        private void ClearTestAccounts()
+        {
+            m_TestAccounts = new List<TestAccount>();
+            m_TestAccountsDirty = new List<bool>();
+            m_TestAccountsValidationMsg = new List<string>();
+        }
+#endif
+
         private void RefreshAllInformation()
         {
+#if (!UNITY_2020_1_OR_NEWER)
+            m_UpdateGameTitleErrorMsg = "";
+            m_UpdateClientErrorMsg = "";
+            m_GameTitleChanged = false;
+            m_CallbackUrlChanged = false;
+            ClearTestAccounts();
+#endif
             ClearIapItems();
             m_IsOperationRunning = true;
             m_TargetStep = k_StepGetClient;

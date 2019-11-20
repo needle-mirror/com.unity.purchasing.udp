@@ -1175,7 +1175,7 @@ namespace UnityEngine.UDP.Editor
 
         private void SetUpClientSettingsPart()
         {
-            if (m_UpdateClientErrorMsg != "")
+            if (!string.IsNullOrEmpty(m_UpdateClientErrorMsg))
             {
                 m_UDPClientSettingsBlock.Q<Label>(UxmlStrings.k_UDPClientErrorMessage).text = m_UpdateClientErrorMsg;
             }
@@ -1215,7 +1215,7 @@ namespace UnityEngine.UDP.Editor
             errTag.AddToClassList(UssStrings.k_UssStringsErrorTag);
             errTag.style.height = 12;
             errTag.style.marginLeft = 4;
-            errTag.style.display = k_TestAccountsValidationMsg[pos] != "" ? DisplayStyle.Flex : DisplayStyle.None;
+            errTag.style.display = !string.IsNullOrEmpty(k_TestAccountsValidationMsg[pos]) ? DisplayStyle.Flex : DisplayStyle.None;
             playerContainer.Add(errTag);
 
             VisualElement player = new VisualElement();
@@ -1460,7 +1460,7 @@ namespace UnityEngine.UDP.Editor
                 {
                     playerAtPosErr.text = k_TestAccountsValidationMsg[pos];
                     playerAtPosErr.style.display =
-                        k_TestAccountsValidationMsg[pos] != "" ? DisplayStyle.Flex : DisplayStyle.None;
+                        !string.IsNullOrEmpty(k_TestAccountsValidationMsg[pos]) ? DisplayStyle.Flex : DisplayStyle.None;
                 }
             }
         }
@@ -1636,7 +1636,7 @@ namespace UnityEngine.UDP.Editor
                     m_TestAccounts[pos].email = m_UDPPlayersContainer.Q<TextField>("player-email-" + pos).value;
                     m_TestAccounts[pos].password = m_UDPPlayersContainer.Q<TextField>("player-password-" + pos).value;
                     k_TestAccountsValidationMsg[pos] = m_TestAccounts[pos].Validate();
-                    if (k_TestAccountsValidationMsg[pos] == "")
+                    if (string.IsNullOrEmpty(k_TestAccountsValidationMsg[pos]))
                     {
                         if (string.IsNullOrEmpty(m_TestAccounts[pos].playerId))
                         {

@@ -92,7 +92,7 @@ namespace UnityEngine.UDP.Editor
         VisualElement m_UDPExternalLinkBlock;
         VisualElement m_UDPLinkClientIdBlock;
 
-        #region local field
+#region local field
         string m_ClientSecretInMemory;
         string m_CallbackUrlInMemory;
         readonly List<string> k_PushRequestList = new List<string>();
@@ -165,7 +165,7 @@ namespace UnityEngine.UDP.Editor
         bool m_IsSearchingPlayer ;
         bool m_IsDeletingPlayer ;
 
-        #endregion
+#endregion
 
         [SettingsProvider]
         static SettingsProvider CreateProjectSettingsProvider()
@@ -384,7 +384,7 @@ namespace UnityEngine.UDP.Editor
 
                         ErrorResponse response = JsonUtility.FromJson<ErrorResponse>(request.downloadHandler.text);
 
-                        #region Analytics Fails
+#region Analytics Fails
 
                         if (resp.GetType() == typeof(EventRequestResponse))
                         {
@@ -457,7 +457,7 @@ namespace UnityEngine.UDP.Editor
                             }
                         }
 
-                        #endregion
+#endregion
 
                         ProcessErrorRequest(reqStruct);
 
@@ -815,7 +815,7 @@ namespace UnityEngine.UDP.Editor
                         SetUpBasicInfoPart();
                         RepaintGameIdPart();
 
-                        #region Analytics
+#region Analytics
 
                         string eventName = null;
                         if (request.method == UnityWebRequest.kHttpVerbPOST)
@@ -842,7 +842,7 @@ namespace UnityEngine.UDP.Editor
                             k_RequestQueue.Enqueue(analyticsReqStruct);
                         }
 
-                        #endregion
+#endregion
 
                         if (reqStruct.targetStep == k_StepUpdateGameTitle)
                         {
@@ -1231,6 +1231,12 @@ namespace UnityEngine.UDP.Editor
             password.value = m_TestAccounts[pos].password;
             password.isPasswordField = true;
 
+            if(!string.IsNullOrEmpty(m_TestAccounts[pos].playerId))
+            {
+                email.isReadOnly = true;
+                password.isReadOnly = true;
+            }
+
             // add delete btn
             Button delBtn = new Button();
             delBtn.text = "\u2212";
@@ -1297,7 +1303,7 @@ namespace UnityEngine.UDP.Editor
             }
         }
 
-        #region helper method
+#region helper method
 
         private void GetAuthCode()
         {
@@ -1424,6 +1430,10 @@ namespace UnityEngine.UDP.Editor
         private void ListPlayers()
         {
             Log("list players");
+            m_TestAccounts.Clear();
+            k_TestAccountsDirty.Clear();
+            k_TestAccountsValidationMsg.Clear();
+
             m_IsSearchingPlayer = true;
             UnityWebRequest newRequest = AppStoreOnboardApi.GetTestAccount(m_UnityClientId.stringValue);
             PlayerResponseWrapper playerResponseWrapper = new PlayerResponseWrapper();
@@ -1461,6 +1471,19 @@ namespace UnityEngine.UDP.Editor
                     playerAtPosErr.text = k_TestAccountsValidationMsg[pos];
                     playerAtPosErr.style.display =
                         !string.IsNullOrEmpty(k_TestAccountsValidationMsg[pos]) ? DisplayStyle.Flex : DisplayStyle.None;
+                }
+
+                var playerEmail = accountUi.Q<TextField>("player-email-" + pos);
+                var playerPassword = accountUi.Q<TextField>("player-password-" + pos);
+                if(!string.IsNullOrEmpty(account.playerId))
+                {
+                    playerEmail.isReadOnly = true;
+                    playerPassword.isReadOnly = true;
+                }else
+                {
+                    playerEmail.isReadOnly = false;
+                    playerPassword.isReadOnly = false;
+
                 }
             }
         }
@@ -1849,7 +1872,7 @@ namespace UnityEngine.UDP.Editor
            // Debug.Log(message);
         }
 
-        #endregion
+#endregion
     }
 }
 

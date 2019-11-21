@@ -4,7 +4,7 @@
 
 **From the Package Manager**
 
-From the Unity Editor’s top menu: **Window > Package Manager:**
+From the Unity Editor’s top menu: **Window > Package Manager:**</br>
 ![img](images/image_49.png)
 
 Select the tab **All** and look for Unity Distribution Portal:

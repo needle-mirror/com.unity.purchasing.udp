@@ -139,9 +139,9 @@ namespace UnityEngine.UDP.Editor
         SerializedProperty m_AppItemId;
 
         bool m_IsOperationRunning; // Lock all panels
-        bool m_IsIapUpdating ; // Lock iap part.
+        bool m_IsIapUpdating; // Lock iap part.
 #if (!UNITY_2020_1_OR_NEWER)
-		bool m_IsTestAccountUpdating ; // Lock testAccount part.
+        bool m_IsTestAccountUpdating; // Lock testAccount part.
 #endif
         State m_CurrentState = State.Success;
 
@@ -240,7 +240,7 @@ namespace UnityEngine.UDP.Editor
 #endif
                         ErrorResponse response = JsonUtility.FromJson<ErrorResponse>(request.downloadHandler.text);
 
-    #region Analytics Fails
+                        #region Analytics Fails
 
                         if (resp.GetType() == typeof(EventRequestResponse))
                         {
@@ -313,7 +313,7 @@ namespace UnityEngine.UDP.Editor
                             }
                         }
 
-    #endregion
+                        #endregion
 
                         ProcessErrorRequest(reqStruct);
                         if (response != null && response.message != null && response.details != null &&
@@ -716,7 +716,7 @@ namespace UnityEngine.UDP.Editor
                         serializedObject.ApplyModifiedProperties();
                         AssetDatabase.SaveAssets();
 
-    #region Analytics
+                        #region Analytics
 
                         string eventName = null;
                         if (request.method == UnityWebRequest.kHttpVerbPOST)
@@ -741,7 +741,7 @@ namespace UnityEngine.UDP.Editor
                             m_RequestQueue.Enqueue(analyticsReqStruct);
                         }
 
-    #endregion
+                        #endregion
 
                         if (reqStruct.targetStep == k_StepUpdateGameTitle)
                         {
@@ -765,7 +765,7 @@ namespace UnityEngine.UDP.Editor
 #if (UNITY_2020_1_OR_NEWER)
                             PullIAPItems();
 #else
-                              ListPlayers();
+                            ListPlayers();
 #endif
                         }
 
@@ -885,7 +885,7 @@ namespace UnityEngine.UDP.Editor
                     else if (resp.GetType() == typeof(PlayerDeleteResponse))
                     {
 #if (!UNITY_2020_1_OR_NEWER)
-		                        m_IsTestAccountUpdating = false;
+                        m_IsTestAccountUpdating = false;
 #endif
                         EditorUtility.DisplayDialog("Success",
                             "TestAccount " + reqStruct.currTestAccount.playerId + " has been Deleted.", "OK");
@@ -1010,11 +1010,11 @@ namespace UnityEngine.UDP.Editor
         private string _clientIdToBeLinked = "UDP client ID";
 #if (!UNITY_2020_1_OR_NEWER)
         private bool m_CallbackUrlChanged;
-        private bool m_UdpClientSettingsFoldout ;
-		private bool m_GameTitleChanged ;
-		private string m_UpdateGameTitleErrorMsg ;
-        private bool m_TestAccountFoldout ;
-        private string m_UpdateClientErrorMsg ;
+        private bool m_UdpClientSettingsFoldout;
+        private bool m_GameTitleChanged;
+        private string m_UpdateGameTitleErrorMsg;
+        private bool m_TestAccountFoldout;
+        private string m_UpdateClientErrorMsg;
 #endif
 
         public override void OnInspectorGUI()
@@ -1219,7 +1219,8 @@ namespace UnityEngine.UDP.Editor
                                 else
                                 {
                                     Debug.LogError(
-                                        "[UDP] TestAccount:" + m_TestAccounts[pos].email + " " + m_TestAccountsValidationMsg[pos]);
+                                        "[UDP] TestAccount:" + m_TestAccounts[pos].email + " " +
+                                        m_TestAccountsValidationMsg[pos]);
                                 }
                             }
                         }
@@ -1232,7 +1233,8 @@ namespace UnityEngine.UDP.Editor
                     GuiLine();
 
 #if (!UNITY_2020_1_OR_NEWER)
-    #region Title & ProjectID
+
+                    #region Title & ProjectID
 
                 {
                     EditorGUILayout.LabelField("Game Title");
@@ -1271,9 +1273,11 @@ namespace UnityEngine.UDP.Editor
                     GuiLine();
                 }
 
-    #endregion
+                    #endregion
+
 #endif
-    #region In App Purchase Configuration
+
+                    #region In App Purchase Configuration
 
 #pragma warning disable
                     if (BuildConfig.IAP_VERSION)
@@ -1340,7 +1344,8 @@ namespace UnityEngine.UDP.Editor
                                             if (!string.IsNullOrEmpty(m_IapValidationMsg[pos]))
                                             {
                                                 Debug.LogError(
-                                                    "[UDP] Iap:" + m_IapItems[pos].slug + " " + m_IapValidationMsg[pos]);
+                                                    "[UDP] Iap:" + m_IapItems[pos].slug + " " +
+                                                    m_IapValidationMsg[pos]);
                                             }
 
                                             if (string.IsNullOrEmpty(m_IapValidationMsg[pos]))
@@ -1460,10 +1465,11 @@ namespace UnityEngine.UDP.Editor
 
 #pragma warning restore
 
-    #endregion
+                    #endregion
 
 #if (!UNITY_2020_1_OR_NEWER)
-    #region UDP Client Settings
+
+                    #region UDP Client Settings
 
                     m_UdpClientSettingsFoldout = EditorGUILayout.Foldout(m_UdpClientSettingsFoldout, "Settings", true,
                         AppStoreStyles.KAppStoreSettingsHeaderGuiStyle);
@@ -1501,9 +1507,9 @@ namespace UnityEngine.UDP.Editor
 
                     GuiLine();
 
-    #endregion
+                    #endregion
 
-    #region Test Accounts
+                    #region Test Accounts
 
                     EditorGUI.BeginDisabledGroup(m_IsTestAccountUpdating);
 
@@ -1528,8 +1534,17 @@ namespace UnityEngine.UDP.Editor
 
                             EditorGUILayout.BeginHorizontal();
                             EditorGUI.BeginChangeCheck();
-                            m_TestAccounts[pos].email = EditorGUILayout.TextField(m_TestAccounts[pos].email);
-                            m_TestAccounts[pos].password = EditorGUILayout.PasswordField(m_TestAccounts[pos].password);
+                            if (string.IsNullOrEmpty(m_TestAccounts[pos].playerId))
+                            {
+                                m_TestAccounts[pos].email = EditorGUILayout.TextField(m_TestAccounts[pos].email);
+                                m_TestAccounts[pos].password =
+                                    EditorGUILayout.PasswordField(m_TestAccounts[pos].password);
+                            }
+                            else
+                            {
+                                SelectableLabel(m_TestAccounts[pos].email);
+                                SelectableLabel(m_TestAccounts[pos].password);
+                            }
 
                             if (GUI.changed)
                             {
@@ -1590,9 +1605,9 @@ namespace UnityEngine.UDP.Editor
                     GuiLine();
                     EditorGUI.EndDisabledGroup();
 
-    #endregion
+                    #endregion
 
-    #region Go to Portal
+                    #region Go to Portal
 
                 {
                     EditorGUILayout.BeginHorizontal();
@@ -1605,7 +1620,7 @@ namespace UnityEngine.UDP.Editor
                     EditorGUILayout.EndHorizontal();
                 }
 
-    #endregion
+                    #endregion
 
 #endif
                     break;
@@ -1619,7 +1634,7 @@ namespace UnityEngine.UDP.Editor
             EditorApplication.update -= CheckRequestUpdate;
         }
 
-    #region helper method
+        #region helper method
 
         void CallApiAsync()
         {
@@ -1898,7 +1913,7 @@ namespace UnityEngine.UDP.Editor
         private void DeleteTestAccount(TestAccount account, int pos)
         {
 #if (!UNITY_2020_1_OR_NEWER)
-	      m_IsTestAccountUpdating = true;
+            m_IsTestAccountUpdating = true;
 #endif
             UnityWebRequest request = AppStoreOnboardApi.DeleteTestAccount(account.playerId);
             PlayerDeleteResponse response = new PlayerDeleteResponse();
@@ -2051,12 +2066,12 @@ namespace UnityEngine.UDP.Editor
 
         private bool AnythingChanged()
         {
-
 #if (!UNITY_2020_1_OR_NEWER)
             if (m_GameTitleChanged || m_CallbackUrlChanged)
             {
                 return true;
             }
+
             foreach (bool dirty in m_TestAccountsDirty)
             {
                 if (dirty)
@@ -2077,7 +2092,7 @@ namespace UnityEngine.UDP.Editor
             return false;
         }
 
-    #endregion
+        #endregion
     }
 #endif
 }

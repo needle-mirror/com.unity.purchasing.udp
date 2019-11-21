@@ -11,8 +11,8 @@ The **Reporting** dashboard tracks the following data from the UDP stores your g
 | Today                    | Metrics for the present day: **daily active users (DAU), Gross Revenue, Game Starts, and Transaction Success / Total** |
 | DAU                      | Daily active users                                           |
 | Unique Devices           | The number of unique devices launching the game              |
-| Revenue                  | The gross revenue you receive from players                   |
-| Game Starts              | The percentage of new players for each day                   |
+| Revenue                  | The gross revenue in USD that your game generated            |
+| Game Starts              | The number of times your game was started                    |
 | In-app Purchase: Total   | The total volume of IAP transactions                         |
 | In-app Purchase: Success | The volume of successful IAP transactions                    |
 

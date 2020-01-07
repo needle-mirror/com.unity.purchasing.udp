@@ -1,4 +1,4 @@
-# Server-side implementation
+# Server-side implementation of UDP
 
 The server-side integration consists of the following steps:
 
@@ -33,7 +33,7 @@ Parameters in the request:
         <td>orderQueryToken</td>
         <td>String</td>
         <td>Required</td>
-        <td>The order query token returned by the client SDK when finishing a purchase. The token needs to be encoded Base64 before being used in the query. (UDP SDK will return PurchaseInfo.OrderQueryToken)</td>
+        <td>The order query token returned by the client SDK when finishing a purchase. The token needs to be encoded Base64 before being used in the query.(UDP SDK will return PurchaseInfo.OrderQueryToken)</td>
 <td style="word-break:break-all;">eyJjaGFubmVsUHJvZHVjdElkIjoiaWFwLl9mM2YzZiIsImNoYW5uZWxUeXBlIjoiQVBUT0lERSIsImNsaWVudElkIjoiQUFJZ3g5VmNGaDJZQ1ZxbUs2VWNDUSIsImNwT3JkZXJJZCI6IjJhNGQ5MWY4NDgzZjQ3YjlhYzFhNGY5MDAwZDVhNTRhIiwicGFja2FnZU5hbWUiOiJjb20udW5pdHkudW5pdHl0ZXN0Z2FtZV9mZWZ3In0=
         </td>
     </tr>
@@ -41,7 +41,7 @@ Parameters in the request:
         <td>orderId</td>
         <td>String</td>
         <td>Required</td>
-        <td>The orderId returned by the client SDK when finishing a purchase. (UDP SDK will return PurchaseInfo.GameOrderId)</td>
+        <td>The orderId returned by the client SDK when finishing a purchase.(UDP SDK will return PurchaseInfo.GameOrderId)</td>
         <td >2a4d91f8483f47b9ac1a4f9000d5a54a
         </td>
     </tr>
@@ -49,7 +49,7 @@ Parameters in the request:
         <td>clientId</td>
         <td>String</td>
         <td>Required</td>
-        <td>The clientId can be found in the Game info - integration information of UDP console.</td>
+        <td>The clientId can be found in the Game info - integration information of UDP console</td>
         <td >AAIgx9VcFh2YCVqmK6UcCQ
         </td>
     </tr>
@@ -57,7 +57,7 @@ Parameters in the request:
         <td>sign</td>
         <td>String</td>
         <td>Required</td>
-      <td>Generate signature with orderQueryToken and client secret, MD5.hash (orderQueryToken + clientSecret).</br>
+      <td>Generate signature with orderQueryToken and client secret, MD5.hash(orderQueryToken + clientSecret).</br>
 Client Secret can also been found in the Game info - integration information of UDP console.
  </td>
       <td style="word-break:break-all;">Client Secret:  KKcCyAgej06MxjKX31WuFNeHSaTJAjLDlgoDWsPJDAM </br></br>
@@ -74,16 +74,16 @@ Parameters in the response：
 | -------------- | --------------------------------------------- | ------------------ | ------------------------------------------------------------ | ---------------------------- |
 | clientId       | String                                        | Required           | The clientId that is returned by Unity after the game has created a client in the Unity IAP. | Q4AnJDW2-rxLAPujqrk1zQ       |
 | cpOrderId      | String                                        | Required           | The order ID assigned by your game, or Unity if the game does not generate it. | 66mea52wne                   |
-| channelType    | String                                        | Required           | Channel type.                                                | APTOIDE,CLOUDMOOLAH          |
+| channelType    | String                                        | Required           | Channel type                                                 | APTOIDE,CLOUDMOOLAH          |
 | status         | String                                        | Required           | Indicates the status of the order.                           | SUCCESS, FAILED, UNCONFIRMED |
-| productId      | String                                        | Required           | The product ID associated with the order.                    | product_1                    |
-| amount         | String                                        | Required           | The payment amount of the order.                             | 1                            |
+| productId      | String                                        | Required           | The product ID associated with the order                     | product_1                    |
+| amount         | String                                        | Required           | The payment amount of the order                              | 1                            |
 | quantity       | Integer                                       | Required           | Indicates the quantity of the product.                       | 1                            |
-| currency       | ISO 4217                                      | Required           | The currency used to purchase the product.                   | CNY                          |
-| country        | ISO 3166-2                                    | Required           | The country or geographic region in which the user is located. | CN                           |
+| currency       | ISO 4217                                      | Required           | The currency used to purchase the product                    | CNY                          |
+| country        | ISO 3166-2                                    | Required           | The country or geographic region in which the user is located | CN                           |
 | paidTime       | ISO8601 yyyy-MM-ddThh:mm:ssXXX， UTC timezone | Required           | Specifies the time when the order is paid.                   | 2017-03-08T06:43:20Z         |
-| rev            | String                                        | Required           | The revision of the order (only for update).                 | 0                            |
-| extension      | Json String                                   | Optional           | The developer payload used to add reference information.     | {"abc" : "123"}              |
+| rev            | String                                        | Required           | The revision of the order (only for update)                  | 0                            |
+| extension      | Json String                                   | Optional           | The developer payload used to add reference information      | {"abc" : "123"}              |
 
 ![img](images/image_70.png)
 
@@ -162,7 +162,7 @@ After a purchase succeeds, if you have specified a callback URL, the UDP server 
 
 **Using the certificate**
 
-You can verify the certificate using the Unity Client RSA Public Key. If the certificate passes verification, extract the RSA public key from the certificate and use this key to verify the signature. To generate the signature, encrypt the payload with the RSA-SHA1 algorithm. 
+You can verify the certificate using the Unity Client RSA Public Key. If the certificate passes verification, extract the RSA public key from the certificate and use this key to verify the signature. The signature is generated by encrypting the payload with the by RSA-SHA1 algorithm. 
 
 Here is an example：
 

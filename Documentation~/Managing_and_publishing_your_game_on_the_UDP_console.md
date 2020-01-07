@@ -7,7 +7,7 @@ The [UDP console](https://distribute.dashboard.unity.com) is a web-based platfor
 - [Publish your game to partner stores](Publishing_your_game_to_stores.md)
 - [View your games’ performance across UDP stores](Reporting.md)
 
-> **Note**: make sure you successfully test your game’s IAPs in the Sandbox environment before continuing to this stage. If your IAPs don’t work in your generic UDP build, the versions that you’d submit to the stores would certainly not work either. For more information, see [UDP Sandbox Test Accounts](Configuring_Unity_Distribution_Portal.md).
+**Important note**: make sure you successfully test your game’s IAPs in the Sandbox environment before continuing to this stage. If your IAPs don’t work in your generic UDP build, the versions that you’d submit to the stores would certainly not work either. More info on this [here](Configuring_Unity_Distribution_Portal.md).
 
 You can go to the UDP console via the URL <https://distribute.dashboard.unity.com>. 
 

@@ -1,6 +1,6 @@
 ## Building and Deploying via Cloud Build
 
-If you use Unity Teams Advanced, you can generate builds automatically (learn about [Automated Build Generation](https://docs.unity3d.com/Manual/UnityCloudBuildContinuousIntegration.html)). 
+If you use Unity Teams Advanced, you can generate builds automatically (see documentation on [Automated Build Generation](https://docs.unity3d.com/Manual/UnityCloudBuildContinuousIntegration.html)). 
 
 In the Cloud Build Services window:
 
@@ -9,5 +9,5 @@ In the Cloud Build Services window:
 - Select **Next: Save.**
 - Select **Start Cloud Build**, then select the target build you just created.
 
-Push your build to UDP directly via the Unity Cloud Build Developer Dashboard (as shown in the section above) .
+Push your build to UDP directly via the Unity Cloud Build Developer Dashboard (as shown in above section) 
 

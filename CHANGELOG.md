@@ -1,4 +1,7 @@
 # Changelog
+## [1.3.0] - 2020-01-06
+- dropping UDP info in persistent data path (for co-op with services such as Remote Config, deltaDNA, etc).
+
 ## [1.2.0] - 2019-09-10
 - injection of SDK version information into app manifest; 
 - premium game support.

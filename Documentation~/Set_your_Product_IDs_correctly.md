@@ -2,7 +2,7 @@
 
 Make sure that, after you implemented all your IAP Products in your game, you collect and double-check all the **Product IDs** you set in the IAP Catalog.
 
-For instance: the event “purchase ItemNo1” (triggered when a player confirms they want to purchase “ItemNo1”) references its Product ID. Your IAP Catalog must use the exact same Product ID for the product “ItemNo1”.
+For instance: the event “purchase ItemNo1” (triggered when player confirms he/she wants to purchase “ItemNo1”) will reference its Product ID. Your IAP Catalog must use the exact same Product ID for the product “ItemNo1”.
 
 In the below example, the IAP Store component is used to list the game’s IAP Product IDs:
 ![img](images/image_64.png)

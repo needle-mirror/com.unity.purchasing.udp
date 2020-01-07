@@ -6,21 +6,22 @@ Follow these steps to install the latest **Unity IAP** version and check you hav
 
 From the Unity Services Window:
 
-1 - [Enable Unity IAP from the Service Window](https://docs.unity3d.com/Manual/UnityIAPSettingUp.html);
+1 - [enable Unity IAP from the Service Window](https://docs.unity3d.com/Manual/UnityIAPSettingUp.html);
 
-2 - Import the latest package using the **Import** button;
+2 - import the latest package using the **Import** button;
 ![img](images/image_39.png)
 
-3 - From the Unity Editor top menu, go to IAP Updates:
+3 - from the Unity Editor top menu, go to IAP Updates:
 ![img](images/image_40.png)
-UDP is included in version 1.22 and above
 ![img](images/image_41.png)
+
+UDP is included in version 1.22 and above
 
 ### Editor UI elements for UDP implementation via Unity IAP
 
-So you have **Unity IAP 1.22**  or above installed.
+So you have **Unity IAP 1.22** installed.
 
-It is normal have both “Unity IAP” and “Unity Distribution Portal” in the **Window** menu, as Unity IAP includes a UDP implementation from version 1.22.
+It is NORMAL you have both “Unity IAP” and “Unity Distribution Portal” in the **Window** menu, as Unity IAP 1.22 includes a UDP implementation.
 
 ![img](images/image_42.png)
 
@@ -35,9 +36,9 @@ However make sure you are getting the following.
 The **UDP Settings** window, for Unity IAP, looks like this:
 ![img](images/image_44.png)
 
-In the UDP Settings window, you can only set Game Title, Test Account Settings, and view/copy some the UDP client settings.
+In that window, you can only set Game Title, Test Account Settings, and view/copy some the UDP client settings (yes there’s some clutter, and we are working on it).
 
-The IAP Catalog is in a separate window, accessed via  the Open Catalog button, or via the menu **Window > Unity IAP > IAP Catalog**:
+The IAP Catalog is in a separate window, accessed via  **Window > Unity IAP > IAP Catalog**:
 ![img](images/image_45.png) 
 
 In the Unity IAP Catalog, there is a dedicated UDP section. **You must enter your IAP Products in this section for them to become part of the UDP Catalog:**
@@ -46,9 +47,9 @@ In the Unity IAP Catalog, there is a dedicated UDP section. **You must enter you
 Remember to **Sync to UDP** every IAP Product that you add to the catalog under the **UDP Configuration** section, using the button immediately below the price field:
 ![img](images/image_47.png)
 
-Otherwise your IAP Product is not synced with the IAP Catalog on the UDP Console.
+Otherwise your IAP Product will NOT be synced with the IAP Catalog on the UDP Console.
 
-This would result in this IAP Product not being synced with the store.
+Which will ultimately result in this IAP Product not being synced with the store.
 
 Before you build, make sure you set **UDP as Build Target:**
 ![img](images/image_48.png)

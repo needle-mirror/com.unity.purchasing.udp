@@ -17,7 +17,6 @@ namespace UnityEngine.UDP.Editor
         public string email;
         public string password;
         public string playerId;
-        public bool deleted = false;
         public bool isUpdate = true;
 
         public TestAccount()
@@ -26,16 +25,11 @@ namespace UnityEngine.UDP.Editor
             this.email = "";
             this.password = "";
             this.playerId = "";
-            this.deleted = false;
         }
 
         public string Validate()
         {
-            if (deleted)
-            {
-                return "";
-            }
-            if (string.IsNullOrEmpty(email) || email == "Email")
+            if (string.IsNullOrEmpty(email))
             {
                 return "Email cannot be null";
             }

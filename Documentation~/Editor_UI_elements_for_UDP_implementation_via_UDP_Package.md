@@ -4,7 +4,7 @@ So you [installed the UDP Package](UDP Package.md).
 
 You should ONLY have “Unity Distribution Portal” in the **Window** menu.
 
-(as in, you should NOT have Window > Unity IAP)</br>
+(as in, you should NOT have Window > Unity IAP)
 ![img](images/image_51.png)
 
 Everything you need is in the UDP Settings inspector window:

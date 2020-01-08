@@ -2,12 +2,12 @@
 
 There are two ways to implement UDP in your game:
 
-- **UDP package**
+- **UDP package**</br>
   The UDP package is in preview and readily [available from Unity Package Manager or from the Unity Asset Store](UDP_Package.md).
-- **UDP with Unity IAP**
-  UDP is included in Unity IAP from version 1.22. To use UDP with Unity IAP, [enable Unity IAP from the Editor’s service window.](Finding_and_navigating_UDP_in_the_Editor.md)
+- **UDP with Unity IAP**</br>
+  UDP is included in Unity IAP from version 1.22. To use UDP with Unity IAP, [enable Unity IAP from the Editor’s service window.](UDP_via_Unity_IAP.md)
 
-Refer to [this section](Before_you_begin_know_this.md) to understand the difference between the 2 options, which one suits you best, and more details on getting set up with either one. Once your implementation choice is made, these will be your next steps:
+Refer to [Two different ways to implete UDP](Before_you_begin_know_this.md) to understand the difference between the options, which one suits you best, and more details on getting set up with either one. Once you've chosen your implementation method, the following steps are required:
 
 1. **In the Unity Editor, [configure UDP](Configuring_Unity_Distribution_Portal.md) and create your game’s catalog of[ in-app purchases](Implementing_UDP_in-app_purchases.md).**
    Create a new UDP game client via the **UDP Settings** window, implement UDP in your game, and populate your **IAP Catalog** with your in-game products.

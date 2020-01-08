@@ -11,7 +11,7 @@ To implement UDP in-app purchases, follow these steps:
 
 ### Configuring UDP in-app purchases
 
-Refer to [this section](Before_you_begin_know_this.md) to understand how the IAP Catalog works in the UDP context.
+To understand how the IAP Catalog works in the UDP context, see [Notion of IAP Catalog](Before_you_begin_know_this.md).
 
 To configure UDP in-app purchases:
 
@@ -21,9 +21,9 @@ To configure UDP in-app purchases:
 
 2. Enter your product information.
 
-- **Name**, the name of the IAP product
-- **Product ID**, the unique ID that is used to identify the IAP product. See below the requirements that Product IDs must follow.
-- **Type**, which indicates whether the IAP product is consumable or not
+- **Name**, the name of the IAP product.
+- **Product ID**, the unique ID used to identify the IAP product. See below the requirements that Product IDs must follow.
+- **Type**, which indicates whether the IAP product is consumable or not.
 - **Price**, the price of the IAP product. You must specify the product price, otherwise players can’t purchase products in your game.
 - **Description**, a short description of the IAP product
 
@@ -37,9 +37,9 @@ To configure UDP in-app purchases:
 - be only composed of letters, digits, dots (.) and underscores (_)
 - must not use capitalized letters
 
-More information on Product IDs [here](Save_Sync_Push_your_IAP_Catalog.md)
+Make sure you [Set your Product IDs correctlY](Set_your_Product_IDs_correctly.md).
 
-> **Important note**: make sure you **Push** new IAP products (or changes to existing IAP products) otherwise they will not be saved on the UDP console. Each individual IAP product can be pushed using the drop-down menu found opposite its name. The entire IAP Catalog can be saved by using the top-most **Push** button; this will also save/sync other settings such as Sandbox Test Accounts, Game Title, and Settings. More info [here](Save_Sync_Push_your_IAP_Catalog.md).
+> **Note**: make sure you **Push** new IAP products (or changes to existing IAP products) otherwise they will not be saved on the UDP console. You can push individual IAP products using the drop-down menu opposite its name. To save the entire IAP Catalog, use the top-most **Push** button; this also saves/syncs other settings such as Sandbox Test Accounts, Game Title, and Settings. For more information, see [Save / Sync / Push your IAP Catalog](Save_Sync_Push_your_IAP_Catalog.md).
 
 ### Initializing the UDP SDK
 
@@ -172,7 +172,7 @@ When you call the **Purchase** method, provide the:
 
 - **productId** - The unique identifier of the product that the player wants to buy. 
 - **developerPayload** - The information you want to send to the UDP SDK.
-- **IPurchaseListener** - the listener that tells you the results of all purchase-related events.
+- **IPurchaseListener** - The listener that tells you the results of all purchase-related events.
 
 For example:
 
@@ -199,8 +199,6 @@ For example:
 ```
   StoreService.ConsumePurchase(PurchaseInfo, IPurchaseListener);
 ```
-
-
 
 ![img](images/image_9.png)
 

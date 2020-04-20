@@ -1,4 +1,8 @@
 # Changelog
+## [1.3.1] - 2020-04-17
+- fix inconsistency when displaying prices returned by the stores;
+- documentation update to v1.3.
+
 ## [1.3.0] - 2020-01-06
 - dropping UDP info in persistent data path (for co-op with services such as Remote Config, deltaDNA, etc).
 

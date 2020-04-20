@@ -9,7 +9,7 @@ namespace UnityEngine.UDP.Editor.Analytics
     public static class EditorAnalyticsApi
     {
         public const string k_API_URL = "/udp/api/cdp/event";
-        public const string k_ENDPOINT = BuildConfig.CONNECT_ENDPOINT;
+        public const string k_ENDPOINT = BuildConfig.UDP_ENDPOINT;
 
         public static string orgIdCache;
         public static string userIdCache;

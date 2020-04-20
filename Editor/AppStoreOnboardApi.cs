@@ -26,7 +26,7 @@ namespace UnityEngine.UDP.Editor
         public static string updateRev;
         public static bool loaded = false;
 
-        public const string udpurl = BuildConfig.UDP_ENDPOINT;
+        public const string udpurl = BuildConfig.UDP_ENDPOINT_REDUNDANT;
 
         public static UnityWebRequest asyncRequest(string method, string url, string api, string token,
             object postObject)

@@ -1,4 +1,5 @@
 #if (UNITY_5_6_OR_NEWER && !UNITY_5_6_0)
+
 using System;
 using System.Reflection;
 using UnityEngine.Networking;
@@ -148,7 +149,7 @@ namespace UnityEngine.UDP.Editor.Analytics
 
         private static UnityWebRequest AssembleAndSendWebRequest(EventRequest request)
         {
-            return AppStoreOnboardApi.asyncRequest(UnityWebRequest.kHttpVerbPOST, k_ENDPOINT, k_API_URL, null, request);
+            return AppStoreOnBoardApi.AsyncRequest(UnityWebRequest.kHttpVerbPOST, k_ENDPOINT, k_API_URL, null, request);
         }
 
 

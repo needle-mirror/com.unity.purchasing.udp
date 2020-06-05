@@ -16,22 +16,21 @@ using UnityEngine.UDP.Editor.Analytics;
 
 namespace UnityEngine.UDP.Editor
 {
-
     internal class AppStoreProjectSettingsEditor : ServicesProjectSettings
     {
-        protected override Notification.Topic[] notificationTopicsToSubscribe => new[] { Notification.Topic.UDPService };
+        protected override Notification.Topic[] notificationTopicsToSubscribe => new[] {Notification.Topic.UDPService};
         protected override SingleService serviceInstance => UDPService.instance;
 
         protected override string serviceUssClassName => "udp";
 
         const string k_UDPStyleSheetPath =
-            "Packages/com.unity.purchasing.udp/Editor/Template/ProjectSettingsUDP.uss";
+            "Editor/Template/ProjectSettingsUDP.uss";
 
         const string k_UDPMainTemplatePath =
-            "Packages/com.unity.purchasing.udp/Editor/Template/ProjectSettingsUDP.uxml";
+            "Editor/Template/ProjectSettingsUDP.uxml";
 
         const string k_UDPLinkProjectTemplatePath =
-            "Packages/com.unity.purchasing.udp/Editor/Template/ProjectSettingsLinkProject.uxml";
+            "Editor/Template/ProjectSettingsLinkProject.uxml";
 
         const string k_UDPDashboardLink = "https://distribute.dashboard.unity.com";
 
@@ -83,6 +82,8 @@ namespace UnityEngine.UDP.Editor
         VisualElement m_ServiceLinkProjectContainer;
         VisualElement m_ServiceCannotOAuthContainer;
         VisualElement m_ServiceCannotGetProjectIdContainer;
+        VisualElement m_ServiceGeneralErrorContainer;
+
         VisualElement m_UDPSettingsWindow;
         VisualElement m_UDPOperationBlock;
         VisualElement m_UDPBasicInfoBlock;
@@ -92,7 +93,10 @@ namespace UnityEngine.UDP.Editor
         VisualElement m_UDPExternalLinkBlock;
         VisualElement m_UDPLinkClientIdBlock;
 
-#region local field
+        #region local field
+
+        private AppStoreSettings settings;
+
         string m_ClientSecretInMemory;
         string m_CallbackUrlInMemory;
         readonly List<string> k_PushRequestList = new List<string>();
@@ -100,34 +104,50 @@ namespace UnityEngine.UDP.Editor
         static readonly bool k_EnableOAuth =
             Utils.FindTypeByName("UnityEditor.Connect.UnityOAuth") != null;
 
-        string m_CallbackUrlLast;
-        const string k_StepGenerateClient = "gen_client";
-        const string k_StepGetClient = "get_client";
-        const string k_StepUpdateClient = "update_client";
-        const string k_UpdateClientSecret = "update_client_secret";
-        const string k_StepUpdateGameTitle = "update_game_title";
-
         List<TestAccount> m_TestAccounts = new List<TestAccount>();
         List<EasyToSaveAccount> m_EasyToSaveAccounts = new List<EasyToSaveAccount>();
         readonly List<bool> k_TestAccountsDirty = new List<bool>();
         readonly List<string> k_TestAccountsValidationMsg = new List<string>();
 
         AppItem m_CurrentAppItem;
-        string m_TargetStep;
         string m_ClientIdToBeLinked = "UDP client ID";
         string m_UpdateClientErrorMsg;
         string m_UpdateGameTitleErrorMsg;
 
+        private bool m_IsTestAccountUpdating;
+        private bool m_IsGeneratingOrLinking;
+        private bool m_IsFetchingToken;
+        private bool m_IsOperationRunning;
+
+        // user state no need to check every frame, so we do checking every some seconds.
+        private float checkTimer = 0.0f;
+        private const float checkDuration = 100.0f;
+
         private struct RequestStruct
         {
-            public string targetStep;
-            public string currentStep;
-            public string eventName;
+            public Step currentStep;
+            public Step nextStep;
 
-            public TestAccount currTestAccount;
+            public TestAccount testAccount;
             public int arrayPosition;
             public UnityWebRequest request;
             public GeneralResponse resp;
+            public FullUpdatePayload fullUpdatePayload;
+
+            public bool IsEmpty()
+            {
+                return request == null;
+            }
+        }
+
+        private enum Step
+        {
+            InitData,
+            FetchToken,
+            GenerateNewClient,
+            LinkProjectId,
+            UpdateAll,
+            DeletePlayer,
         }
 
         private struct EasyToSaveAccount
@@ -150,22 +170,7 @@ namespace UnityEngine.UDP.Editor
         SerializedProperty m_AppSlug;
         SerializedProperty m_AppItemId;
 
-        bool m_IsGettingAuthCode ;
-        bool m_IsGettingAccessToken ;
-        bool m_IsGettingUserId ;
-        bool m_IsGettingOrgId ;
-        bool m_IsSearchingClient;
-        bool m_IsCreatingClient ;
-        bool m_IsGettingClient ;
-        bool m_IsUpdatingClient;
-        bool m_IsSearchingAppItem ;
-        bool m_IsUpdatingAppItem ;
-        bool m_IsCreatingAppItem ;
-        bool m_IsPublishingAppItem;
-        bool m_IsSearchingPlayer ;
-        bool m_IsDeletingPlayer ;
-
-#endregion
+        #endregion
 
         [SettingsProvider]
         static SettingsProvider CreateProjectSettingsProvider()
@@ -183,6 +188,26 @@ namespace UnityEngine.UDP.Editor
         protected override void ActivateAction(string searchContext)
         {
             Log("activate");
+            CreateSettingsAsset();
+
+            settings = LoadSettingsAsset();
+            if (settings == null)
+            {
+                Debug.LogError("UDP Settings.asset not found");
+                return;
+            }
+
+            var script = MonoScript.FromScriptableObject(settings);
+            var path = AssetDatabase.GetAssetPath(script);
+            var assetRootPath = path.Contains("Runtime") ? path.Remove(path.Length - 15) : path.Remove(path.Length - 7);
+
+            rootVisualElement.styleSheets.Add(
+                AssetDatabase.LoadAssetAtPath<StyleSheet>(assetRootPath + k_UDPStyleSheetPath));
+            m_MainTemplateAssets =
+                AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(assetRootPath + k_UDPMainTemplatePath);
+            m_LinkProjectTemplateAssets =
+                AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(assetRootPath + k_UDPLinkProjectTemplatePath);
+
             if (!k_EnableOAuth)
             {
                 Debug.LogError("cannot oauth");
@@ -190,13 +215,10 @@ namespace UnityEngine.UDP.Editor
                 return;
             }
 
-            CreateSettingsAsset();
             InitializeProperties();
             // Must reset properties every time this is activated
             // rootVisualElement.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>(k_udpStyleSheetPath));
-            rootVisualElement.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>(k_UDPStyleSheetPath));
-            m_MainTemplateAssets = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(k_UDPMainTemplatePath);
-            m_LinkProjectTemplateAssets = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(k_UDPLinkProjectTemplatePath);
+
 
             //            rootVisualElement.AddStyleSheetPath(EditorGUIUtility.isProSkin ? k_ServicesWindowDarkUssPath : k_ServicesWindowLightUssPath);
             //            rootVisualElement.AddStyleSheetPath(EditorGUIUtility.isProSkin ? k_ServicesDarkUssPath : k_ServicesLightUssPath);
@@ -207,8 +229,11 @@ namespace UnityEngine.UDP.Editor
             //            m_UDPGoToConsoleButton = rootVisualElement.Q<Button>(UxmlStrings.k_GoToUdpDashboard);
             //            m_UDPOpenIapCatalogButton = rootVisualElement.Q<Button>(k);
 
-            RestoreTestAccount();
+//            RestoreTestAccount();
             SetUpServiceWindow();
+
+            EditorApplication.update -= CheckUserState;
+            EditorApplication.update += CheckUserState;
             EditorApplication.update -= CheckRequestUpdate;
             EditorApplication.update += CheckRequestUpdate;
         }
@@ -218,6 +243,7 @@ namespace UnityEngine.UDP.Editor
             HideVisualElement(m_ServiceLinkProjectContainer);
             HideVisualElement(m_ServiceCannotOAuthContainer);
             HideVisualElement(m_ServiceCannotGetProjectIdContainer);
+            HideVisualElement(m_ServiceGeneralErrorContainer);
 
             if (m_ServiceWindowContainer != null && rootVisualElement.Contains(m_ServiceWindowContainer))
             {
@@ -247,6 +273,7 @@ namespace UnityEngine.UDP.Editor
             HideVisualElement(m_ServiceWindowContainer);
             HideVisualElement(m_ServiceCannotOAuthContainer);
             HideVisualElement(m_ServiceCannotGetProjectIdContainer);
+            HideVisualElement(m_ServiceGeneralErrorContainer);
 
             if (m_ServiceLinkProjectContainer != null && rootVisualElement.Contains(m_ServiceLinkProjectContainer))
             {
@@ -269,6 +296,25 @@ namespace UnityEngine.UDP.Editor
                 OnLinkToExitingClientButtonClick;
         }
 
+        private void SetUpGeneralErrorWindow(string errorMsg)
+        {
+            EditorApplication.update -= CheckRequestUpdate;
+
+            HideVisualElement(m_ServiceWindowContainer);
+            HideVisualElement(m_ServiceCannotOAuthContainer);
+            HideVisualElement(m_ServiceLinkProjectContainer);
+            HideVisualElement(m_ServiceCannotGetProjectIdContainer);
+
+            if (m_ServiceGeneralErrorContainer != null && rootVisualElement.Contains(m_ServiceGeneralErrorContainer))
+            {
+                rootVisualElement.Remove(m_ServiceGeneralErrorContainer);
+            }
+
+            m_ServiceGeneralErrorContainer = new VisualElement();
+            m_ServiceGeneralErrorContainer.Add(new Label(errorMsg));
+            rootVisualElement.Add(m_ServiceGeneralErrorContainer);
+        }
+
         private void SetUpCannotOAuthWindow()
         {
             EditorApplication.update -= CheckRequestUpdate;
@@ -277,6 +323,7 @@ namespace UnityEngine.UDP.Editor
             HideVisualElement(m_ServiceWindowContainer);
             HideVisualElement(m_ServiceLinkProjectContainer);
             HideVisualElement(m_ServiceCannotGetProjectIdContainer);
+            HideVisualElement(m_ServiceGeneralErrorContainer);
 
             if (m_ServiceCannotOAuthContainer != null && rootVisualElement.Contains(m_ServiceCannotOAuthContainer))
             {
@@ -299,6 +346,7 @@ namespace UnityEngine.UDP.Editor
             HideVisualElement(m_ServiceWindowContainer);
             HideVisualElement(m_ServiceLinkProjectContainer);
             HideVisualElement(m_ServiceCannotOAuthContainer);
+            HideVisualElement(m_ServiceGeneralErrorContainer);
 
             if (m_ServiceCannotGetProjectIdContainer != null &&
                 rootVisualElement.Contains(m_ServiceCannotGetProjectIdContainer))
@@ -325,6 +373,65 @@ namespace UnityEngine.UDP.Editor
             SaveToTestAccountStruct();
         }
 
+        private void ProcessErrorResponse(RequestStruct reqStruct)
+        {
+            var request = reqStruct.request;
+            var response = reqStruct.resp;
+            if (response == null)
+            {
+                return;
+            }
+
+            var resErr = new ErrorResponse();
+            if (request != null)
+            {
+                resErr = JsonUtility.FromJson<ErrorResponse>(request.downloadHandler.text);
+            }
+
+            if (response.GetType() == typeof(TokenInfo))
+            {
+                ResetAllStatusFlag();
+                SetUpGeneralErrorWindow("something happened during authorization, please try again.");
+                return;
+            }
+
+            if (reqStruct.currentStep == Step.LinkProjectId || reqStruct.currentStep == Step.GenerateNewClient)
+            {
+                m_IsGeneratingOrLinking = false;
+            }
+
+            if (reqStruct.currentStep == Step.DeletePlayer)
+            {
+                m_IsTestAccountUpdating = false;
+                if (resErr != null && resErr.message != null)
+                {
+                    k_TestAccountsValidationMsg[reqStruct.arrayPosition] = resErr.message;
+                }
+            }
+
+            if (reqStruct.currentStep == Step.UpdateAll)
+            {
+                m_IsOperationRunning = false;
+            }
+        }
+
+        private void CheckUserState()
+        {
+            checkTimer += Time.deltaTime;
+            if (checkTimer > checkDuration)
+            {
+                // do check
+                checkTimer -= checkDuration;
+
+                if (Utils.UserStateChanged(AppStoreOnBoardApi.unityUserId, AppStoreOnBoardApi.unityOrgId,
+                        AppStoreOnBoardApi.unityAccessToken) ||
+                    AppStoreOnBoardApi.unityProjectId != Application.cloudProjectId)
+                {
+                    InitializeProperties();
+                }
+            }
+        }
+
         private void CheckRequestUpdate()
         {
             var doing = IsOperationRunning() || k_PushRequestList.Count > 0;
@@ -333,151 +440,70 @@ namespace UnityEngine.UDP.Editor
 
             m_UDPOperationBlock?.SetEnabled(!doing);
 
-            m_UDPPlayerBlock?.SetEnabled(!m_IsDeletingPlayer);
+            m_UDPPlayerBlock?.SetEnabled(!m_IsTestAccountUpdating);
+
+            m_UDPLinkClientIdBlock?.SetEnabled(!m_IsGeneratingOrLinking);
 
             if (k_RequestQueue.Count == 0)
             {
                 return;
             }
 
-            RequestStruct reqStruct = k_RequestQueue.Dequeue();
-            UnityWebRequest request = reqStruct.request;
-            GeneralResponse resp = reqStruct.resp;
+            RequestStruct currentRequestStruct = k_RequestQueue.Dequeue();
+            UnityWebRequest request = currentRequestStruct.request;
+            GeneralResponse resp = currentRequestStruct.resp;
 
             if (request != null && request.isDone)
             {
                 if (request.error != null || request.responseCode / 100 != 2)
                 {
                     // Deal with errors
-                    if (request.downloadHandler.text.Contains(AppStoreOnboardApi.invalidAccessTokenInfo)
-                        || request.downloadHandler.text.Contains(AppStoreOnboardApi.forbiddenInfo)
-                        || request.downloadHandler.text.Contains(AppStoreOnboardApi.expiredAccessTokenInfo))
-                    {
-                        m_IsGettingAccessToken = true;
-                        UnityWebRequest newRequest = AppStoreOnboardApi.RefreshToken();
-                        TokenInfo tokenInfoResp = new TokenInfo();
-                        RequestStruct newReqStruct = new RequestStruct();
-                        newReqStruct.request = newRequest;
-                        newReqStruct.resp = tokenInfoResp;
-                        newReqStruct.targetStep = reqStruct.targetStep;
-                        k_RequestQueue.Enqueue(newReqStruct);
-                    }
-                    else if (request.downloadHandler.text.Contains(AppStoreOnboardApi.invalidRefreshTokenInfo)
-                             || request.downloadHandler.text.Contains(AppStoreOnboardApi.expiredRefreshTokenInfo))
-                    {
-                        if (reqStruct.targetStep == "LinkProject")
-                        {
-                            m_TargetStep = reqStruct.targetStep;
-                        }
-                        else
-                        {
-                            m_TargetStep = k_StepGetClient;
-                        }
+                    Log("request with error");
 
-                        AppStoreOnboardApi.tokenInfo.access_token = null;
-                        AppStoreOnboardApi.tokenInfo.refresh_token = null;
-                        GetAuthCode();
+                    var errText = request.downloadHandler.text;
+                    if (errText.Contains(AppStoreOnBoardApi.notAuthenticatedError))
+                    {
+                        // token invalid. reFetch it.
+                        m_IsFetchingToken = true;
+                        AppStoreOnBoardApi.tokenInfo = new TokenInfo();
+                        var req = BuildRequestFromStepName(Step.FetchToken);
+                        if (req.IsEmpty()) return;
+                        req.nextStep = currentRequestStruct.currentStep;
+                        k_RequestQueue.Enqueue(req);
+                    }
+                    else if (errText.Contains(AppStoreOnBoardApi.authorizationError))
+                    {
+                        // no permission.
+                        Debug.LogError(
+                            "[UDP] authorization error, please ask your manager or owner to do this operation.");
+                        EditorUtility.DisplayDialog("Error",
+                            "authorization error, please ask your manager or owner to do this operation.",
+                            "OK");
+
+                        ResetAllStatusFlag();
+                        Repaint();
+                    }
+                    else if (errText.Contains(AppStoreOnBoardApi.clientNotLinked))
+                    {
+                        ResetAllStatusFlag();
+                        SetUpLinkProjectWindow();
+                        Repaint();
                     }
                     else
                     {
-                        ResetAllStatusFlag();
-
-                        ErrorResponse response = JsonUtility.FromJson<ErrorResponse>(request.downloadHandler.text);
-
-#region Analytics Fails
-
-                        if (resp.GetType() == typeof(EventRequestResponse))
+                        // general error
+                        var error = JsonUtility.FromJson<ErrorResponse>(request.downloadHandler.text);
+                        if (error != null && error.message != null)
                         {
-                            // Debug.Log("[Debug] Event Request Failed: " + reqStruct.eventName);
-                            return; // Do not show error dialog
-                        }
-
-                        if (resp.GetType() == typeof(UnityClientResponse))
-                        {
-                            string eventName = null;
-                            switch (request.method)
+                            var errMsg = "[UDP] " + error.message;
+                            if (error.target != "")
                             {
-                                case UnityWebRequest.kHttpVerbPOST:
-                                    eventName = EditorAnalyticsApi.k_ClientCreateEventName;
-                                    break;
-                                case UnityWebRequest.kHttpVerbPUT:
-                                    eventName = EditorAnalyticsApi.k_ClientUpdateEventName;
-                                    break;
-                                default:
-                                    eventName = null;
-                                    break;
+                                errMsg += " target: " + error.target;
                             }
 
-                            if (eventName != null)
-                            {
-                                UnityWebRequest analyticsRequest =
-                                    EditorAnalyticsApi.ClientEvent(eventName, null, response.message);
-
-                                RequestStruct analyticsReqStruct = new RequestStruct
-                                {
-                                    request = analyticsRequest,
-                                    resp = new EventRequestResponse(),
-                                    eventName = eventName,
-                                };
-
-                                k_RequestQueue.Enqueue(analyticsReqStruct);
-                            }
-                        }
-
-                        if (resp.GetType() == typeof(AppItemResponse))
-                        {
-                            string eventName;
-                            switch (request.method)
-                            {
-                                case UnityWebRequest.kHttpVerbPOST:
-                                    eventName = EditorAnalyticsApi.k_AppCreateEventName;
-                                    break;
-                                case UnityWebRequest.kHttpVerbPUT:
-                                    eventName = EditorAnalyticsApi.k_AppUpdateEventName;
-                                    break;
-                                default:
-                                    eventName = null;
-                                    break;
-                            }
-
-                            if (eventName != null)
-                            {
-                                UnityWebRequest analyticsRequest =
-                                    EditorAnalyticsApi.AppEvent(eventName, m_UnityClientId.stringValue, null,
-                                        response.message);
-
-                                RequestStruct analyticsRequestStruct = new RequestStruct
-                                {
-                                    request = analyticsRequest,
-                                    resp = new EventRequestResponse(),
-                                    eventName = eventName,
-                                };
-
-                                k_RequestQueue.Enqueue(analyticsRequestStruct);
-                            }
-                        }
-
-#endregion
-
-                        ProcessErrorRequest(reqStruct);
-
-                        if (response != null && response.message != null && response.details != null &&
-                            response.details.Length != 0)
-                        {
-                            Debug.LogError("[UDP] " + response.details[0].field + ": " + response.message);
+                            Debug.LogError(errMsg);
                             EditorUtility.DisplayDialog("Error",
-                                response.details[0].field + ": " + response.message,
-                                "OK");
-                            if (response.message == "Project not found")
-                            {
-                                SetUpCannotGetProjectIdWindow();
-                            }
-                        }
-                        else if (response != null && response.message != null)
-                        {
-                            Debug.LogError("[UDP] " + response.message);
-                            EditorUtility.DisplayDialog("Error",
-                                response.message,
+                                errMsg,
                                 "OK");
                         }
                         else
@@ -487,591 +513,203 @@ namespace UnityEngine.UDP.Editor
                                 "Network error, no response received",
                                 "OK");
                         }
+
+                        // if error during fetch token, show noOauth panel.
+                        ProcessErrorResponse(currentRequestStruct);
+                        Repaint();
                     }
                 }
-
                 else
                 {
-                    Log(resp.GetType().ToString());
-                    if (resp.GetType() == typeof(UnityClientResponse))
+                    if (resp.GetType() == typeof(TokenInfo))
                     {
-                        Log("update client success");
-                        // LinkProject & Get Role (later action) will result in this response.
-                        resp = JsonUtility.FromJson<UnityClientResponse>(request.downloadHandler.text);
-                        m_UnityClientId.stringValue = ((UnityClientResponse)resp).client_id;
-                        m_UnityClientKey.stringValue = ((UnityClientResponse)resp).client_secret;
-                        m_UnityClientRsaPublicKey.stringValue = ((UnityClientResponse)resp).channel.publicRSAKey;
-                        m_UnityProjectId.stringValue = ((UnityClientResponse)resp).channel.projectGuid;
-                        m_ClientSecretInMemory = ((UnityClientResponse)resp).channel.channelSecret;
-                        m_CallbackUrlInMemory = ((UnityClientResponse)resp).channel.callbackUrl;
-                        m_CallbackUrlLast = m_CallbackUrlInMemory;
-                        AppStoreOnboardApi.tps = ((UnityClientResponse)resp).channel.thirdPartySettings;
-                        AppStoreOnboardApi.updateRev = ((UnityClientResponse)resp).rev;
-                        m_SerializedSettings.ApplyModifiedProperties();
-                        AssetDatabase.SaveAssets();
-                        SaveGameSettingsProps(((UnityClientResponse)resp).client_id);
-                        SetUpClientSettingsPart();
-
-                        if (request.method == UnityWebRequest.kHttpVerbPOST) // Generated Client
-                        {
-                            m_IsCreatingClient = false;
-                            UnityWebRequest analyticsRequest =
-                                EditorAnalyticsApi.ClientEvent(EditorAnalyticsApi.k_ClientCreateEventName,
-                                    ((UnityClientResponse)resp).client_id, null);
-
-                            RequestStruct analyticsReqStruct = new RequestStruct
-                            {
-                                request = analyticsRequest,
-                                resp = new EventRequestResponse(),
-                                eventName = EditorAnalyticsApi.k_ClientCreateEventName,
-                            };
-
-                            k_RequestQueue.Enqueue(analyticsReqStruct);
-                        }
-                        else if (request.method == UnityWebRequest.kHttpVerbPUT) // Updated Client
-                        {
-                            m_IsUpdatingClient = false;
-                            UnityWebRequest analyticsRequest =
-                                EditorAnalyticsApi.ClientEvent(EditorAnalyticsApi.k_ClientUpdateEventName,
-                                    ((UnityClientResponse)resp).client_id, null);
-
-                            RequestStruct analyticsReqStruct = new RequestStruct
-                            {
-                                request = analyticsRequest,
-                                resp = new EventRequestResponse(),
-                                eventName = EditorAnalyticsApi.k_ClientUpdateEventName,
-                            };
-
-                            k_RequestQueue.Enqueue(analyticsReqStruct);
-                        }
-                        else
-                        {
-                            m_IsGettingClient = false;
-                        }
-
-                        if (reqStruct.targetStep == "LinkProject")
-                        {
-                            if (reqStruct.currentStep == "GetClientBeforeLink")
-                            {
-                                SetUpServiceWindow();
-                            }
-
-                            Log("link project to client");
-
-                            m_IsUpdatingClient = true;
-                            UnityClientInfo unityClientInfo = new UnityClientInfo();
-                            //                            unityClientInfo.ClientId = unityClientID.stringValue;
-                            unityClientInfo.ClientId = m_ClientIdToBeLinked;
-                            UnityWebRequest newRequest =
-                                AppStoreOnboardApi.UpdateUnityClient(Application.cloudProjectId, unityClientInfo,
-                                    m_CallbackUrlInMemory);
-                            UnityClientResponse clientResp = new UnityClientResponse();
-                            RequestStruct newReqStruct = new RequestStruct();
-                            newReqStruct.request = newRequest;
-                            newReqStruct.resp = clientResp;
-                            newReqStruct.targetStep = "GetRole";
-                            k_RequestQueue.Enqueue(newReqStruct);
-                        }
-
-                        else if (reqStruct.targetStep == "GetRole")
-                        {
-                            Log("get role");
-
-                            m_IsGettingUserId = true;
-                            UnityWebRequest newRequest = AppStoreOnboardApi.GetUserId();
-                            UserIdResponse userIdResp = new UserIdResponse();
-                            RequestStruct newReqStruct = new RequestStruct();
-                            newReqStruct.request = newRequest;
-                            newReqStruct.resp = userIdResp;
-                            newReqStruct.targetStep = k_StepGetClient;
-                            k_RequestQueue.Enqueue(newReqStruct);
-                        }
-
-                        else
-                        {
-                            if (reqStruct.targetStep == k_StepUpdateClient)
-                            {
-                                EditorUtility.DisplayDialog("Hint",
-                                    "Unity Client updated successfully.",
-                                    "OK");
-                                //                                RemovePushRequest(m_UnityClientId.stringValue);
-                            }
-
-                            if (m_CurrentAppItem.status == "STAGE")
-                            {
-                                Log("update appItem");
-                                m_IsUpdatingAppItem = true;
-                                UnityWebRequest newRequest = AppStoreOnboardApi.UpdateAppItem(m_CurrentAppItem);
-                                AppItemResponse appItemResponse = new AppItemResponse();
-                                RequestStruct newReqStruct = new RequestStruct();
-                                newReqStruct.request = newRequest;
-                                newReqStruct.resp = appItemResponse;
-                                k_RequestQueue.Enqueue(newReqStruct);
-                                //                                AddPushRequests(m_CurrentAppItem.id);
-                            }
-                            else
-                            {
-                                Log("get appItemByClientId");
-                                m_IsSearchingAppItem = true;
-                                UnityWebRequest newRequest = AppStoreOnboardApi.GetAppItem(m_UnityClientId.stringValue);
-                                AppItemResponseWrapper appItemResponseWrapper = new AppItemResponseWrapper();
-                                RequestStruct newReqStruct = new RequestStruct();
-                                newReqStruct.request = newRequest;
-                                newReqStruct.resp = appItemResponseWrapper;
-                                k_RequestQueue.Enqueue(newReqStruct);
-                                //                                AddPushRequests(m_CurrentAppItem.id);
-                            }
-                        }
+                        var res = JsonUtility.FromJson<TokenInfo>(request.downloadHandler.text);
+                        AppStoreOnBoardApi.tokenInfo.token = res.token;
+                        AppStoreOnBoardApi.tokenInfo.canManage = res.canManage;
+                        AppStoreOnBoardApi.tokenInfo.orgId = res.orgId;
+                        m_IsFetchingToken = false;
+                        var req = BuildRequestFromStepName(currentRequestStruct.nextStep);
+                        if (req.IsEmpty()) return;
+                        k_RequestQueue.Enqueue(req);
                     }
-
-                    else if (resp.GetType() == typeof(UserIdResponse))
+                    else if (resp.GetType() == typeof(AllDataResponse))
                     {
-                        Log("fetch userId success");
-                        m_IsGettingUserId = false;
-                        resp = JsonUtility.FromJson<UserIdResponse>(request.downloadHandler.text);
-                        AppStoreOnboardApi.userId = ((UserIdResponse)resp).sub;
+                        var res = JsonUtility.FromJson<AllDataResponse>(request.downloadHandler.text);
+                        LocalSaveAllDataFromServerResponse(res);
+                        m_IsOperationRunning = false;
+                        m_IsGeneratingOrLinking = false;
 
-                        m_IsGettingOrgId = true;
-                        UnityWebRequest newRequest = AppStoreOnboardApi.GetOrgId(Application.cloudProjectId);
-                        OrgIdResponse orgIdResp = new OrgIdResponse();
-                        RequestStruct newReqStruct = new RequestStruct();
-                        newReqStruct.request = newRequest;
-                        newReqStruct.resp = orgIdResp;
-                        newReqStruct.targetStep = reqStruct.targetStep;
-                        k_RequestQueue.Enqueue(newReqStruct);
+                        SetUpServiceWindow();
+//                        Repaint();
                     }
-
-                    else if (resp.GetType() == typeof(OrgIdResponse))
-                    {
-                        Log("fetch orgId success");
-                        m_IsGettingOrgId = false;
-
-                        resp = JsonUtility.FromJson<OrgIdResponse>(request.downloadHandler.text);
-                        AppStoreOnboardApi.orgId = ((OrgIdResponse)resp).org_foreign_key;
-
-                        if (reqStruct.targetStep == k_StepGenerateClient)
-                        {
-                            UnityClientInfo unityClientInfo = new UnityClientInfo();
-                            string callbackUrl = m_CallbackUrlInMemory;
-
-                            m_IsCreatingClient = true;
-                            UnityWebRequest newRequest =
-                                AppStoreOnboardApi.GenerateUnityClient(Application.cloudProjectId,
-                                    unityClientInfo,
-                                    callbackUrl);
-                            UnityClientResponse clientResp = new UnityClientResponse();
-                            RequestStruct newReqStruct = new RequestStruct();
-                            newReqStruct.request = newRequest;
-                            newReqStruct.resp = clientResp;
-                            newReqStruct.targetStep = k_StepGetClient;
-                            k_RequestQueue.Enqueue(newReqStruct);
-                        }
-
-                        if (reqStruct.targetStep == k_StepGetClient)
-                        {
-                            Log("start fetch userClient");
-                            m_IsSearchingClient = true;
-                            UnityWebRequest newRequest =
-                                AppStoreOnboardApi.GetUnityClientInfo(Application.cloudProjectId);
-                            UnityClientResponseWrapper clientRespWrapper = new UnityClientResponseWrapper();
-                            RequestStruct newReqStruct = new RequestStruct();
-                            newReqStruct.request = newRequest;
-                            newReqStruct.resp = clientRespWrapper;
-                            newReqStruct.targetStep = reqStruct.targetStep;
-                            k_RequestQueue.Enqueue(newReqStruct);
-                        }
-                        else if (reqStruct.targetStep == k_StepUpdateClient)
-                        {
-                            Log("update userClient");
-
-                            UnityClientInfo unityClientInfo = new UnityClientInfo();
-                            unityClientInfo.ClientId = m_UnityClientId.stringValue;
-                            string callbackUrl = m_CallbackUrlInMemory;
-                            m_IsUpdatingClient = true;
-                            UnityWebRequest newRequest =
-                                AppStoreOnboardApi.UpdateUnityClient(Application.cloudProjectId, unityClientInfo,
-                                    callbackUrl);
-                            UnityClientResponse clientResp = new UnityClientResponse();
-                            RequestStruct newReqStruct = new RequestStruct();
-                            newReqStruct.request = newRequest;
-                            newReqStruct.resp = clientResp;
-                            newReqStruct.targetStep = reqStruct.targetStep;
-                            k_RequestQueue.Enqueue(newReqStruct);
-                        }
-                        else if (reqStruct.targetStep == k_UpdateClientSecret)
-                        {
-                            Log("update userClient secret");
-
-                            string clientId = m_UnityClientId.stringValue;
-                            m_IsUpdatingClient = true;
-                            UnityWebRequest newRequest = AppStoreOnboardApi.UpdateUnityClientSecret(clientId);
-                            UnityClientResponse clientResp = new UnityClientResponse();
-                            RequestStruct newReqStruct = new RequestStruct();
-                            newReqStruct.request = newRequest;
-                            newReqStruct.resp = clientResp;
-                            newReqStruct.targetStep = reqStruct.targetStep;
-                            k_RequestQueue.Enqueue(newReqStruct);
-                        }
-                        else if (reqStruct.targetStep == "LinkProject")
-                        {
-                            Log("link project");
-                            m_IsGettingClient = true;
-                            UnityWebRequest newRequest =
-                                AppStoreOnboardApi.GetUnityClientInfoByClientId(m_ClientIdToBeLinked);
-                            UnityClientResponse unityClientResponse = new UnityClientResponse();
-                            RequestStruct newReqStruct = new RequestStruct();
-                            newReqStruct.request = newRequest;
-                            newReqStruct.resp = unityClientResponse;
-                            newReqStruct.targetStep = reqStruct.targetStep;
-                            k_RequestQueue.Enqueue(newReqStruct);
-                        }
-
-                        m_SerializedSettings.ApplyModifiedProperties();
-                        AssetDatabase.SaveAssets();
-                    }
-
-                    else if (resp.GetType() == typeof(UnityClientResponseWrapper))
-                    {
-                        string raw = "{ \"array\": " + request.downloadHandler.text + "}";
-                        resp = JsonUtility.FromJson<UnityClientResponseWrapper>(raw);
-
-                        m_IsSearchingClient = false;
-
-                        // only one element in the list
-                        if (((UnityClientResponseWrapper)resp).array.Length > 0)
-                        {
-                            if (reqStruct.targetStep != null && reqStruct.targetStep == "CheckUpdate")
-                            {
-                                m_TargetStep = k_StepGetClient;
-                                GetAuthCode();
-                            }
-                            else
-                            {
-                                UnityClientResponse unityClientResp = ((UnityClientResponseWrapper)resp).array[0];
-                                AppStoreOnboardApi.tps = unityClientResp.channel.thirdPartySettings;
-                                m_UnityClientId.stringValue = unityClientResp.client_id;
-                                m_UnityClientKey.stringValue = unityClientResp.client_secret;
-                                m_UnityClientRsaPublicKey.stringValue = unityClientResp.channel.publicRSAKey;
-                                m_UnityProjectId.stringValue = unityClientResp.channel.projectGuid;
-                                m_ClientSecretInMemory = unityClientResp.channel.channelSecret;
-                                m_CallbackUrlInMemory = unityClientResp.channel.callbackUrl;
-                                m_CallbackUrlLast = m_CallbackUrlInMemory;
-                                AppStoreOnboardApi.updateRev = unityClientResp.rev;
-                                AppStoreOnboardApi.loaded = true;
-                                m_SerializedSettings.ApplyModifiedProperties();
-                                this.SetUpClientSettingsPart();
-
-                                AssetDatabase.SaveAssets();
-                                SaveGameSettingsProps(unityClientResp.client_id);
-
-                                m_IsSearchingAppItem = true;
-                                UnityWebRequest newRequest = AppStoreOnboardApi.GetAppItem(m_UnityClientId.stringValue);
-                                AppItemResponseWrapper appItemResponseWrapper = new AppItemResponseWrapper();
-                                RequestStruct newReqStruct = new RequestStruct();
-                                newReqStruct.request = newRequest;
-                                newReqStruct.resp = appItemResponseWrapper;
-                                k_RequestQueue.Enqueue(newReqStruct);
-                            }
-                        }
-                        else
-                        {
-                            //                            if (reqStruct.targetStep != null &&
-                            //                                (reqStruct.targetStep == "LinkProject" || reqStruct.targetStep == "CheckUpdate"))
-                            //                            {
-                            //                                ResetAllStatusFlag();
-                            //                            }
-                            //                            else
-                            //                            {
-                            // no client found, generate one or link to one
-
-                            ResetAllStatusFlag();
-                            SetUpLinkProjectWindow();
-                            //                            }
-                        }
-                    }
-
-                    else if (resp.GetType() == typeof(AppItemResponse))
-                    {
-                        Log("update appItem success");
-
-                        resp = JsonUtility.FromJson<AppItemResponse>(request.downloadHandler.text);
-                        m_AppItemId.stringValue = ((AppItemResponse)resp).id;
-                        m_AppName.stringValue = ((AppItemResponse)resp).name;
-                        m_AppSlug.stringValue = ((AppItemResponse)resp).slug;
-                        m_CurrentAppItem.id = ((AppItemResponse)resp).id;
-                        m_CurrentAppItem.name = ((AppItemResponse)resp).name;
-                        m_CurrentAppItem.slug = ((AppItemResponse)resp).slug;
-                        m_CurrentAppItem.ownerId = ((AppItemResponse)resp).ownerId;
-                        m_CurrentAppItem.ownerType = ((AppItemResponse)resp).ownerType;
-                        m_CurrentAppItem.status = ((AppItemResponse)resp).status;
-                        m_CurrentAppItem.type = ((AppItemResponse)resp).type;
-                        m_CurrentAppItem.clientId = ((AppItemResponse)resp).clientId;
-                        m_CurrentAppItem.packageName = ((AppItemResponse)resp).packageName;
-                        m_CurrentAppItem.revision = ((AppItemResponse)resp).revision;
-                        m_SerializedSettings.ApplyModifiedProperties();
-                        AssetDatabase.SaveAssets();
-                        //                        RemovePushRequest(m_CurrentAppItem.id);
-
-                        SetUpBasicInfoPart();
-                        RepaintGameIdPart();
-
-#region Analytics
-
-                        string eventName = null;
-                        if (request.method == UnityWebRequest.kHttpVerbPOST)
-                        {
-                            eventName = EditorAnalyticsApi.k_AppCreateEventName;
-                            m_IsCreatingAppItem = false;
-                        }
-                        else if (request.method == UnityWebRequest.kHttpVerbPUT)
-                        {
-                            eventName = EditorAnalyticsApi.k_AppUpdateEventName;
-                            m_IsUpdatingAppItem = false;
-                        }
-
-                        if (eventName != null)
-                        {
-                            RequestStruct analyticsReqStruct = new RequestStruct
-                            {
-                                eventName = eventName,
-                                request = EditorAnalyticsApi.AppEvent(eventName, m_CurrentAppItem.clientId,
-                                    (AppItemResponse)resp, null),
-                                resp = new EventRequestResponse(),
-                            };
-
-                            k_RequestQueue.Enqueue(analyticsReqStruct);
-                        }
-
-#endregion
-
-                        if (reqStruct.targetStep == k_StepUpdateGameTitle)
-                        {
-                            //                            RemovePushRequest(m_CurrentAppItem.id);
-                        }
-
-                        PublishApp(m_AppItemId.stringValue, reqStruct.targetStep);
-                    }
-
-                    else if (resp.GetType() == typeof(AppItemPublishResponse))
-                    {
-                        Log("publish appItem success");
-                        m_IsPublishingAppItem = false;
-                        AppStoreOnboardApi.loaded = true;
-                        resp = JsonUtility.FromJson<AppItemPublishResponse>(request.downloadHandler.text);
-                        m_CurrentAppItem.revision = ((AppItemPublishResponse)resp).revision;
-                        m_CurrentAppItem.status = "PUBLIC";
-                        if (reqStruct.targetStep != k_StepUpdateGameTitle)
-                        {
-                            ListPlayers();
-                        }
-                    }
-
-                    else if (resp.GetType() == typeof(AppItemResponseWrapper))
-                    {
-                        Log("search appItem success");
-                        resp = JsonUtility.FromJson<AppItemResponseWrapper>(request.downloadHandler.text);
-                        m_IsSearchingAppItem = false;
-
-                        if (((AppItemResponseWrapper)resp).total < 1)
-                        {
-                            // generate app
-                            m_CurrentAppItem.clientId = m_UnityClientId.stringValue;
-                            m_CurrentAppItem.name = m_UnityProjectId.stringValue;
-                            m_CurrentAppItem.slug = Guid.NewGuid().ToString();
-                            m_CurrentAppItem.ownerId = AppStoreOnboardApi.orgId;
-
-                            m_IsCreatingAppItem = true;
-                            UnityWebRequest newRequest = AppStoreOnboardApi.CreateAppItem(m_CurrentAppItem);
-                            AppItemResponse appItemResponse = new AppItemResponse();
-                            RequestStruct newReqStruct = new RequestStruct();
-                            newReqStruct.request = newRequest;
-                            newReqStruct.resp = appItemResponse;
-                            k_RequestQueue.Enqueue(newReqStruct);
-                        }
-                        else
-                        {
-                            var appItemResp = ((AppItemResponseWrapper)resp).results[0];
-                            m_AppName.stringValue = appItemResp.name;
-                            m_AppSlug.stringValue = appItemResp.slug;
-                            m_AppItemId.stringValue = appItemResp.id;
-                            m_CurrentAppItem.id = appItemResp.id;
-                            m_CurrentAppItem.name = appItemResp.name;
-                            m_CurrentAppItem.slug = appItemResp.slug;
-                            m_CurrentAppItem.ownerId = appItemResp.ownerId;
-                            m_CurrentAppItem.ownerType = appItemResp.ownerType;
-                            m_CurrentAppItem.status = appItemResp.status;
-                            m_CurrentAppItem.type = appItemResp.type;
-                            m_CurrentAppItem.clientId = appItemResp.clientId;
-                            m_CurrentAppItem.packageName = appItemResp.packageName;
-                            m_CurrentAppItem.revision = appItemResp.revision;
-                            m_SerializedSettings.ApplyModifiedProperties();
-                            AssetDatabase.SaveAssets();
-                            SetUpBasicInfoPart();
-                            RepaintGameIdPart();
-                            //RemovePushRequest(m_CurrentAppItem.id);
-
-                            if (appItemResp.status != "PUBLIC")
-                            {
-                                PublishApp(appItemResp.id, "");
-                            }
-                            else
-                            {
-                                AppStoreOnboardApi.loaded = true;
-                                ListPlayers();
-                            }
-                        }
-                    }
-
-                    else if (resp.GetType() == typeof(PlayerResponse))
-                    {
-                        Log("update player");
-
-                        resp = JsonUtility.FromJson<PlayerResponse>(request.downloadHandler.text);
-
-                        var playerId = ((PlayerResponse)resp).id;
-
-                        m_TestAccounts[reqStruct.arrayPosition].playerId = playerId;
-                        m_TestAccounts[reqStruct.arrayPosition].password = "******";
-                        m_TestAccounts[reqStruct.arrayPosition].deleted = false;
-                        RemovePushRequest(m_TestAccounts[reqStruct.arrayPosition].email);
-                        k_TestAccountsDirty[reqStruct.arrayPosition] = false;
-                        RepaintSingleTestAccount(reqStruct.arrayPosition);
-
-                        UnityWebRequest newRequest = AppStoreOnboardApi.VerifyTestAccount(playerId);
-                        PlayerVerifiedResponse playerVerifiedResponse = new PlayerVerifiedResponse();
-                        RequestStruct newReqStruct = new RequestStruct();
-                        newReqStruct.request = newRequest;
-                        newReqStruct.resp = playerVerifiedResponse;
-                        newReqStruct.targetStep = null;
-                        k_RequestQueue.Enqueue(newReqStruct);
-                    }
-
-                    else if (resp.GetType() == typeof(PlayerResponseWrapper))
-                    {
-                        Log("fetch players success");
-
-                        m_IsSearchingPlayer = false;
-                        resp = JsonUtility.FromJson<PlayerResponseWrapper>(request.downloadHandler.text);
-                        m_TestAccounts = new List<TestAccount>();
-
-                        if (((PlayerResponseWrapper)resp).total > 0)
-                        {
-                            var exists = ((PlayerResponseWrapper)resp).results;
-                            for (int i = 0; i < exists.Length; i++)
-                            {
-                                TestAccount existed = new TestAccount
-                                {
-                                    email = exists[i].nickName,
-                                    password = "******",
-                                    playerId = exists[i].id
-                                };
-                                m_TestAccounts.Add(existed);
-                                k_TestAccountsDirty.Add(false);
-                                k_TestAccountsValidationMsg.Add("");
-                            }
-                        }
-
-                        this.ClearPlayerPart();
-                        this.SetUpPlayerPart();
-                    }
-
-                    else if (resp.GetType() == typeof(PlayerVerifiedResponse))
-                    {
-                        // ListPlayers();
-                    }
-
-                    else if (resp.GetType() == typeof(PlayerChangePasswordResponse))
-                    {
-                        Log("update player password");
-                        RemovePushRequest(m_TestAccounts[reqStruct.arrayPosition].email);
-                        m_TestAccounts[reqStruct.arrayPosition].password = "******";
-                        m_TestAccounts[reqStruct.arrayPosition].deleted = false;
-                        k_TestAccountsDirty[reqStruct.arrayPosition] = false;
-                        RepaintSingleTestAccount(reqStruct.arrayPosition);
-                    }
-
-                    else if (resp.GetType() == typeof(PlayerDeleteResponse))
-                    {
-                        Log("delete player");
-
-                        m_IsDeletingPlayer = false;
-                        EditorUtility.DisplayDialog("Success",
-                            "TestAccount " + reqStruct.currTestAccount.playerId + " has been Deleted.", "OK");
-                        RemoveTestAccountLocally(reqStruct.arrayPosition);
-                        // this.Repaint();
-                    }
-
-                    else if (resp.GetType() == typeof(TokenInfo))
-                    {
-                        m_IsGettingAccessToken = false;
-                        resp = JsonUtility.FromJson<TokenInfo>(request.downloadHandler.text);
-                        AppStoreOnboardApi.tokenInfo.access_token = ((TokenInfo)resp).access_token;
-                        AppStoreOnboardApi.tokenInfo.refresh_token = ((TokenInfo)resp).refresh_token;
-
-                        m_IsGettingUserId = true;
-                        UnityWebRequest newRequest = AppStoreOnboardApi.GetUserId();
-                        UserIdResponse userIdResp = new UserIdResponse();
-                        RequestStruct newReqStruct = new RequestStruct();
-                        newReqStruct.request = newRequest;
-                        newReqStruct.resp = userIdResp;
-                        newReqStruct.targetStep = reqStruct.targetStep;
-                        k_RequestQueue.Enqueue(newReqStruct);
-                    }
-
-                    else if (resp.GetType() == typeof(UserIdResponse))
-                    {
-                        m_IsGettingUserId = false;
-                        resp = JsonUtility.FromJson<UserIdResponse>(request.downloadHandler.text);
-                        AppStoreOnboardApi.userId = ((UserIdResponse)resp).sub;
-                        m_IsGettingOrgId = true;
-                        UnityWebRequest newRequest = AppStoreOnboardApi.GetOrgId(Application.cloudProjectId);
-                        OrgIdResponse orgIdResp = new OrgIdResponse();
-                        RequestStruct newReqStruct = new RequestStruct();
-                        newReqStruct.request = newRequest;
-                        newReqStruct.resp = orgIdResp;
-                        newReqStruct.targetStep = reqStruct.targetStep;
-                        k_RequestQueue.Enqueue(newReqStruct);
-                    }
-
-                    else if (resp.GetType() == typeof(OrgIdResponse))
-                    {
-                        m_IsGettingOrgId = false;
-                        resp = JsonUtility.FromJson<OrgIdResponse>(request.downloadHandler.text);
-                        AppStoreOnboardApi.orgId = ((OrgIdResponse)resp).org_foreign_key;
-                        //                        UnityWebRequest newRequest = AppStoreOnboardApi.GetOrgRoles();
-                        //                        OrgRoleResponse orgRoleResp = new OrgRoleResponse();
-                        //                        RequestStruct newReqStruct = new RequestStruct();
-                        //                        newReqStruct.request = newRequest;
-                        //                        newReqStruct.resp = orgRoleResp;
-                        //                        newReqStruct.targetStep = reqStruct.targetStep;
-                        //                        k_RequestQueue.Enqueue(newReqStruct);
-                    }
-
-                    else if (resp.GetType() == typeof(IapItemSearchResponse))
-                    {
-                        Debug.LogError("won't reach here.");
-                    }
-
-                    else if (resp.GetType() == typeof(IapItemDeleteResponse))
-                    {
-                        Debug.LogError("won't reach here.");
-                    }
-
                     else if (resp.GetType() == typeof(UnityIapItemUpdateResponse))
                     {
-                        Debug.LogError("won't reach here.");
+                        Debug.LogError("wont reach here!");
                     }
-
                     else if (resp.GetType() == typeof(UnityIapItemCreateResponse))
                     {
-                        Debug.LogError("won't reach here.");
+                        Debug.LogError("wont reach here!");
+                    }
+                    else if (resp.GetType() == typeof(IapItemDeleteResponse))
+                    {
+                        Debug.LogError("wont reach here!");
+                    }
+                    else if (resp.GetType() == typeof(FullUpdateResponse))
+                    {
+                        m_IsOperationRunning = false;
+                        var res = JsonUtility.FromJson<FullUpdateResponse>(request.downloadHandler.text);
+
+                        var errMsg = "";
+                        if (!string.IsNullOrEmpty(res.gameTitleErrorMsg))
+                        {
+                            errMsg += "update game title failed: " + res.gameTitleErrorMsg + "\n";
+                        }
+                        else
+                        {
+                            m_UpdateGameTitleErrorMsg = "";
+                            LocalSaveAppItemFromServerResponse(res.allDataResponse.appItem);
+                        }
+
+                        if (!string.IsNullOrEmpty(res.callbackUrlErrorMsg))
+                        {
+                            errMsg += "update callback url failed: " + res.callbackUrlErrorMsg + "\n";
+                        }
+                        else
+                        {
+                            m_UpdateClientErrorMsg = "";
+                            LocalSaveClientSettingsFromServerResponse(res.allDataResponse.client);
+                        }
+
+                        LocalSavePlayerFromServerResponse(res.allDataResponse.players);
+
+                        var pushedPlayers = currentRequestStruct.fullUpdatePayload.testAccounts;
+                        if (res.testAccountSuccess != null)
+                        {
+                            for (var i = 0; i < res.testAccountSuccess.Length; i++)
+                            {
+                                if (!string.IsNullOrEmpty(res.testAccountSuccess[i]))
+                                {
+                                    var player = pushedPlayers[i];
+                                    if (string.IsNullOrEmpty(player.id))
+                                    {
+                                        errMsg += "create testAccount " + player.email + " failed.\n";
+                                    }
+                                    else
+                                    {
+                                        errMsg += "update testAccount " + player.email + " failed.\n";
+                                    }
+
+                                    m_TestAccounts.Add(new TestAccount()
+                                        {playerId = player.id, email = player.email, password = player.password});
+                                    k_TestAccountsDirty.Add(true);
+                                    k_TestAccountsValidationMsg.Add(res.testAccountSuccess[i]);
+                                }
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(errMsg))
+                        {
+                            Debug.LogError("[UDP] update all content failed: " + errMsg);
+                            EditorUtility.DisplayDialog("Error",
+                                "[UDP] " + errMsg,
+                                "OK");
+                        }
+
+                        Repaint();
+                    }
+                    else if (resp.GetType() == typeof(PlayerDeleteResponse))
+                    {
+                        m_IsTestAccountUpdating = false;
+                        EditorUtility.DisplayDialog("Success",
+                            "TestAccount " + currentRequestStruct.testAccount.email + " has been Deleted.", "OK");
+                        RemoveTestAccountLocally(currentRequestStruct.arrayPosition);
+                        Repaint();
                     }
                 }
             }
             else
             {
-                k_RequestQueue.Enqueue(reqStruct);
+                k_RequestQueue.Enqueue(currentRequestStruct);
             }
+        }
+
+        private void LocalSaveAllDataFromServerResponse(AllDataResponse all)
+        {
+            if (all == null) return;
+            LocalSaveAppItemFromServerResponse(all.appItem);
+
+            LocalSaveClientSettingsFromServerResponse(all.client);
+
+            LocalSavePlayerFromServerResponse(all.players);
+        }
+
+        private void LocalSaveAppItemFromServerResponse(AppItemResponse appItem)
+        {
+            if (appItem == null) return;
+            m_AppItemId.stringValue = appItem.id;
+            m_AppName.stringValue = appItem.name;
+            m_AppSlug.stringValue = appItem.slug;
+            m_CurrentAppItem.id = appItem.id;
+            m_CurrentAppItem.name = appItem.name;
+            m_CurrentAppItem.slug = appItem.slug;
+            m_CurrentAppItem.ownerId = appItem.ownerId;
+            m_CurrentAppItem.ownerType = appItem.ownerType;
+            m_CurrentAppItem.status = appItem.status;
+            m_CurrentAppItem.type = appItem.type;
+            m_CurrentAppItem.clientId = appItem.clientId;
+            m_CurrentAppItem.packageName = appItem.packageName;
+            m_CurrentAppItem.revision = appItem.revision;
+            m_SerializedSettings.ApplyModifiedProperties();
+            AssetDatabase.SaveAssets();
+        }
+
+        private void LocalSaveClientSettingsFromServerResponse(UnityClientResponse client)
+        {
+            if (client == null) return;
+            m_UnityClientId.stringValue = client.client_id;
+            m_UnityClientKey.stringValue = client.client_secret;
+            if (client.channel != null)
+            {
+                m_UnityClientRsaPublicKey.stringValue = client.channel.publicRSAKey;
+                m_UnityProjectId.stringValue = client.channel.projectGuid;
+                m_ClientSecretInMemory = client.channel.channelSecret;
+                m_CallbackUrlInMemory = client.channel.callbackUrl;
+            }
+            else
+            {
+                m_UnityClientRsaPublicKey.stringValue = "";
+                m_UnityProjectId.stringValue = "";
+                m_ClientSecretInMemory = "";
+                m_CallbackUrlInMemory = "";
+            }
+
+            m_SerializedSettings.ApplyModifiedProperties();
+            AssetDatabase.SaveAssets();
+
+            SaveGameSettingsProps(client.client_id);
+        }
+
+        private void LocalSavePlayerFromServerResponse(IEnumerable<PlayerResponse> players)
+        {
+            if (players == null) return;
+            ClearTestAccounts();
+            foreach (var player in players)
+            {
+                m_TestAccounts.Add(new TestAccount()
+                    {playerId = player.id, password = "******", email = player.nickName});
+                k_TestAccountsDirty.Add(false);
+                k_TestAccountsValidationMsg.Add("");
+            }
+        }
+
+        private AppStoreSettings LoadSettingsAsset()
+        {
+            if (settings == null)
+            {
+                settings = AssetDatabase.LoadAssetAtPath<AppStoreSettings>(AppStoreSettings.appStoreSettingsAssetPath);
+            }
+
+            return settings;
         }
 
         private static void CreateSettingsAsset()
@@ -1090,8 +728,7 @@ namespace UnityEngine.UDP.Editor
 
         private void InitializeProperties()
         {
-            AppStoreSettings settings =
-                AssetDatabase.LoadAssetAtPath<AppStoreSettings>(AppStoreSettings.appStoreSettingsAssetPath);
+            settings = LoadSettingsAsset();
             if (settings == null)
             {
                 Debug.LogError("UDP Settings.asset not found");
@@ -1110,9 +747,14 @@ namespace UnityEngine.UDP.Editor
             m_TestAccounts = new List<TestAccount>();
             m_CurrentAppItem = new AppItem();
 
+            AppStoreOnBoardApi.unityOrgId = Utils.GetOrganizationId();
+            AppStoreOnBoardApi.unityUserId = Utils.GetUserId();
+            AppStoreOnBoardApi.unityProjectId = Application.cloudProjectId;
+            AppStoreOnBoardApi.unityAccessToken = Utils.GetAccessToken();
+
             if (!string.IsNullOrEmpty(Application.cloudProjectId))
             {
-                InitializeSecrets();
+                Initialize();
             }
             else
             {
@@ -1120,33 +762,42 @@ namespace UnityEngine.UDP.Editor
             }
         }
 
-        private void InitializeSecrets()
+        private void ClearTestAccounts()
         {
-            // If client secret is in the memory, We do nothing
-            if (!string.IsNullOrEmpty(m_ClientSecretInMemory))
+            m_TestAccounts.Clear();
+            k_TestAccountsDirty.Clear();
+            k_TestAccountsValidationMsg.Clear();
+        }
+
+        private void LoginRequired(Step nextStep)
+        {
+            if (AppStoreOnBoardApi.tokenInfo != null &&
+                !string.IsNullOrEmpty(AppStoreOnBoardApi.tokenInfo.token))
             {
+                var nextReq = BuildRequestFromStepName(nextStep);
+                if (nextReq.IsEmpty()) return;
+                nextReq.currentStep = nextStep;
+                k_RequestQueue.Enqueue(nextReq);
                 return;
             }
 
-            // If client ID is not serialized, it means this is a newly created GameSettings.asset
-            // We provide a chance to link the project to an existing client
-            if (string.IsNullOrEmpty(m_UnityClientId.stringValue))
-            {
-                m_TargetStep = k_StepGetClient;
-                GetAuthCode();
-                return;
-            }
+            var req = BuildRequestFromStepName(Step.FetchToken);
+            if (req.IsEmpty()) return;
+            req.currentStep = Step.FetchToken;
+            req.nextStep = nextStep;
+            m_IsFetchingToken = true;
+            k_RequestQueue.Enqueue(req);
+        }
 
-            // Start initialization.
-            m_IsSearchingClient = true;
-            UnityWebRequest newRequest = AppStoreOnboardApi.GetUnityClientInfo(Application.cloudProjectId);
-            UnityClientResponseWrapper clientRespWrapper = new UnityClientResponseWrapper();
-            RequestStruct newReqStruct = new RequestStruct();
-            newReqStruct.request = newRequest;
-            newReqStruct.resp = clientRespWrapper;
-            newReqStruct.targetStep =
-                "CheckUpdate";
-            k_RequestQueue.Enqueue(newReqStruct);
+        private void Initialize()
+        {
+            Log("initialize");
+            m_UpdateGameTitleErrorMsg = "";
+            m_UpdateClientErrorMsg = "";
+            ClearTestAccounts();
+
+            m_IsOperationRunning = true;
+            LoginRequired(Step.InitData);
         }
 
         private void SetUpOperationsPart()
@@ -1162,7 +813,7 @@ namespace UnityEngine.UDP.Editor
         {
             m_UDPBasicInfoBlock.Q<TextField>(UxmlStrings.k_UDPGameTitle).SetValueWithoutNotify(m_AppName.stringValue);
             m_UDPBasicInfoBlock.Q<TextField>(UxmlStrings.k_UDPProjectId)
-                .SetValueWithoutNotify(m_UnityProjectId.stringValue);
+                .SetValueWithoutNotify(Application.cloudProjectId);
 
             m_UDPBasicInfoBlock.Q<Button>(UxmlStrings.k_CopyProjectIdButton).clicked -= OnCopyProjectIdButtonClick;
             m_UDPBasicInfoBlock.Q<Button>(UxmlStrings.k_CopyProjectIdButton).clicked += OnCopyProjectIdButtonClick;
@@ -1190,7 +841,7 @@ namespace UnityEngine.UDP.Editor
             m_UDPClientSettingsBlock.Q<TextField>(UxmlStrings.k_UDPClientSecret)
                 .SetValueWithoutNotify(m_ClientSecretInMemory);
             m_UDPClientSettingsBlock.Q<TextField>(UxmlStrings.k_UDPClientCallbackUrl)
-                .SetValueWithoutNotify(m_CallbackUrlLast);
+                .SetValueWithoutNotify(m_CallbackUrlInMemory);
         }
 
         private void SetUpSinglePlayer(int index)
@@ -1215,7 +866,9 @@ namespace UnityEngine.UDP.Editor
             errTag.AddToClassList(UssStrings.k_UssStringsErrorTag);
             errTag.style.height = 12;
             errTag.style.marginLeft = 4;
-            errTag.style.display = !string.IsNullOrEmpty(k_TestAccountsValidationMsg[pos]) ? DisplayStyle.Flex : DisplayStyle.None;
+            errTag.style.display = !string.IsNullOrEmpty(k_TestAccountsValidationMsg[pos])
+                ? DisplayStyle.Flex
+                : DisplayStyle.None;
             playerContainer.Add(errTag);
 
             VisualElement player = new VisualElement();
@@ -1231,7 +884,7 @@ namespace UnityEngine.UDP.Editor
             password.value = m_TestAccounts[pos].password;
             password.isPasswordField = true;
 
-            if(!string.IsNullOrEmpty(m_TestAccounts[pos].playerId))
+            if (!string.IsNullOrEmpty(m_TestAccounts[pos].playerId))
             {
                 email.isReadOnly = true;
                 password.isReadOnly = true;
@@ -1272,7 +925,6 @@ namespace UnityEngine.UDP.Editor
         private void SetUpPlayerPart()
         {
             m_UDPPlayersContainer = m_UDPPlayerBlock.Q(UxmlStrings.k_Players);
-
             for (var i = 0; i < m_TestAccounts.Count; i++)
             {
                 SetUpSinglePlayer(i);
@@ -1291,6 +943,7 @@ namespace UnityEngine.UDP.Editor
 
                 goToDashboard.AddManipulator(clickable);
             }
+
             var goToIAPCatalog = m_UDPExternalLinkBlock.Q(UxmlStrings.k_GoToIAPCatalog);
             if (goToIAPCatalog != null)
             {
@@ -1303,102 +956,96 @@ namespace UnityEngine.UDP.Editor
             }
         }
 
-#region helper method
+        #region helper method
 
-        private void GetAuthCode()
+        private RequestStruct BuildRequestFromStepName(Step targetStep)
         {
-            Log("getAuthCode");
-            if (AppStoreOnboardApi.tokenInfo.access_token == null)
+            var req = new RequestStruct();
+            switch (targetStep)
             {
-                m_IsGettingAuthCode = true;
-                Type unityOAuthType = Utils.FindTypeByName("UnityEditor.Connect.UnityOAuth");
-                Type authCodeResponseType = unityOAuthType.GetNestedType("AuthCodeResponse", BindingFlags.Public);
-                var performMethodInfo =
-                    typeof(AppStoreProjectSettingsEditor).GetMethod("Perform").MakeGenericMethod(authCodeResponseType);
-                var actionT =
-                    typeof(Action<>).MakeGenericType(authCodeResponseType); // Action<UnityOAuth.AuthCodeResponse>
-                var getAuthorizationCodeAsyncMethodInfo = unityOAuthType.GetMethod("GetAuthorizationCodeAsync");
-                var performDelegate = Delegate.CreateDelegate(actionT, this, performMethodInfo);
-                try
+                case Step.FetchToken:
                 {
-                    getAuthorizationCodeAsyncMethodInfo.Invoke(null,
-                        new object[] { AppStoreOnboardApi.oauthClientId, performDelegate });
-                }
-                catch (TargetInvocationException ex)
-                {
-                    if (ex.InnerException is InvalidOperationException)
+                    try
                     {
-                        Debug.LogError("[UDP] You must login with Unity ID first.");
-                        EditorUtility.DisplayDialog("Error", "You must login with Unity ID first.", "OK");
+                        var unityToken = Utils.GetAccessToken();
+
+                        // exchange udp token
+                        req.request = AppStoreOnBoardApi.GetUdpToken(unityToken, Application.cloudProjectId);
+                        req.resp = new TokenInfo();
+                        req.currentStep = Step.FetchToken;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
                         ResetAllStatusFlag();
-                        SetUpCannotGetProjectIdWindow();
+                        SetUpCannotOAuthWindow();
                     }
                 }
+                    break;
+                case Step.InitData:
+                {
+                    req.request = AppStoreOnBoardApi.FetchData();
+                    req.resp = new AllDataResponse();
+                    req.currentStep = Step.InitData;
+                }
+                    break;
+                case Step.GenerateNewClient:
+                {
+                    req.request = AppStoreOnBoardApi.GenerateNewClient();
+                    req.resp = new AllDataResponse();
+                    req.currentStep = Step.GenerateNewClient;
+                }
+                    break;
+                case Step.LinkProjectId:
+                {
+                    m_ClientIdToBeLinked =
+                        m_UDPLinkClientIdBlock.Q<TextField>(UxmlStrings.k_UdpClientIdToBeLinked)?.value;
+                    if (!string.IsNullOrEmpty(m_ClientIdToBeLinked))
+                    {
+                        m_ClientIdToBeLinked = m_ClientIdToBeLinked.Trim();
+                        req.request = AppStoreOnBoardApi.LinkProjectId(m_ClientIdToBeLinked);
+                        req.resp = new AllDataResponse();
+                        req.currentStep = Step.LinkProjectId;
+                    }
+                }
+                    break;
+                case Step.UpdateAll:
+                {
+                    var iapItems = new List<SimpleIapPayload>();
+
+                    var players = new List<SimplePlayerPayload>();
+                    for (var i = 0; i < k_TestAccountsDirty.Count; i++)
+                    {
+                        var player = m_TestAccounts[i];
+
+                        if (!k_TestAccountsDirty[i]) continue;
+                        var p = new SimplePlayerPayload
+                        {
+                            id = player.playerId, email = player.email, password = player.password
+                        };
+                        players.Add(p);
+                    }
+
+                    var payload = new FullUpdatePayload()
+                    {
+                        clientId = m_UnityClientId.stringValue,
+                        gameTitle = m_UDPBasicInfoBlock.Q<TextField>(UxmlStrings.k_UDPGameTitle).value,
+                        iapItems = iapItems.ToArray(),
+                        testAccounts = players.ToArray(),
+                        callbackUrl = m_UDPClientSettingsBlock.Q<TextField>(UxmlStrings.k_UDPClientCallbackUrl).value,
+                    };
+
+                    req.fullUpdatePayload = payload;
+                    req.request = AppStoreOnBoardApi.UpdateAll(payload);
+                    req.resp = new FullUpdateResponse();
+                    req.currentStep = Step.UpdateAll;
+                }
+                    break;
             }
-            else
-            {
-                m_IsGettingUserId = true;
-                UnityWebRequest request = AppStoreOnboardApi.GetUserId();
-                UserIdResponse userIdResp = new UserIdResponse();
-                RequestStruct reqStruct = new RequestStruct();
-                reqStruct.request = request;
-                reqStruct.resp = userIdResp;
-                reqStruct.targetStep = m_TargetStep;
-                k_RequestQueue.Enqueue(reqStruct);
-            }
+
+            return req;
         }
 
-        public void Perform<T>(T response)
-        {
-            var authCodePropertyInfo = response.GetType().GetProperty("AuthCode");
-            var exceptionPropertyInfo = response.GetType().GetProperty("Exception");
-            string authCode = (string)authCodePropertyInfo.GetValue(response, null);
-            Exception exception = (Exception)exceptionPropertyInfo.GetValue(response, null);
-            m_IsGettingAuthCode = false;
-            if (authCode != null)
-            {
-                m_IsGettingAccessToken = true;
-                UnityWebRequest request = AppStoreOnboardApi.GetAccessToken(authCode);
-                TokenInfo tokenInfoResp = new TokenInfo();
-                RequestStruct reqStruct = new RequestStruct();
-                reqStruct.request = request;
-                reqStruct.resp = tokenInfoResp;
-                reqStruct.targetStep = m_TargetStep;
-                k_RequestQueue.Enqueue(reqStruct);
-            }
-            else
-            {
-                Debug.LogError("[UDP] " + "Failed: " + exception.ToString());
-                EditorUtility.DisplayDialog("Error", "Failed: " + exception.ToString(), "OK");
-                ResetAllStatusFlag();
-                SetUpCannotGetProjectIdWindow();
-            }
-        }
-
-        private void ProcessErrorRequest(RequestStruct reqStruct)
-        {
-            /** if (reqStruct.curIapItem != null)
-             {
-                 RemovePushRequest(reqStruct.curIapItem.slug);
-             }
-             **/
-
-            if (reqStruct.resp.GetType() == typeof(UnityClientResponse))
-            {
-                RemovePushRequest(m_UnityClientId.stringValue);
-            }
-
-            else if (reqStruct.resp.GetType() == typeof(AppItemResponse))
-            {
-                RemovePushRequest(m_CurrentAppItem.id);
-            }
-
-            else if (reqStruct.resp.GetType() == typeof(PlayerResponse) ||
-                     reqStruct.resp.GetType() == typeof(PlayerChangePasswordResponse))
-            {
-                RemovePushRequest(m_TestAccounts[reqStruct.arrayPosition].email);
-            }
-        }
 
         private void SaveGameSettingsProps(String clientId)
         {
@@ -1412,36 +1059,6 @@ namespace UnityEngine.UDP.Editor
             writter.WriteLine(clientId);
             writter.WriteLine(warningMessage);
             writter.Close();
-        }
-
-        private void PublishApp(String appItemId, string targetStep)
-        {
-            Log("publish app");
-            m_IsPublishingAppItem = true;
-            UnityWebRequest newRequest = AppStoreOnboardApi.PublishAppItem(appItemId);
-            AppItemPublishResponse appItemPublishResponse = new AppItemPublishResponse();
-            RequestStruct newReqStruct = new RequestStruct();
-            newReqStruct.request = newRequest;
-            newReqStruct.resp = appItemPublishResponse;
-            newReqStruct.targetStep = targetStep;
-            k_RequestQueue.Enqueue(newReqStruct);
-        }
-
-        private void ListPlayers()
-        {
-            Log("list players");
-            m_TestAccounts.Clear();
-            k_TestAccountsDirty.Clear();
-            k_TestAccountsValidationMsg.Clear();
-
-            m_IsSearchingPlayer = true;
-            UnityWebRequest newRequest = AppStoreOnboardApi.GetTestAccount(m_UnityClientId.stringValue);
-            PlayerResponseWrapper playerResponseWrapper = new PlayerResponseWrapper();
-            RequestStruct newReqStruct = new RequestStruct();
-            newReqStruct.request = newRequest;
-            newReqStruct.resp = playerResponseWrapper;
-            newReqStruct.targetStep = null;
-            k_RequestQueue.Enqueue(newReqStruct);
         }
 
         private void RemoveTestAccountLocally(int pos)
@@ -1475,15 +1092,15 @@ namespace UnityEngine.UDP.Editor
 
                 var playerEmail = accountUi.Q<TextField>("player-email-" + pos);
                 var playerPassword = accountUi.Q<TextField>("player-password-" + pos);
-                if(!string.IsNullOrEmpty(account.playerId))
+                if (!string.IsNullOrEmpty(account.playerId))
                 {
                     playerEmail.isReadOnly = true;
                     playerPassword.isReadOnly = true;
-                }else
+                }
+                else
                 {
                     playerEmail.isReadOnly = false;
                     playerPassword.isReadOnly = false;
-
                 }
             }
         }
@@ -1495,91 +1112,22 @@ namespace UnityEngine.UDP.Editor
             k_TestAccountsValidationMsg.Clear();
             m_UpdateClientErrorMsg = "";
             m_UDPClientSettingsBlock.Q<Label>(UxmlStrings.k_UDPClientErrorMessage).text = m_UpdateClientErrorMsg;
-            m_TargetStep = k_StepGetClient;
 
-            GetAuthCode();
-        }
-
-        private bool CheckURL(string url)
-        {
-            string pattern =
-                @"^(https?://[\w\-]+(\.[\w\-]+)+(:\d+)?((/[\w\-]*)?)*(\?[\w\-]+=[\w\-]+((&[\w\-]+=[\w\-]+)?)*)?)?$";
-            return new Regex(pattern, RegexOptions.IgnoreCase).IsMatch(url);
-        }
-
-        private void UpdateCallbackUrl(string url)
-        {
-            UnityClientInfo unityClientInfo = new UnityClientInfo();
-            unityClientInfo.ClientId = m_UnityClientId.stringValue;
-
-            m_IsUpdatingClient = true;
-            UnityWebRequest newRequest =
-                AppStoreOnboardApi.UpdateUnityClient(Application.cloudProjectId, unityClientInfo,
-                    url);
-            UnityClientResponse clientResp = new UnityClientResponse();
-            RequestStruct newReqStruct = new RequestStruct();
-            newReqStruct.request = newRequest;
-            newReqStruct.resp = clientResp;
-            newReqStruct.targetStep = k_StepUpdateClient;
-            k_RequestQueue.Enqueue(newReqStruct);
-        }
-
-        private void UpdateGameTitle(string title)
-        {
-            m_CurrentAppItem.status = "STAGE";
-            m_CurrentAppItem.name = title;
-            m_IsUpdatingAppItem = true;
-            UnityWebRequest newRequest = AppStoreOnboardApi.UpdateAppItem(m_CurrentAppItem);
-            AppItemResponse appItemResponse = new AppItemResponse();
-            RequestStruct newReqStruct = new RequestStruct();
-            newReqStruct.request = newRequest;
-            newReqStruct.resp = appItemResponse;
-            newReqStruct.targetStep = k_StepUpdateGameTitle;
-            k_RequestQueue.Enqueue(newReqStruct);
-        }
-
-        private void CreateTestAccount(TestAccount testAccount, int pos)
-        {
-            Player player = new Player();
-            player.email = testAccount.email;
-            player.password = testAccount.password;
-            UnityWebRequest request =
-                AppStoreOnboardApi.SaveTestAccount(player, m_UnityClientId.stringValue);
-            PlayerResponse playerResponse = new PlayerResponse();
-            RequestStruct reqStruct = new RequestStruct();
-            reqStruct.request = request;
-            reqStruct.resp = playerResponse;
-            reqStruct.targetStep = null;
-            reqStruct.arrayPosition = pos;
-            k_RequestQueue.Enqueue(reqStruct);
-        }
-
-        private void UpdateTestAccount(TestAccount testAccount, int pos)
-        {
-            PlayerChangePasswordRequest player = new PlayerChangePasswordRequest();
-            player.password = testAccount.password;
-            player.playerId = testAccount.playerId;
-            UnityWebRequest request = AppStoreOnboardApi.UpdateTestAccount(player);
-            PlayerChangePasswordResponse playerChangePasswordResponse = new PlayerChangePasswordResponse();
-            RequestStruct reqStruct = new RequestStruct();
-            reqStruct.request = request;
-            reqStruct.resp = playerChangePasswordResponse;
-            reqStruct.targetStep = null;
-            reqStruct.arrayPosition = pos;
-            k_RequestQueue.Enqueue(reqStruct);
+            Initialize();
         }
 
         private void DeleteTestAccount(TestAccount account, int pos)
         {
-            m_IsDeletingPlayer = true;
-            UnityWebRequest request = AppStoreOnboardApi.DeleteTestAccount(account.playerId);
+            m_IsTestAccountUpdating = true;
+            UnityWebRequest request = AppStoreOnBoardApi.DeleteTestAccount(account.playerId);
             PlayerDeleteResponse response = new PlayerDeleteResponse();
-            RequestStruct reqStruct = new RequestStruct
+            RequestStruct reqStruct = new RequestStruct()
             {
                 request = request,
                 resp = response,
                 arrayPosition = pos,
-                currTestAccount = account
+                testAccount = account,
+                currentStep = Step.DeletePlayer
             };
             k_RequestQueue.Enqueue(reqStruct);
         }
@@ -1604,20 +1152,18 @@ namespace UnityEngine.UDP.Editor
 
         private void OnPushButtonClick()
         {
+            var noError = true;
             // Update UDP Client Settings
             if (CallbackUrlChanged())
             {
                 string callbackUrl = m_UDPClientSettingsBlock.Q<TextField>(UxmlStrings.k_UDPClientCallbackUrl).value;
 
-                if (CheckURL(callbackUrl))
+                if (Utils.CheckURL(callbackUrl))
                 {
                     m_UpdateClientErrorMsg = "";
-                    UpdateCallbackUrl(callbackUrl);
-                    //                    AddPushRequests(m_UnityClientId.stringValue);
                 }
                 else
                 {
-                    //
                     if (callbackUrl.StartsWith("https") || callbackUrl.StartsWith("http"))
                     {
                         m_UpdateClientErrorMsg = "Callback URL is invalid.";
@@ -1626,6 +1172,8 @@ namespace UnityEngine.UDP.Editor
                     {
                         m_UpdateClientErrorMsg = "Callback URL is invalid. (http/https is required)";
                     }
+
+                    noError = false;
                 }
 
                 m_UDPClientSettingsBlock.Q<Label>(UxmlStrings.k_UDPClientErrorMessage).text = m_UpdateClientErrorMsg;
@@ -1639,12 +1187,11 @@ namespace UnityEngine.UDP.Editor
                 if (!string.IsNullOrEmpty(gameTitle))
                 {
                     m_UpdateGameTitleErrorMsg = "";
-                    UpdateGameTitle(gameTitle);
-                    //                    AddPushRequests(m_CurrentAppItem.id);
                 }
                 else
                 {
                     m_UpdateGameTitleErrorMsg = "Game title cannot be null";
+                    noError = false;
                 }
 
                 m_UDPBasicInfoBlock.Q<Label>(UxmlStrings.k_UDPGameErrorMessage).text = m_UpdateGameTitleErrorMsg;
@@ -1659,21 +1206,9 @@ namespace UnityEngine.UDP.Editor
                     m_TestAccounts[pos].email = m_UDPPlayersContainer.Q<TextField>("player-email-" + pos).value;
                     m_TestAccounts[pos].password = m_UDPPlayersContainer.Q<TextField>("player-password-" + pos).value;
                     k_TestAccountsValidationMsg[pos] = m_TestAccounts[pos].Validate();
-                    if (string.IsNullOrEmpty(k_TestAccountsValidationMsg[pos]))
+                    if (!string.IsNullOrEmpty(k_TestAccountsValidationMsg[pos]))
                     {
-                        if (string.IsNullOrEmpty(m_TestAccounts[pos].playerId))
-                        {
-                            CreateTestAccount(m_TestAccounts[pos], pos);
-                        }
-                        else
-                        {
-                            UpdateTestAccount(m_TestAccounts[pos], pos);
-                        }
-
-                        AddPushRequests(m_TestAccounts[pos].email);
-                    }
-                    else
-                    {
+                        noError = false;
                         RepaintSingleTestAccount(pos);
                         Debug.LogError(
                             "[UDP] TestAccount:" + m_TestAccounts[pos].email + " " +
@@ -1681,11 +1216,22 @@ namespace UnityEngine.UDP.Editor
                     }
                 }
             }
+
+            if (noError)
+            {
+                // full update
+                var req = BuildRequestFromStepName(Step.UpdateAll);
+                if (!req.IsEmpty())
+                {
+                    m_IsOperationRunning = true;
+                    k_RequestQueue.Enqueue(req);
+                }
+            }
         }
 
         private void OnCopyProjectIdButtonClick()
         {
-            EditorGUIUtility.systemCopyBuffer = m_UnityProjectId.stringValue;
+            EditorGUIUtility.systemCopyBuffer = Application.cloudProjectId;
         }
 
         private void OnAddNewPlayerButtonClick()
@@ -1705,9 +1251,21 @@ namespace UnityEngine.UDP.Editor
 
         private void OnGenerateNewClientButtonClick()
         {
-            SetUpServiceWindow();
-            m_TargetStep = k_StepGenerateClient;
-            GetAuthCode();
+            GenerateNewClient();
+        }
+
+        private void GenerateNewClient()
+        {
+            Log("generate new client");
+            m_IsGeneratingOrLinking = true;
+            LoginRequired(Step.GenerateNewClient);
+        }
+
+        private void LinkProjectWithClient()
+        {
+            Log("link project id");
+            m_IsGeneratingOrLinking = true;
+            LoginRequired(Step.LinkProjectId);
         }
 
         private void OnLinkToExitingClientButtonClick()
@@ -1715,16 +1273,7 @@ namespace UnityEngine.UDP.Editor
             m_ClientIdToBeLinked = m_UDPLinkClientIdBlock.Q<TextField>(UxmlStrings.k_UdpClientIdToBeLinked)?.value;
             if (!string.IsNullOrEmpty(m_ClientIdToBeLinked))
             {
-                m_ClientIdToBeLinked = m_ClientIdToBeLinked.Trim();
-                UnityWebRequest newRequest =
-                    AppStoreOnboardApi.GetUnityClientInfoByClientId(m_ClientIdToBeLinked);
-                UnityClientResponse unityClientResponse = new UnityClientResponse();
-                RequestStruct newReqStruct = new RequestStruct();
-                newReqStruct.request = newRequest;
-                newReqStruct.currentStep = "GetClientBeforeLink";
-                newReqStruct.resp = unityClientResponse;
-                newReqStruct.targetStep = "LinkProject";
-                k_RequestQueue.Enqueue(newReqStruct);
+                LinkProjectWithClient();
             }
         }
 
@@ -1794,37 +1343,14 @@ namespace UnityEngine.UDP.Editor
 
         private void ResetAllStatusFlag()
         {
-            m_IsGettingAuthCode = false;
-            m_IsGettingAccessToken = false;
-            m_IsGettingUserId = false;
-            m_IsGettingOrgId = false;
-            m_IsSearchingClient = false;
-            m_IsCreatingClient = false;
-            m_IsGettingClient = false;
-            m_IsUpdatingClient = false;
-            m_IsSearchingAppItem = false;
-            m_IsUpdatingAppItem = false;
-            m_IsCreatingAppItem = false;
-            m_IsPublishingAppItem = false;
-            m_IsSearchingPlayer = false;
-            m_IsDeletingPlayer = false;
+            m_IsFetchingToken = false;
+            m_IsOperationRunning = false;
         }
 
         private bool IsOperationRunning()
         {
-            return m_IsGettingAuthCode ||
-                   m_IsGettingAccessToken ||
-                   m_IsGettingUserId ||
-                   m_IsGettingOrgId ||
-                   m_IsSearchingClient ||
-                   m_IsCreatingClient ||
-                   m_IsGettingClient ||
-                   m_IsUpdatingClient ||
-                   m_IsSearchingAppItem ||
-                   m_IsUpdatingAppItem ||
-                   m_IsCreatingAppItem ||
-                   m_IsPublishingAppItem ||
-                   m_IsSearchingPlayer;
+            return m_IsOperationRunning ||
+                   m_IsFetchingToken;
         }
 
         private bool AnythingChanged()
@@ -1841,7 +1367,7 @@ namespace UnityEngine.UDP.Editor
         private bool CallbackUrlChanged()
         {
             var v = m_UDPClientSettingsBlock.Q<TextField>(UxmlStrings.k_UDPClientCallbackUrl).value;
-            if (string.IsNullOrEmpty(v) && string.IsNullOrEmpty(m_CallbackUrlLast))
+            if (string.IsNullOrEmpty(v) && string.IsNullOrEmpty(m_CallbackUrlInMemory))
             {
                 return false;
             }
@@ -1851,7 +1377,7 @@ namespace UnityEngine.UDP.Editor
                 v = "";
             }
 
-            return !v.Equals(m_CallbackUrlLast);
+            return !v.Equals(m_CallbackUrlInMemory);
         }
 
         private bool TestAccountsChanged()
@@ -1869,10 +1395,10 @@ namespace UnityEngine.UDP.Editor
 
         private void Log(string message)
         {
-           // Debug.Log(message);
+//            Debug.Log(message);
         }
 
-#endregion
+        #endregion
     }
 }
 

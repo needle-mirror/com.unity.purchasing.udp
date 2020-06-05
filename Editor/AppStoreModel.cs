@@ -4,14 +4,6 @@ using System.Text.RegularExpressions;
 
 namespace UnityEngine.UDP.Editor
 {
-    public class UnityClientInfo
-    {
-        public string ClientId { get; set; }
-        public string ClientKey { get; set; }
-        public string ClientRSAPublicKey { get; set; }
-        public string ClientSecret { get; set; }
-    }
-
     public class TestAccount
     {
         public string email;
@@ -35,6 +27,7 @@ namespace UnityEngine.UDP.Editor
             {
                 return "";
             }
+
             if (string.IsNullOrEmpty(email) || email == "Email")
             {
                 return "Email cannot be null";
@@ -64,62 +57,11 @@ namespace UnityEngine.UDP.Editor
     }
 
     [Serializable]
-    public class UnityClient
-    {
-        public string client_id;
-        public string client_secret;
-        public string client_name;
-        public List<string> scopes;
-        public UnityChannel channel;
-        public string rev;
-        public string owner;
-        public string ownerType;
-
-        public UnityClient()
-        {
-            this.scopes = new List<string>();
-        }
-    }
-
-    [Serializable]
-    public class UnityChannel
-    {
-        public string projectGuid;
-        public ThirdPartySetting[] thirdPartySettings;
-        public string callbackUrl;
-        public string bundleIdentifier = "UDP";
-    }
-
-    [Serializable]
-    public class ThirdPartySetting
-    {
-        public string appId;
-        public string appType;
-        public string appKey;
-        public string appSecret;
-        public ExtraProperties extraProperties;
-    }
-
-    [Serializable]
-    public class ExtraProperties
-    {
-        public string pubKey;
-        public string performIapCallbacks;
-    }
-
-    [Serializable]
-    public class UnityClientResponseWrapper : GeneralResponse
-    {
-        public UnityClientResponse[] array;
-    }
-
-    [Serializable]
     public class UnityClientResponse : GeneralResponse
     {
         public string client_id;
         public string client_secret;
         public UnityChannelResponse channel;
-        public string rev;
     }
 
     public class UnityIapItemUpdateResponse : GeneralResponse
@@ -134,7 +76,6 @@ namespace UnityEngine.UDP.Editor
     public class UnityChannelResponse
     {
         public string projectGuid;
-        public ThirdPartySetting[] thirdPartySettings;
         public string callbackUrl;
         public string publicRSAKey;
         public string channelSecret;
@@ -143,50 +84,22 @@ namespace UnityEngine.UDP.Editor
     [Serializable]
     public class TokenRequest
     {
-        public string code;
-        public string client_id;
-        public string client_secret;
-        public string grant_type;
-        public string redirect_uri;
-        public string refresh_token;
+        public string token;
+        public string projectId;
     }
 
     [Serializable]
     public class TokenInfo : GeneralResponse
     {
-        public string access_token;
-        public string refresh_token;
-    }
-
-    [Serializable]
-    public class UserIdResponse : GeneralResponse
-    {
-        public string sub;
-    }
-
-    [Serializable]
-    public class OrgIdResponse : GeneralResponse
-    {
-        public string org_foreign_key;
-    }
-
-    [Serializable]
-    public class OrgRoleResponse : GeneralResponse
-    {
-        public List<string> roles;
+        public string token;
+        public string orgId;
+        public bool canManage;
     }
 
     [Serializable]
     public class GeneralResponse
     {
         public string message;
-    }
-
-    [Serializable]
-    public class IapItemSearchResponse : GeneralResponse
-    {
-        public int total;
-        public List<IapItem> results;
     }
 
     [Serializable]
@@ -239,7 +152,7 @@ namespace UnityEngine.UDP.Editor
             }
 
             var price = priceSets.PurchaseFee.priceMap.DEFAULT[0].price;
-            if (!Regex.IsMatch(price, @"(^[0-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)"))
+            if (!Regex.IsMatch(price, @"(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)"))
             {
                 return -7;
             }
@@ -338,36 +251,6 @@ namespace UnityEngine.UDP.Editor
     }
 
     [Serializable]
-    public class Locales
-    {
-        public Locale thisShouldBeENHyphenUS;
-        public Locale thisShouldBeZHHyphenCN;
-    }
-
-    [Serializable]
-    public class Locale
-    {
-        public string name;
-        public string shortDescription;
-        public string longDescription;
-    }
-
-    [Serializable]
-    public class Player
-    {
-        public string email;
-        public string password;
-        public string clientId;
-    }
-
-    [Serializable]
-    public class PlayerChangePasswordRequest
-    {
-        public string password;
-        public string playerId;
-    }
-
-    [Serializable]
     public class PlayerResponse : GeneralResponse
     {
         public string nickName;
@@ -418,24 +301,6 @@ namespace UnityEngine.UDP.Editor
     }
 
     [Serializable]
-    public class AppItemResponseWrapper : GeneralResponse
-    {
-        public int total;
-        public AppItemResponse[] results;
-    }
-
-    [Serializable]
-    public class AppItemPublishResponse : GeneralResponse
-    {
-        public string revision;
-    }
-
-    [Serializable]
-    public class PlayerVerifiedResponse : GeneralResponse
-    {
-    }
-
-    [Serializable]
     public class PlayerDeleteResponse : GeneralResponse
     {
     }
@@ -448,19 +313,59 @@ namespace UnityEngine.UDP.Editor
     [Serializable]
     public class ErrorResponse : GeneralResponse
     {
-        public string code;
-        public ErrorDetail[] details;
+        public string errorCode;
+        public string target;
     }
 
     [Serializable]
-    public class ErrorDetail
+    public class AllDataResponse : GeneralResponse
     {
-        public string field;
-        public string reason;
+        public AppItemResponse appItem;
+        public IapItem[] iapItems;
+        public PlayerResponse[] players;
+        public UnityClientResponse client;
     }
 
     [Serializable]
-    public class PlayerChangePasswordResponse : GeneralResponse
+    public class SimpleIapPayload
     {
+        public string id;
+        public string slug;
+        public string name;
+        public bool consumable;
+        public string price;
+        public string description;
+    }
+
+    [Serializable]
+    public class SimplePlayerPayload
+    {
+        public string id;
+        public string email;
+        public string password;
+    }
+
+    [Serializable]
+    public class FullUpdatePayload
+    {
+        public string clientId;
+        public string gameTitle;
+        public string callbackUrl;
+        public SimpleIapPayload[] iapItems;
+        public SimplePlayerPayload[] testAccounts;
+    }
+
+    public class FullUpdateResponse : GeneralResponse
+    {
+        public AllDataResponse allDataResponse;
+        public string[] iapSuccess;
+        public string[] testAccountSuccess;
+        public string callbackUrlErrorMsg;
+        public string gameTitleErrorMsg;
+    }
+
+    public class LinkProjectPayload
+    {
+        public string clientId;
     }
 }

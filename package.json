@@ -1,7 +1,7 @@
 {
   "name": "com.unity.purchasing.udp",
   "displayName": "Unity Distribution Portal",
-  "version": "1.3.1-preview.1",
+  "version": "2.0.0-preview.1",
   "unity": "2018.2",
   "description": "Unity Distribution Portal (UDP) gives you direct and ready access to third-party Android app stores.\n\nThis package allows you to implement only one In-App Payment SDK for all the app stores accessible via UDP.\n\nThe UDP console will let you centralize your marketing assets and game metadata, and submit your game to multiple app stores from a single hub.",
   "keywords": [
@@ -10,10 +10,12 @@
     "iap"
   ],
   "documentation": "https://docs.unity3d.com/Packages/com.unity.purchasing.udp@latest/index.html",
+  "upmCi": {
+    "footprint": "1037c185438e7c50de8640070e25c2d9c1b1542a"
+  },
   "repository": {
-    "footprint": "a44697e5d97a0511d5cf26dbfe092f1a9ca16b4e",
-    "type": "git",
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.purchasing.udp.git",
-    "revision": "3bccf572a12c47fe5c12215939f30f4ad5770ea4"
+    "type": "git",
+    "revision": "4b9b9eb8cc84238d74a1ca560f133c2a84dab94d"
   }
 }

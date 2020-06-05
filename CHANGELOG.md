@@ -1,4 +1,10 @@
 # Changelog
+## [2.0.0] - 2020-06-05
+- Package interoperability with Unity IAP: the Unity IAP package can now work directly with the UDP Package instead of maintaining its own UDP dll. 
+- User permissions can be set at the Project level.
+- UDP Settings: inspector window activated when invoking the asset file; faster load and sync times.
+- General code refinements.
+
 ## [1.3.1] - 2020-04-17
 - fix inconsistency when displaying prices returned by the stores;
 - documentation update to v1.3.

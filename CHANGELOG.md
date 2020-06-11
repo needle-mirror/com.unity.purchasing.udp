@@ -1,4 +1,7 @@
 # Changelog
+## [2.0.1] - 2020-06-11
+- Fix developer payload missing issue in UDP sandbox. 
+
 ## [2.0.0] - 2020-06-05
 - Package interoperability with Unity IAP: the Unity IAP package can now work directly with the UDP Package instead of maintaining its own UDP dll. 
 - User permissions can be set at the Project level.

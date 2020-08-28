@@ -15,6 +15,8 @@ namespace UnityEngine.UDP.Editor
         [MenuItem("Window/Unity Distribution Portal/IAP Catalog", false, 111)]
         public static void ActivateSettingsWindow()
         {
+            ActivateInspectorWindow();
+
             if (File.Exists(AppStoreSettings.appStoreSettingsAssetPath))
             {
                 var existedAppStoreSettings = (AppStoreSettings) AssetDatabase.LoadAssetAtPath(
@@ -32,8 +34,6 @@ namespace UnityEngine.UDP.Editor
             AssetDatabase.CreateAsset(appStoreSettings, AppStoreSettings.appStoreSettingsAssetPath);
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = appStoreSettings;
-
-            ActivateInspectorWindow();
         }
 
 
@@ -53,6 +53,8 @@ namespace UnityEngine.UDP.Editor
         [MenuItem("Window/Unity Distribution Portal/Settings", false, 111)]
         public static void ActivateSettingsWindow()
         {
+            ActivateInspectorWindow();
+
             if (File.Exists(AppStoreSettings.appStoreSettingsAssetPath))
             {
                 var existedAppStoreSettings = (AppStoreSettings) AssetDatabase.LoadAssetAtPath(
@@ -70,8 +72,6 @@ namespace UnityEngine.UDP.Editor
             AssetDatabase.CreateAsset(appStoreSettings, AppStoreSettings.appStoreSettingsAssetPath);
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = appStoreSettings;
-
-            ActivateInspectorWindow();
         }
 
         [MenuItem("Window/Unity Distribution Portal/Settings", true)]
@@ -249,6 +249,7 @@ namespace UnityEngine.UDP.Editor
                         AppStoreOnBoardApi.unityAccessToken) ||
                     AppStoreOnBoardApi.unityProjectId != Application.cloudProjectId)
                 {
+                    AppStoreOnBoardApi.tokenInfo = new TokenInfo();
                     InitParameters();
                     currentState = State.Initializing;
                     Initialize();

@@ -22,7 +22,7 @@ In the Unity Editor, go to the top menu and select **Window** > **Unity IAP** > 
 
 #### How do I know that UDP is installed?
 
-You should have Unity Distribution Portal show in the Window menu of the Unity Editor. For more details refer to [Setting up UDP](setting-up-udp.md).
+The Window menu of the Unity Editor will display **Unity Distribution Portal**. For more details refer to [Setting up UDP](setting-up-udp.md).
 
 #### Do I need to enable Unity Analytics to use UDP?
 
@@ -68,6 +68,14 @@ You can deploy your game to the UDP console in the following ways:
 
 No. This build is only an artefact created during the course of the UDP workflow. It only works with the Unity sandbox. It is calling stubbed payment APIs and is not capable of making any transaction on any of the UDP stores’ billing systems. To be used, this build needs to be repacked with the store’s specific SDK. This is automatically done on the UDP console during the game submission process.
 
+#### Do Presets work with UDP?
+
+No. You cannot apply [presets](https://docs.unity3d.com/Manual/Presets.html) to the UDP Settings. 
+
+#### Does UDP support server-side validation?
+
+Yes. For [server-side validation](games-with-iap.html#server-side), you can either implement via Query order (all stores support it) or callback notifications (all stores except Huawei).
+
 ## The UDP console
 
 #### How do I access the UDP console?
@@ -107,23 +115,6 @@ No. If you change them in the general Game Info section of the UDP console, the 
 #### Can I submit Premium games?
 
 Yes. There is a Premium Price field in the Game Information section for the pay-to-download price of your game; for more details see [Premium Games](#premium-games). Note that not all stores accept Premium games; the stores which do, carry a "Pay-to-Download" label (in the **Publish** tab). If you try to submit a Premium game to a store which doesn’t support them, you will be warned before the submission can go through. 
-
-<a name="org-permissions"></a>
-#### In my team who can do what on UDP?
-
-Permissions are based on your Organization roles (Owner, Manager, User)
-
-* Both Manager and Owner can generate a new UDP client in the Editor 
-* Both Manager and Owner can link a Unity project with a UDP client in the Editor 
-* Both Manager and Owner can modify UDP Settings in the Editor 
-* Anyone (User, Manager, Owner) can create or modify IAPs in the Editor 
-* Both Manager and Owner can create a new game on the UDP console
-* Anyone (User, Manager, Owner) can edit a game revision on the UDP console
-* Both Manager and Owner can RELEASE a game revision on the UDP console
-* Both Manager and Owner can sign up the Organization with a store
-* Both Manager and Owner can register a game to a store
-* Both Manager and Owner can publish a game to a store
-* Both Manager and Owner can view the Reporting dashboard
 
 #### We use several Organizations within our studio. How will that work?
 
@@ -206,7 +197,7 @@ No. You can log into this build with the Sandbox Test Accounts defined in the UD
 
 This can happen with an implementation via Unity IAP, if you forget to set UDP as the build target.
 
-It can also happen if you use the Minify option while building your APK; UDP may not able to find files/directories that it needs because of it. Keep UDP-related packages in a customised proguard file (or disable Minify option) and rebuild your game.
+It can also happen if you use the Minify option while building your APK; UDP may not be able to find files/directories that it needs because of it. Keep UDP-related packages in a customized proguard file (or disable Minify option) and rebuild your game.
 
 #### Why do I need to register my game before submitting it?
 
@@ -233,17 +224,27 @@ Yes, at this stage you have to. UDP checks and optimizes your submission for eac
 
 When your game is repacked for a store, UDP removes the UDP Sandbox implementation and replaces it with the store-specific SDK. The game is then signed again.
 
-Some stores require a suffix to be added to the package name. At time of writing, the following stores modify the package name: Samsung Galaxy Store (.gs), Mi Game Centre (.unity.migc), Huawei AppGallery (.huawei), QooApp Game Store (.qooapp). This is highlighted during the Register step in the UDP console. 
+Some stores require a suffix to be added to the package name. At time of writing, the following stores modify the package name: Samsung Galaxy Store (.gs), Mi Game Centre (.unity.mi), MiGetApps (.unity.migc), Huawei AppGallery (.huawei), QooApp Game Store (.qooapp). This is highlighted during the Register step in the UDP console. 
 
 Each store-specific build is signed with a UDP certificate that is specific to your game and to each store. You can find and retrieve the certificate from the Advanced section of each store.
 
 #### Can I use my own certificate to repack store-specific builds?
 
-No. When UDP repacks your game for a store, it applies a new certificate that is specific to your game and to that store. This ensures that each store-specific build is distinct. You can find and retrieve this certificate from the Advanced section of each store.
+Yes. Instead of letting UDP create a certificate, you can upload your own App signing key.
+If your game is released in Google Play, select **Export and upload the key and certificate** and use the same App signing private key as on Google Play.
+
+#### How does UDP create app signing keys
+
+UDP uses company information to generate a keystore for the repacked APK files when the following two conditions are met:
+
+* The APK file uploaded by the developer does not contain the keystore file.
+* The game has not been repacked in the partner store.
+
+If these conditions are not met, UDP uses an existing UDP keystore if available, or it uses the developer information to generate a new signature file.
 
 #### Does UDP block third-party SDKs?
 
-No. However, certain stores alter your game’s package name, and UDP signs your store-specific builds with its own certificate. Therefore, check directly with the third-party service providers how this impacts the ability of their service to operate properly in your game.
+No. However, certain stores alter your game’s package name, and UDP can sign your store-specific builds with its own certificate if you choose not to upload your own. Therefore, check directly with the third-party service providers how this impacts the ability of their service to operate properly in your game.
 
 **Note**: Certain UDP stores have their own rules and regulations about what SDKs are allowed or prohibited in their store. For more details, see [Partner Stores](setting-up-udp.html#partner).
 
@@ -252,3 +253,7 @@ No. However, certain stores alter your game’s package name, and UDP signs your
 Yes. Once your game is successfully repacked, go to the Status tab where you will find a download link for your repacked game.
 
 Note however that a repacked game will always fetch the last IAP catalog that was submitted to the store, so for the first time, you need to submit your game in order to create an IAP catalog on the store’s servers.
+
+#### How can I unlink my Unity account from a store?
+
+The stores hold your authentication token. Therefore, contact the store directly to unlink your Unity account.

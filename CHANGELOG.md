@@ -1,4 +1,8 @@
 # Changelog
+
+## [2.0.2] - 2020-08-28
+- documentation update to 2.0.0
+
 ## [2.0.1] - 2020-06-11
 - Fix developer payload missing issue in UDP sandbox. 
 

@@ -24,7 +24,7 @@ In the game client, you can implement your in-app purchases either with the UDP 
 
 To understand the difference between the implementations, and which one suits you best, see [How to implement UDP](getting-started.html#how-to-implement).
 
-If you suspect your project is using both Unity IAP and the UDP Package at the same time, see [Don’t mix the implementations](best-practices.html#dont-mix) to resolve this situation.
+If you suspect your project is using both Unity IAP and the UDP Package at the same time, see [UDP implementations](best-practices.html#udp-implementation) to resolve this situation.
 
 <a name="with-udp"></a>
 ### With the UDP package
@@ -37,6 +37,8 @@ To implement UDP in-app purchases, follow these steps:
 4. [Consume a purchase](#consume)
 5. [Validate the client-side integration](#validate)
 6. [Fill in the IAP Catalog](#iap-catalog)
+
+Once you have implemented IAP items using UDP, [test your IAP](best-practices.html#test) in your generic UDP build before uploading it to the UDP console.
 
 <a name="init"></a>
 #### Initializing the UDP SDK
@@ -52,6 +54,8 @@ Call the `Initialize` method in your game code.
 StoreService.Initialize(IInitListener listener)
 ```
 
+**Note**: You must implement the `Initialize()` method in your game to be able to publish your game to app stores via UDP.
+
 The InitListener then tells your game whether the initialization has succeeded or failed. 
 
 ```
@@ -64,7 +68,7 @@ public class InitListener : IInitListener
     {
         Debug.Log("Initialization succeeded");
         // You can call the QueryInventory method here
-        // to check whether there are purchases that haven’t be consumed.       
+        // to check whether there are purchases that haven’t been consumed.       
     }
 
     public void OnInitializeFailed(string message)
@@ -86,10 +90,17 @@ To check for unconsumed IAP products, your game should call the `QueryInventory`
 ![](Images/5-GamesWithIAP_02.png)<br/>
 Sending a query from your game to the UDP inventory
 
-To query for the product details, call the **QueryInventory** method. If you don’t specify product IDs, you get the information of all IAP products that are purchased but not consumed. If you specify product IDs, you get the product information for your specified IAP products and the non-consumed purchases. 
+To query for the product details, call the **QueryInventory** method. This returns the product information (product name, ID, price, description) for non-consumable purchases and consumable purchases which have not yet been consumed. 
+
+If you specify product IDs, you get the product information for your specified IAP products. 
 
 ```
 StoreService.QueryInventory(List<string> productIds, IPurchaseListener listener);
+```
+
+If you don’t specify product IDs, you get the information of all IAP products.
+
+```
 StoreService.QueryInventory(IPurchaseListener listener);
 ```
 
@@ -174,7 +185,11 @@ For example:
 StoreService.Purchase(string productId, string developerPayload, IPurchaseListener listener);
 ```
 
-The UDP returns information to your game after the purchase is complete. 
+**Note**: Games with IAP must contain a `Purchase` method.
+
+The UDP returns information to your game when the purchase is complete. 
+
+Some partner stores' payment gateways can't get payment callbacks in real-time. This can prevent UDP quickly receiving payment SUCCESS or FAILED callbacks. In this case, UDP regards the callback as FAILED. In case this situation occurs, add logic to your game to get the latest order status via server-side validation. This can be using the [SDK callback](#callback-notif) or [order queries](#query-order).
 
 If your game is an online game, you can verify the purchase on your game server via a callback notification. UDP sends the callback notification to the callback URL that you have specified either in the Unity Editor or on the UDP console (see [UDP Settings](creating-a-game-on-udp.html#udp-settings)).
 
@@ -187,7 +202,7 @@ When a user has purchased a consumable product, they cannot repurchase that prod
 
 **Note**: This step is only necessary for consumable products.
 
-To consume a product, your game needs to send a Consume request to the UDP SDK. Your  game should deliver a product after it is initially consumed. This prevents the product being delivered repeatedly. Note that **PurchaseInfo** is returned by **OnPurchase**. 
+To consume a product, your game needs to send a Consume request to the UDP SDK. Your game should deliver a product when it is initially consumed. This prevents the product being delivered repeatedly. Note that **PurchaseInfo** is returned by **OnPurchase**. 
 
 For example:  
 
@@ -197,6 +212,56 @@ StoreService.ConsumePurchase(PurchaseInfo, IPurchaseListener);
 
 ![](Images/5-GamesWithIAP_05.png)<br/>
 Sending a consume request from your game to UDP
+
+#### UDP SDK data structure
+
+This section describes the classes of the UDP SDK.
+
+`UserInfo`
+
+|field name|type|desc|
+|---|---|---|
+|Channel|string|PartnerStore name, generated by UDP|
+|UserId|string|optional, user ID returned from PartnerStore|
+|UserLoginToken|string|optional, user login token returned from PartnerStore|
+
+`Inventory`
+
+
+|public function|returns|desc|
+|---|---|---|
+|GetPurchaseInfo(string productId)|PurchaseInfo|get PurchaseInfo of given productId|
+|GetProductInfo(string productId)|ProductInfo|get ProductInfo of given productId|
+|HasPurchase(string productId)|bool|check if any unconsumed purchase exists for given productId|
+|HasProduct(string productId)|bool|check if product exists for given productId|
+|GetPurchaseDictionary()|Dictionary\<string, PurchaseInfo>|get purchases as productId - PurchaseInfo dictionary|
+|GetPurchaseList()|List\<PurchaseInfo>|get purchases as list|
+|GetProductDictionary()|Dictionary\<string, ProductInfo>|get products as productId - ProductInfo dictionary|
+|GetProductList()|List\<ProductInfo>|get products as list|
+
+`PurchaseInfo`
+
+|field name|type|desc|
+|---|---|---|
+|ItemType|string|fixed value “inapp”|
+|ProductId|string|product ID of IAP item|
+|GameOrderId|string|cpOrderId provided by UDP|
+|OrderQueryToken|string|token to query UDP server, generated by UDP|
+|DeveloperPayload|string|any string provided by the developer. UDP will pass this to PartnerStore in ‘Purchase’ method|
+|StorePurchaseJsonString|string|any other additional info provided by PartnerStore|
+
+`ProductInfo`
+
+|field name|type|desc|
+|---|---|---|
+|ItemType|string|fixed value “inapp”|
+|ProductId|string|product ID of IAP item|
+|Consumable|bool|can be consumed or not|
+|Price|string|formatted price of the IAP item, including its currency sign|
+|PriceAmountMicros|long|price of IAP item in micros|
+|Currency|string|currency of IAP item|
+|Title|string|IAP item name|
+|Description|string|IAP item description|
 
 <a name="validate"></a>
 #### Validating the client-side integration
@@ -210,8 +275,7 @@ Filling in the IAP Catalog requires you to list and configure all your UDP in-ap
 
 **Note:** If you don’t use an IAP Catalog in your game client (for instance, your IAP items are maintained solely on your game server) you still have to create your IAP Catalog on the UDP console. For more information, see [In-App Purchases](managing-and-publishing-your-game.html#iap).
 
-1. Open the **UDP Settings** inspector window.<br/>
-  ![](Images/5-GamesWithIAP_06.png)
+1. For Unity Editor versions 2019.4 and below, open the **UDP Settings** inspector window.<br/>For Unity Editor versions 2020.1 and above, open the **IAP Catalog** window.<br/>
 2. In the **IAP Catalog** section, enter your product information for each IAP product:<br/>
   * **Name**, the name of the IAP product.
   * **Product ID**, the unique ID used to identify the IAP product. See below the requirements that Product IDs must follow.
@@ -234,14 +298,27 @@ To understand how the IAP Catalog works in the UDP context, see [Notion of IAP C
 
 For more information on the UDP Package user interface, see [Editor UI for the UDP Package](best-practices.html#editor-ui).
 
-When you’ve completed the UDP implementation and configuration on the game client side, [implement UDP on the server side](#server-side) if needed, and go on to [build your game](building-your-game.md).
+When you’ve completed the UDP implementation and configuration on the game client side, [implement UDP on the server side](#server-side) if needed, and [build your game](building-your-game.md).
 
 <a name="with-unity-iap"></a>
 ### With Unity IAP
 
 If you want to implement UDP using Unity IAP, first [set up Unity IAP](https://docs.unity3d.com/Manual/UnityIAPSettingUp.html). 
 
-**Note**: If you choose to implement UDP with Unity IAP (instead of using the UDP package) then implement via Unity IAP only. Make sure you [don’t mix the implementations](best-practices.html#dont-mix).
+**Note**: If you choose to implement UDP with Unity IAP version 1.22.0-1.23.5 (instead of using the UDP package) then implement via Unity IAP only.
+
+Unity IAP automatically handles the following:
+
+* Initializing UDP
+* Querying the store’s IAP product inventory
+* Requesting to purchase a product
+* Consuming the purchased item
+
+However, your game must properly use Unity IAP’s similar functions (such as initialization and purchase) according to the [Unity IAP Documentation](https://docs.unity3d.com/Manual/UnityIAP.html).
+
+**Note**: Unity IAP consumes the IAP item automatically, so Unity IAP doesn’t contain an API to consume the item.
+
+Once you’ve implemented UDP using Unity IAP, [test your IAP](best-practices.md#test) in your generic UDP build, before uploading it to the UDP console.
 
 When you’ve implemented your game’s in-app purchases with Unity IAP, take the following steps to set up UDP with Unity IAP.
 
@@ -293,6 +370,8 @@ When fetching the IAP products to pass to the queryInventory method, invoke buil
 builder.AddProduct(product.id, product.type, new IDs{}) 
 ```
 
+To display the product price, formatted with currency, use `productInfo.Value.Price`.
+
 If you want to retrieve all the IAP products defined on the UDP Console, you don’t need to invoke any IAP product retrieval method at all. Your game will then fetch the entire IAP Catalog from the UDP Console. 
 
 In summary, you can choose to:
@@ -338,10 +417,12 @@ To understand how the IAP Catalog works in the UDP context, see [Notion of IAP C
 <a name="server-side"></a>
 ## Server-side implementation
 
-The server-side integration consists of the following steps:
+You can validate purchases on the server side in one of the following ways:
 
 * [Querying orders](#query-order)
 * [Receiving callback notifications](#callback-notif)
+
+**Note**: Callback notifications are not currently supported for the Huawei AppGallery store.
 
 You can test your server-side implementation in the UDP Sandbox environment.
 
@@ -355,7 +436,14 @@ Querying UDP about orders
 
 GET https://distribute.dashboard.unity.com
 
-/udp/developer/api/order?orderQueryToken=\<orderQueryToken>&or/derId=\<orderId>&clientId=\<clientId>&sign=\<sign>
+/udp/developer/api/order?orderQueryToken=\<orderQueryToken>&orderId=\<orderId>&clientId=\<clientId>&sign=\<sign>
+
+The API can return an "unconfirmed" status for the following reasons:
+
+* The store can’t get the order status at this time
+* The store doesn't support real-time order status query
+
+In this case, retry the QueryOrder API with an interval. The store will send a callback (in near real-time) to UDP and UDP can return the status to the game.
 
 Parameters in the request:
 
@@ -372,7 +460,7 @@ Parameters in the request:
     <td>String</td>
     <td>Required</td>
     <td>The order query token returned by the client SDK when finishing a purchase. The token needs to be encoded Base64 before being used in the query. (UDP SDK will return PurchaseInfo.OrderQueryToken)</td>
-    <td>eyJjaGFubmVsUHJvZHVjdElkIjoiaWFwLl9mM2YzZiIsImNoYW5uZWxUeXBlIjoiQVBUT0lERSIsImNsaWVudElkIjoiQUFJZ3g5VmNGaDJZQ1ZxbUs2VWNDUSIsImNwT3JkZXJJZCI6IjJhNGQ5MWY4NDgzZjQ3YjlhYzFhNGY5MDAwZDVhNTRhIiwicGFja2FnZU5hbWUiOiJjb20udW5pdHkudW5pdHl0ZXN0Z2FtZV9mZWZ3In0=
+    <td style="word-break:break-all;">eyJjaGFubmVsUHJvZHVjdElkIjoiaWFwLl9mM2YzZiIsImNoYW5uZWxUeXBlIjoiQVBUT0lERSIsImNsaWVudElkIjoiQUFJZ3g5VmNGaDJZQ1ZxbUs2VWNDUSIsImNwT3JkZXJJZCI6IjJhNGQ5MWY4NDgzZjQ3YjlhYzFhNGY5MDAwZDVhNTRhIiwicGFja2FnZU5hbWUiOiJjb20udW5pdHkudW5pdHl0ZXN0Z2FtZV9mZWZ3In0=
 </td>
   </tr>
   <tr>
@@ -396,7 +484,7 @@ Parameters in the request:
     <td>Generate signature with orderQueryToken and client secret, MD5.hash(orderQueryToken + clientSecret).
 
 Client Secret can also been found in the Game info - integration information of UDP console.</td>
-    <td>Client Secret:  KKcCyAgej06MxjKX31WuFNeHSaTJAjLDlgoDWsPJDAM
+    <td style="word-break:break-all;">Client Secret:  KKcCyAgej06MxjKX31WuFNeHSaTJAjLDlgoDWsPJDAM
 
 Sign:
 90a4e440897623c7cd0b2b80a97c267e
@@ -418,21 +506,21 @@ Parameters in the response：
     <td>Example</td>
   </tr>
   <tr>
-    <td>ClientId</td>
+    <td>clientId</td>
     <td>String </td>
     <td>Required</td>
     <td>The clientId that Unity returns after the game has created a client in the Unity IAP. </td>
     <td>Q4AnJDW2-rxLAPujqrk1zQ</td>
   </tr>
   <tr>
-    <td>CpOrderId</td>
+    <td>cpOrderId</td>
     <td>String </td>
     <td>Required</td>
     <td>The order ID assigned by your game, or Unity if the game does not generate it.</td>
     <td>66mea52wne</td>
   </tr>
   <tr>
-    <td>ChannelType</td>
+    <td>channelType</td>
     <td>String</td>
     <td>Required</td>
     <td>Channel type.</td>
@@ -440,52 +528,49 @@ Parameters in the response：
 CLOUDMOOLAH</td>
   </tr>
   <tr>
-    <td>Status </td>
+    <td>status </td>
     <td>String</td>
     <td>Required</td>
     <td>Indicates the status of the order.  </td>
-    <td>SUCCESS, FAILED, UNCONFIRMED</td>
+    <td>SUCCESS, FAILED, UNCONFIRMED, STORE_NOT_SUPPORT</td>
   </tr>
   <tr>
-    <td>ProductId</td>
+    <td>productId</td>
     <td>String</td>
     <td>Required</td>
     <td>The product ID associated with the order.</td>
     <td>product_1</td>
   </tr>
   <tr>
-    <td>Amount  
-
-</td>
+    <td>amount</td>
     <td>String</td>
     <td>Required</td>
     <td>The payment amount of the order.</td>
     <td>1</td>
   </tr>
   <tr>
-    <td>Quantity
-</td>
+    <td>quantity</td>
     <td>Integer</td>
     <td>Required</td>
     <td>Indicates the quantity of the product.</td>
     <td>1</td>
   </tr>
   <tr>
-    <td>Currency</td>
+    <td>currency</td>
     <td>ISO 4217</td>
     <td>Required</td>
     <td>The currency used to purchase the product.</td>
     <td>CNY</td>
   </tr>
   <tr>
-    <td>Country</td>
+    <td>country</td>
     <td>ISO 3166-2</td>
     <td>Required</td>
     <td>The country or geographic region in which the user is located.</td>
     <td>CN</td>
   </tr>
   <tr>
-    <td>PaidTime</td>
+    <td>paidTime</td>
     <td>ISO8601 yyyy-MM-ddThh:mm:ssXXX， UTC timezone</td>
     <td>Optional</td>
     <td>Specifies the time when the order is paid.</td>
@@ -493,14 +578,14 @@ CLOUDMOOLAH</td>
 </td>
   </tr>
   <tr>
-    <td>Rev</td>
+    <td>rev</td>
     <td>String</td>
     <td>Required</td>
     <td>The revision of the order (only for update).</td>
     <td>0</td>
   </tr>
   <tr>
-    <td>Extension</td>
+    <td>extension</td>
     <td>Json String</td>
     <td>Optional</td>
     <td>The developer payload used to add reference information.</td>
@@ -518,7 +603,7 @@ Here is an example request from your game server to the UDP server and response 
 {"channelProductId":“iap._f3f3f”,“channelType”:“APTOIDE”,“clientId”:“AAIgx9VcFh2YCVqmK6UcCQ”,“cpOrderId”:“2a4d91f8483f47b9ac1a4f9000d5a54a”,“packageName”:“com.unity.unitytestgame_fefw”}
 ```
 
-**Being encoded using Base64, the orderQueryToken:**
+**orderQueryToken (encoded as Base64):**
 ```
 eyJjaGFubmVsUHJvZHVjdElkIjoiaWFwLl9mM2YzZiIsImNoYW5uZWxUeXBlIjoiQVBUT0lERSIsImNsaWVudElkIjoiQUFJZ3g5VmNGaDJZQ1ZxbUs2VWNDUSIsImNwT3JkZXJJZCI6IjJhNGQ5MWY4NDgzZjQ3YjlhYzFhNGY5MDAwZDVhNTRhIiwicGFja2FnZU5hbWUiOiJjb20udW5pdHkudW5pdHl0ZXN0Z2FtZV9mZWZ3In0=
 ```
@@ -638,56 +723,56 @@ Here is the content of a JSON payload:
     <td>Example</td>
   </tr>
   <tr>
-    <td>CpOrderId</td>
+    <td>cpOrderId</td>
     <td>String</td>
     <td>Required</td>
     <td>The unique order identifier assigned by your game.</td>
     <td>0bckmoqhel5yd13f</td>
   </tr>
   <tr>
-    <td>Status</td>
+    <td>status</td>
     <td>String</td>
     <td>Required</td>
     <td>Indicates the status of the order.</td>
     <td>SUCCESS</td>
   </tr>
   <tr>
-    <td>Amount</td>
+    <td>amount</td>
     <td>String</td>
     <td>Required</td>
     <td>Specifies the amount of money that the order cost.</td>
     <td>1.01</td>
   </tr>
   <tr>
-    <td>ProductId</td>
+    <td>productId</td>
     <td>String</td>
     <td>Required</td>
     <td>Specifies the unique identifiers of the products that belong to the order.</td>
     <td>com.mystudio.mygame.productid1</td>
   </tr>
   <tr>
-    <td>PaidTime</td>
+    <td>paidTime</td>
     <td>ISO8601 yyyy-MM-ddThh:mm:ssZ, UTC timezone</td>
     <td>Optional</td>
     <td>The time when the order was paid. </td>
     <td>2018-09-28T06:43:20Z</td>
   </tr>
   <tr>
-    <td>Country</td>
+    <td>country</td>
     <td>ISO 3166-2</td>
     <td>Required</td>
     <td>The country where the order was paid.</td>
     <td>CHINA</td>
   </tr>
   <tr>
-    <td>Currency</td>
+    <td>currency</td>
     <td>ISO 4217 or cryptocurrency type</td>
     <td>Required</td>
     <td>The currency of the country where the order was placed.</td>
     <td>CNY</td>
   </tr>
   <tr>
-    <td>Quantity</td>
+    <td>quantity</td>
     <td>Integer</td>
     <td>Required</td>
     <td>The number of products in the order.</td>
@@ -701,7 +786,7 @@ Here is the content of a JSON payload:
     <td>Q_sX9CXfn-rTcWmpP9VEfw</td>
   </tr>
   <tr>
-    <td>Extension</td>
+    <td>extension</td>
     <td>String</td>
     <td>Optional</td>
     <td>The developer payload which is used to contain reference information for developers.</td>

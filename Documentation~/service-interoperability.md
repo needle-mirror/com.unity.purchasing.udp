@@ -85,6 +85,10 @@ These are case-sensitive.
     <td>XiaomiStore</td>
   </tr>
   <tr>
+    <td>Mi Game Center (Xiaomi China)</td>
+    <td>XiaomiStoreCn</td>
+  </tr>
+  <tr>
     <td>HUAWEI AppGallery</td>
     <td>Huawei</td>
   </tr>
@@ -103,6 +107,10 @@ These are case-sensitive.
   <tr>
     <td>Uptodown</td>
     <td>Uptodown</td>
+  </tr>
+   <tr>
+    <td>SHAREit</td>
+    <td>ShareIt</td>
   </tr>
   <tr>
     <td>JioGames</td>

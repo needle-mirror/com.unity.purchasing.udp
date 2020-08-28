@@ -25,15 +25,16 @@ You can view and edit the following sections:
 * [Ads](#ads)
 * [Premium Price](#premium)
 * [In-App Purchases](#iap)
+* [Sandbox Testing](#sandbox)
+* [App Signature](#appsign)
 * [Integration Information](#integrate)
-* [Sandbox Test Accounts](#sandbox)
 
-Enter editing mode via the **EDIT INFO** button at the top on the Game Information page. To save changes select **SAVE**. To discard your changes, select **CANCEL**.
+In the **Game Info** page, select the **EDIT INFO** button to enter edit mode. To save changes select **SAVE**. To discard your changes, select **CANCEL**.
 
 <a name="desc"></a>
 ### Game description
 
-Not every store necessarily takes all the assets listed below; however the list represents a superset of all the participating stores’ requirements. The UDP console flags which fields are mandatory and which are optional. Populate the following fields:
+The table below describes a superset of all the participating stores’ requirements. Not all stores use all of the properties described. The UDP console flags which fields are mandatory and which are optional. Additionally, some stores have specific syntax requirements. These are indicated in the UDP console.
 
 <table>
   <tr>
@@ -54,20 +55,36 @@ Not every store necessarily takes all the assets listed below; however the list 
   </tr>
   <tr>
     <td>Game Icon</td>
-    <td>The game icon that is shown on the app stores.</td>
+    <td>The game icon to show on the app stores.</td>
   </tr>
   <tr>
-    <td>Descriptions & Keywords</td>
-    <td>The full-length description of your game to players, which is shown on the app stores. There is a short description (max 60 char) and a long description (4000 char); you can also define up to 4 keywords (30 char each).</td>
+    <td>Short Description</td>
+    <td>Short description (max 60 char) of your game to show on the app stores.</td>
+  </tr>
+  <tr>
+    <td>Descriptions</td>
+    <td>Full-length description (4,000 char) of your game to show on the app stores.</td>
   </tr>
   <tr>
     <td>Game Banners</td>
     <td>An image used by stores to feature your game. For example, it can be a placement in a carousel. The landscape banner is mandatory, the portrait banner is optional.</td>
   </tr>
   <tr>
-    <td>Screenshots & Videos</td>
-    <td>The screenshots and video trailers of your game, including the cover image (thumbnail) to lay over the mp4 video when it is not playing.
-Note: For videos, certain stores only accept mp4 files while others only accept a Youtube link. It’s recommended to upload both.</td>
+    <td>Keywords</td>
+    <td>Define up to 4 keywords (30 char each). These are used for search purposes in the app stores.</td>
+  </tr>
+  <tr>
+    <td>Feature Video</td>
+    <td>Add a video trailer for your game.<br/>
+<strong>Note</strong>: For videos, some stores only accept MP4 files while others only accept a Youtube link. It’s recommended to upload both.</td>
+  </tr>
+  <tr>
+    <td>Screenshots</td>
+    <td>Add screenshots of your game, including the cover image (thumbnail) to lay over the mp4 video when it is not playing.</td>
+  </tr>
+  <tr>
+    <td>Ratings</td>
+    <td>Select the audience which the game is suitable for.</td>
   </tr>
 </table>
 
@@ -88,11 +105,38 @@ Input metadata for each of your supported languages. To add new languages, choos
 <a name="binary"></a>
 ### Binary
 
-Upload your APK file and OBB files: 
+Upload your APK file and OBB files:
 
-* **APK File**, which is your UDP game build. If you pushed your UDP build via Cloud Build, you don’t need to upload it again.
-* **OBB File(Main)**, which is the main extension file for additional resources that your game or app might need.
-* **OBB File(Patch)**, which is optional and lets you make small updates to the main expansion file.
+<table>
+<tr>
+<td>Property</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>APK File</td>
+<td>Your UDP game build. If you pushed your UDP build via Cloud Build, you don’t need to upload it again.
+For UDP to accept your APK file, the APK file: 
+<ul>
+<li>Must contain a versionName</li>
+<li>Must have an Initialize() method</li>
+<li>Must have a Purchase() method (for games with IAP)</li>
+</ul>
+If you upload a new APK version which contains a different package name, you will receive an error. This also prevents publishing the new APK version.
+</td>
+</tr>
+<tr>
+<td>OBB File (Main)</td>
+<td>The main extension file for additional resources that your game or app might need.</td>
+</tr>
+<tr>
+<td>OBB File (Patch)</td>
+<td>Optional file to make small updates to the main expansion file.</td>
+</tr>
+<tr>
+<td>Does your game use Google Play Services?</td>
+<td>Knowing about your Google Play Services usage helps UDP better guide you during the submission stage.</td>
+</tr>
+</table>
 
 OBB files are not pushed during a CloudBuild deployment, so if your game uses them you must upload them manually from the UDP console.
 
@@ -111,14 +155,26 @@ UDP asks if your game contains ads to better inform your submissions to the stor
 
 If this is the case, these stores display a "warning" icon in the Publish section, and the tooltip explains the cause for concern. It is then easier for you to plan your submission knowing what issues lie ahead.
 
-UDP otherwise does not modify your game’s ad implementation in any way. 
+UDP otherwise does not modify your game’s ad implementation in any way.
+
+The table below describes the Ads section.
+
+|Property|Description|
+|---|---|
+|Does your game contain ads|Select whether or not your game contains ads. This information is useful for UDP to better guide you during submission.|
+|What ad mediation solutions does your game use? (Optional)|If your game contains ads, select which mediation solutions your game uses.|
+|What ad networks does your game use? (Optional)|If your game contains ads, select which ad networks your game uses.|
 
 Ongoing tests of the most common mediation layers + ad networks indicate that games repacked for the UDP stores generally have no problem receiving ad campaigns. We will post findings once definite results are available; in the meantime feel free to [ask UDP Support](mailto:udpsupport@unity3d.com) about your ad set-up and its suitability for distribution via UDP. Make sure you mention which mediation SDK and ad networks your game uses, to get a better-informed answer faster.
 
 <a name="premium"></a>
 ### Premium price
 
-The Premium price is the price it costs players to download your game. Set a default price in USD, and adjust prices in other currencies using the **Manage amounts and currencies** link. 
+The Premium price is the price it costs players to download your game. Set a default price in USD, and adjust prices in other currencies using the **Manage amounts and currencies** link.
+
+|Property|Description|
+|---|---|
+|Manage amounts and currencies|Set the cost of the game in USD.<br/>Select Convert to automatically convert the USD price into the other listed currencies.You can also edit prices manually for specific currencies.|
 
 ![](Images/8-ManagingGame_05.png)
 
@@ -134,6 +190,14 @@ If you try to submit a Premium game to a store which doesn’t support them, you
 ### In-App Purchases
 
 UDP keeps your game’s IAP Catalog synchronized between the Unity Editor and the UDP console. However, the Unity Editor only handles IAP prices in USD and IAP descriptions in English. It is only in the UDP console that you can set prices in other currencies than USD, descriptions in other languages than English, and [import your IAP products in bulk](bulk-iap-import.md).
+
+|Property|Description|
+|---|---|
+|Search box|Filter the list of IAP items by text.|
+|Type dropdown|Filter the list of IAPs by type, that is, consumable or non-consumable.|
+|Sort dropdown|Choose how to sort the list of IAP items.|
+|Add Item|Click to add a new IAP item. This opens a window to enter the IAP details.|
+|Convert|Converts the USD price of your IAP item into global currencies. This overwrites any manually set prices for other currencies.|
 
 This section covers how to edit, create and delete IAP products from the UDP console.
 
@@ -205,15 +269,30 @@ Alternately, import all this information in bulk using the [Bulk IAP Import](bul
 3. See [Bulk IAP Import](#bulk-iap-import.md) for full coverage of this function.
 4. Select **SAVE** to save your changes.
 
-<a name="integrate"></a>
-### Integration Information
-
-This information is synced with the Unity Editor. You can only edit the **IAP Callback URL** field.
-
 <a name="sandbox"></a>
-### Sandbox Test Accounts
+### Sandbox Testing
 
-Your generic UDP game build, when it launches in the UDP Sandbox environment, asks the user for access credentials. You define and manage these credentials in that section. 
+The **Sandbox Testing** section displays the test status for your game for:
+* **UDP Initialization**
+* **IAP Transaction**
+
+Test that your in-app purchases work in your generic UDP build before you release your first game revision on UDP.
+
+Once you have built your APK, run it in the emulator or on a real Android device, using the UDP Sandbox Test Environment, and make an IAP transaction. 
+
+To ensure the UDP SDK is implemented in games that are uploaded to UDP, test your game in the Sandbox to check:
+
+* The `Initialize()` method is called (for all games)
+* The `Purchase()` method is called (for IAP games only)
+
+UDP will verify whether or not the Sandbox tests were conclusive. Games that don’t meet this criteria can’t be released. If the tests are successful, you can release your revision and move to the submission stages.
+
+Your generic UDP game build, when it launches in the UDP Sandbox environment, asks the user for access credentials. You define and manage these credentials in the Sandbox Testing section. 
+
+Set credentials for sandbox test accounts in either:
+
+* The **UDP Settings** window in the Unity Editor
+* The **Game Information** tab of the UDP console:
 
 Learn more about [UDP Sandbox Test Accounts.](creating-a-game-on-udp.html#udp-sandbox)
 
@@ -221,7 +300,37 @@ The information you edit on the UDP console is synced with the Unity Editor when
 
 **Note:** The test accounts are only for the UDP Sandbox environment, and only apply to the generic UDP build. When a game is repacked for a specific store, it no longer points to the sandbox environment where the test accounts belong.
 
-### Save your Revision
+<a name="app-sign"></a>
+### App Signature
+
+UDP uses an App-signing private key to sign the repacked APK files that are submitted to the stores.
+
+Unity recommends that you select **Export and upload the key and certificate** and use your own App signing private key. If your game is released on Google Play, use the same key as on Google Play. This significantly decreases the chance of your game being flagged by Google Play Protect when users install it.
+
+**Note**: iIf your game is flagged, this happens you can appeal to Google [here](https://support.google.com/googleplay/android-developer/answer/2992033?hl=en).
+
+The table below describes the App Signature section of the Game Info tab.
+
+|Property|Description|
+|---|---|
+|Let UDP create and manage App signing private key|UDP generates a different App signing private key for each store the game is repacked for.<br/>This option leaves your game more vulnerable to Google Play Protect warnings.|
+|Export and upload the key and certificate (recommended)|UDP uses the App signing private key you upload to sign the repacked builds. If you select this option, it applies to all stores you submit your game to.|
+|Steps|Displays the steps to export and upload your private key.|
+
+#### Changing keys
+
+If you change your app-signing preference, a notification informs you that the change won’t apply for stores which the game was already repacked for (and therefore signed).
+
+You can switch from using the UDP key to your own key at any time. However, if you repack for a store using the UDP key, that store will always use the UDP key, even if you then switch from using the UDP key to your own key. Stores you have not repacked for will use your own key.
+
+If you have not repacked your game for a store, you can switch from using your own key to the UDP key. If your own key is repacked for any store, you can no longer switch to using the UDP key.
+
+<a name="integrate"></a>
+### Integration Information
+
+This information is synced with the Unity Editor. You can only edit the **Callback URL** field.
+
+### Save your revision
 
 When you have entered all the game information for this revision, including in all the languages, save your changes using the **SAVE** button.
 
@@ -284,7 +393,7 @@ If this is your first time working with this store, sign up for a store account.
 
 Once your Organization has signed up with the store, this step is no longer required. 
 
-Store accounts are per Unity Organization. If you return to the UDP console under a different Organization, you need to sign up again and create a different account.
+Store accounts are per Unity Organization. If you return to the UDP console under a different Organization, you need to sign up again and create a different account. For more information on how to sign up to individual stores, see the store guides in the Resources section of the UDP console.
 
 <a name="register"></a>
 ### Register your game with the store
@@ -298,6 +407,9 @@ Confirm the package name you want to register with the store and click **REGISTE
 ![](Images/8-ManagingGame_14.png)
 
 When your game is registered with the store, you can no longer change the package name for that store.
+
+If you use UDP to generate the [App signing](#app-sign) private key, UDP generates a store-specific key to sign the repacked build. This may also affect third-party services integrated in your game. The store-specific certificate is available in the **Advanced** section, once your game has been repacked.
+Signing your repacked build in this way makes your game more vulnerable to Google Play Protect warnings.
 
 Some stores ask for additional information when registering the game.
 
@@ -328,11 +440,28 @@ Click **Advanced** to configure more store-specific settings.
 
 You can configure the following properties specifically for a store:
 
-|Property|Function|
-|---|---|
-|Target SDK|The version of the store SDK that you publish your game to. By default, UDP repacks for the latest version of the store SDK.|
-|Premium Price|The price players will pay to download your game.|
-|In-App Purchases|The name, price and currency for your IAP items.|
+|Property|Function|Affected store|
+|---|---|---|
+|Target SDK|The version of the store SDK that you publish your game to. By default, UDP repacks for the latest version of the store SDK.|All|
+|CP ID|Merchant ID on the Huawei AppGallery Connect console.|Huawei|
+|Product ID|Product ID on the Huawei AppGallery Connect console.|Huawei|
+|App ID|Application ID on the Huawei AppGallery Connect console.|Huawei|
+|Configuration version on the Huawei AppGallery Connect console.|Version of the game|Huawei|
+|PubKey|Public key on the Huawei AppGallery Connect console.|Huawei|
+|App Secret|App secret on the Huawei AppGallery Connect console.|Huawei|
+|privacyPolicy|Privacy statement address on the Huawei AppGallery Connect console.|Huawei|
+|Premium Price|The price players will pay to download your game.|All stores which support premium games|
+|In-App Purchases|The name, price and currency for your IAP items.|All|
+|GRAC certificate|A GRAC certificate is required to distribute games rated 18+ in Korea. Upload the certificate here, if required.|Samsung|
+|Approval Number from SAPPRFT (aka ISBN)|Enter the SAPPRFT approval number for games you publish in China. If you don’t have a publishing licence for this, deselect China from the country list.|Xiaomi<br/>Huawei|
+|Registration Number from MCPRC|Ministry of Culture Record number for games you publish in China.|Huawei|
+|Launch Manually|Set to launch the game manually on the store.|Samsung<br/>Huawei|
+|Launch on|Specify a date and time to launch your game on the store.|Samsung<br/>Huawei|
+|Renew authentication|Select to renew your authentication token for the selected store.|Huawei|
+|Package Name|Displays the name of the package. This cannot be edited once it’s been registered.|QooApp<br/>Viveport|
+|URL for Privacy Policy|Enter the URL for your game’s privacy policy.|Viveport|
+|URL for EULA/Terms of Use|Enter the URL for your game’s EULA/Terms of use.|Viveport|
+
 
 ### Company Information
 
@@ -357,30 +486,46 @@ Once you have completed all the above steps, select each store you want to submi
 
 Only the latest released revision of your game is taken through the target steps selected for each store.
 
-If your submission is missing anything, the UDP console flags the omissions via a pop-up. The pop-ups can be:
+If your submission is missing anything, the UDP console displays error or warning messages. Select the **Detail** button to expand for more information on the problem.
 
-* Errors (in red): you must fix these before you can submit your game. Click on **Modify** to be sent to the area when you can fix the issue. You can also choose to only submit to stores where there are no errors.
-* Warnings (in yellow): you can ignore these, though addressing them will improve the quality of your submission.
+Errors are displayed in a red panel. You must fix errors before you can submit your game. Click **Modify** to go to the erroneous area to fix the issue.
 
-In either case, the stores impacted by an Error or Warning are highlighted in the Pre-submission screening pop-up.
+You can also choose to only submit to stores where there are no errors.
 
-![](Images/8-ManagingGame_19.png)
+Warnings are displayed in a yellow panel. You can dismiss the warnings you decide to ignore.
 
 ## Submission follow-up
 
 ### Monitoring status
 
-When UDP starts processing your game, visit the **Status** panel to monitor progress and check the submission history of your game. Your game can have the following statuses:
+When UDP starts processing your game, visit the **Status** panel to monitor progress and check the submission history of your game. 
 
-* **Packing**: your game is being repacked with the SDK of the selected store
-* **Packed**: your game was successfully repacked with the SDK of the selected store
-* **Packing failed**: your game could not be repacked with the SDK of the selected store
-* **Submitted**: your game was successfully repacked with the SDK of the selected store and submitted to its Production environment 
-* **Submission failed**: your game was successfully repacked with the SDK of the selected store but encountered a problem during the submission process
+The **Status** panel displays an overview of your game's history.
+
+|Field|Description|
+|---|---|
+|Revisions repacked|Total number of repacked APK builds created with UDP.<br/>**Note**: If a game has been repacked three times for the same stores, this counts as three.|
+|Revisions submitted|Total number of submissions made via UDP.
+Note: If a game was submitted five times to a store, this counts as five.|
+|Submissions accepted|Number of submissions that have been accepted to app stores.|
+|Submissions rejected|Number of revisions that have been rejected by app stores.|
+
+For each game revision, the **Status** panel displays the following details:
+
+|Field|Description|
+|---|---|
+|Store|The store(s) that the game was submitted to.|
+|Status|The status of the revision.<br/>Not all stores can provide visibility until 'Live'. The Status section only provides the information it can get from the store.|
+|Countries|The number of countries which your game is enabled for, for each store. Select the number in this column to view the countries.|
+|Action|Perform additional actions, such as download revisions of your game or go to the store to complete publishing steps.|
+
+Your game can have the following statuses:
+
+* **Repacked**: your game was successfully repacked with the SDK of the selected store
+* **Published**: your game has passed all the steps required for the store when repacking and submitting to that store
+* **Pending**: your game is being repacked with the SDK of the selected store
+* **Failed**: your game could not be repacked with the SDK of the selected store
 * **Canceled**: your game submission was cancelled by you or someone from your Organization
-* **Vetting**: your game is being reviewed by the store’s content management team
-* **Accepted**: your game was accepted by the store’s content management team
-* **Rejected**: your game was rejected by the store’s content management team
 
 ![](Images/8-ManagingGame_20.png)
 

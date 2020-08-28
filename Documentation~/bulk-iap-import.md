@@ -7,7 +7,7 @@ A typical UDP implementation consists of:
 
 However, putting together an IAP Catalog of hundreds of products in the Editor can be tedious, and that’s when you may want to leverage the Bulk IAP Import feature. 
 
-Bulk IAP Import lets you upload a CSV file to the UDP Console with all your IAP product details, including prices in multiple currencies and descriptions in multiple languages.
+Bulk IAP Import lets you upload CSV files in the regular UDP format and in [Google Play](#google) format to the UDP Console with all your IAP product details, including prices in multiple currencies and descriptions in multiple languages.
 
 This section describes how to import your IAP items in bulk.
 
@@ -20,7 +20,7 @@ You should only use the Bulk IAP Import function to add new IAP products if you 
 * With the UDP Package
 * With Unity IAP, not using codeless
 
-If your implementation is with Unity IAP codeless, don’t use the Bulk IAP Import function to add  new IAP products to your catalog. Your game’s IAP products must be defined in the Editor’ IAP Catalog by the time you build your game APK, so your bulk upload would be in vain.
+If your implementation is with Unity IAP codeless, don’t use the Bulk IAP Import function to add  new IAP products to your catalog. Your game’s IAP products must be defined in the Editor’s IAP Catalog when you build your game APK, so your bulk upload would be in vain.
 
 ### To add localized descriptions and prices
 
@@ -49,6 +49,8 @@ Don’t use the Bulk IAP Import function to add new IAP products, your bulk uplo
 You can still, however, use Bulk IAP Import to assign descriptions in more languages and prices in more currencies to your existing IAP products. To ensure a successful operation, make sure that for each IAP product the ProductID and Product Type you define in the CSV file match exactly the values defined in your Editor’s IAP Catalog.
 
 ## Download the CSV Template
+
+UDP provides a CSV template you can use for bulk import of IAP products. The template is in the regular UDP format for CSV files.
 
 1. Select **EDIT INFO** on the **Game Information** page.<br/>
   ![](Images/10-BulkImport_01.png)
@@ -135,7 +137,7 @@ USD;0.99;CNY;6</td>
     <td>zh-CN</td>
   </tr>
   <tr>
-    <td>CHINESE(HONG KONG)</td>
+    <td>CHINESE (HONG KONG)</td>
     <td>zh-HK</td>
   </tr>
   <tr>
@@ -436,16 +438,48 @@ product_id,language; product_name; description,consumable,currency; price com.my
 1. Select **EDIT INFO** on the **Game Information** page.
 2. Go to the **In-App Purchases** section.
 3. Click **IMPORT CATALOG**.
-4. Click **Upload document** or drag and drop your CSV file in the designated box.<br/>
+4. Click **Upload CSV** or drag and drop your CSV file in the designated box.<br/>
   ![](Images/10-BulkImport_05.png)
-5. Click **CREATE** to upload your IAP Catalog to the UDP console.
+5. Click **IMPORT** to upload your IAP Catalog to the UDP console.
 
 **Note:** Uploading a CSV file entirely overwrites this revision’s IAP catalog. The UDP console only uses the information contained in your CSV file; any other IAP information you previously entered via the UDP console is lost.
 
 ## Export a CSV file
 
-If you want to re-use an existing IAP Catalog or add new products to it, click **EXPORT CATALOG** to download it, and use this file to make modifications on your IAP Catalog. Upload the final IAP Catalog back using **IMPORT CATALOG**. 
+If you want to re-use an existing IAP Catalog or add new products to it, click **EXPORT CATALOG** to download it, and use this file to make modifications to your IAP Catalog. This exports the IAP Catalog as a CSV file in the regular UDP format. Upload the final IAP Catalog back using **IMPORT CATALOG**. 
 
 ![](Images/10-BulkImport_06.png)
 
-The **EXPORT CATALOG** button is only shown if you have IAP products in your IAP Catalog, and is only visible in editing mode.
+The **EXPORT CATALOG** button is only shown if you have IAP products in your IAP Catalog, and is only visible in edit mode.
+
+<a name="google"></a>
+## Import IAP products from Google Play format
+
+UDP also supports CSV files in Google Play format.
+To import IAP products using a Google Play CSV file:
+
+1. Select **EDIT INFO** on the **Game Information** page.
+2. Go to the **In-App Purchases** section.
+3. Click **IMPORT CATALOG**.
+4. Select the **CSV file in Google Play format** checkbox.
+5. Click Upload CSV or drag and drop your CSV file in the designated box.
+6. Click **CREATE** to upload your IAP Catalog to the UDP console.
+
+### Pricing
+Google Play sets pricing by country, UDP sets pricing by currency. Therefore the import maps countries to currencies.
+If for the same IAP product you've set different prices across countries using the same currency (for instance, EUR in European countries) UDP uses the first country in the list for the currency. If there are several countries with USD listed, the US locale is used.
+
+### Default currency
+
+Your Google Play default currency cannot be determined from your CSV file; you need to tell UDP what your Google Play default currency is.
+UDP uses USD as its default currency. If you don’t have USD pricing on Google Play, UDP converts your Google Play default pricing and default currency into USD and uses this as the UDP default pricing.
+Local prices that are set in your CSV file are maintained in their respective currencies.
+For countries that aren't explicitly set in the CSV file, UDP converts your Google Play default pricing and default currency into their respective currencies.
+
+### IAP products
+
+The type of IAP products (consumable / non-consumable) cannot be determined from your CSV file; you need to tell UDP the type of each IAP product.
+ 
+UDP does not support Auto-Translate. This setting is ignored. UDP only uses the localized descriptions provided in the CSV file.
+ 
+UDP does not support Google Play’s Pricing Templates. This setting is ignored. UDP only uses the local prices provided in the CSV file.

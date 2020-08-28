@@ -9,9 +9,10 @@ UDP overview
 
 ## Support
 
-* UDP is supported in Unity 5.6.1 or higher (2018.4 or higher is recommended) 
-* UDP only supports Android
-* UDP supports games with In-App Purchases and Premium games
+* UDP is supported in Unity 5.6.1 or higher (2018.4 or higher is recommended).
+* UDP only supports Android.
+* UDP supports games with In-App Purchases and Premium games.
+* UDP only supports consumable and non-consumable IAP products. Subscription products are not supported.
 
 ## Documentation overview
 
@@ -60,6 +61,3 @@ We’ve put together [FAQs](faq.md) and [Best Practices](best-practices.md) that
 ## Questions and Feedback
 
 If you have a question that isn’t answered in this documentation, contact the UDP Support team: [udpsupport@unity3d.com](mailto:udpsupport@unity3d.com)
-
-Did anything go wrong? Which part of the documentation really helped you, or lost you? What do you think about UDP? What’s missing? We would really like to hear from you - just [head here](https://www.google.com/url?q=https://forms.gle/XHTNYZYZ1fFJSnwJ9&sa=D&ust=1586968763545000&usg=AFQjCNGcbuQOLuhNy0QvMLIDCpx31EOV0Q) and tell us.
-

@@ -19,9 +19,8 @@ Get the UDP Package from Unity’s Package Manager. See details in [Setting up U
 
 1. Create a new UDP client or [link your project to an existing UDP Client](creating-a-game-on-udp.html#linking-project).
 2. In the UDP Settings, you only need to enter the **Game Title**. <br/>You can ignore the IAP Catalog (unless your game also has IAPs). 
-3. **Push** these changes to the server.
-
-![](Images/6-PremiumGames_01.png)
+3. **Push** these changes to the server.<br/>
+   ![](Images/6-PremiumGames_01.png)
 
 ## Implement the Init method
 
@@ -36,6 +35,7 @@ Call the **Initialize** method in your game code.
 StoreService.Initialize(IInitListener listener)
 `
 
+**Note**: You must implement the `Initialize()` method in your game to be able to publish your game to app stores via UDP.
 The InitListener then tells your game whether the initialization has succeeded or failed. 
 
 ```
@@ -60,7 +60,7 @@ public class InitListener : IInitListener
 
 ## (Optional) Implement the LicenceCheck method 
 
-The LicenceCheck method is currently only used by a single store (Viveport) so if you don’t intend to distribute your game to this store you can skip this step. Implementing it does not impact the behaviour of your game in other stores.
+The LicenceCheck method is currently only used by Viveport and QooApp. If you don’t intend to distribute your game to these stores you can skip this step. Implementing it does not impact the behaviour of your game in other stores.
 
 The UDP LicenseCheck service determines, at each game start, if the game has been purchased by the current player.
 

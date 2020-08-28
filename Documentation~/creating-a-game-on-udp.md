@@ -5,13 +5,13 @@
 
 You can create a game on UDP either from the Unity Editor or from the UDP console.
 
-Creating a game on UDP means creating a new **UDP client**. The UDP client is what identifies your game on the UDP service; it has a **UDP client ID**.
+Creating a game on UDP creates a new **UDP client**, including Client ID. The Client ID is what identifies your game on the UDP service.
 
 You must link your UDP client to your Unity project.
 
 If you begin your UDP journey inside the Unity Editor, you can **generate a new UDP client** from your Unity project and automatically link them. See [Starting from the Unity Editor](#starting-from-editor).
 
-If you or someone else in your organization createscreate a new game on the UDP console, it only generates a new UDP client. You need to link this UDP client to your Unity project when you begin your UDP implementation in the Unity Editor. See [Creating a game in the UDP console](#udp-new-game).
+If you or someone else in your organization creates a new game on the UDP console, it only generates a new UDP client. You need to link this UDP client to your Unity project when you begin your UDP implementation in the Unity Editor. See [Creating a game in the UDP console](#udp-new-game).
 
 ### Existing UDP clients - user stories
 
@@ -32,6 +32,8 @@ Click on the blank card to create a new game:
 
 ![](Images/4-CreatingGame_01.png)
 
+A window opens to get started creating your game. Add a title for your game and click **Create**.
+
 This sends you to your new game’s **Game Info** page where you can start [editing your game information](managing-and-publishing-your-game.html#edit-info).
 
 **Note**: You must link your Unity project with your UDP client in the Unity Editor.
@@ -43,12 +45,14 @@ When you create a game on the UDP console, it gets a UDP client ID. You need to 
 
 1. To create a **UDP Settings** file, select **Window** > **Unity Distribution Portal** > **Settings**:<br/>
    ![](Images/4-CreatingGame_02.png)
-2. In the **UDP Settings** inspector window, paste your UDP client ID into the input box,
-   1. Select **Link to existing UDP client**:
+2. If your project doesn’t already have a Unity Project ID, select an organization in the **Organizations** field. You can then choose to:   
+   * **Use an existing Unity project ID**. This links the project to an existing cloud project.
+   * **Create project ID**. This creates a new cloud project.
+3. In the **UDP Settings** inspector window, paste your UDP client ID into the input box,
+   1. Select **Link to existing UDP client**:<br/>
+   ![](Images/4-CreatingGame_03.png)
 
-![](Images/4-CreatingGame_03.png)
-
-**Note:** You can only link your Unity project to a single UDP client, and the link is irrevocable. If you need to link your project to a different UDP client, you’ll need a new project ID. See [Linking a project to another UDP client](#linking-project) for details on how to proceed.
+**Note:** You can only link your Unity project to a single UDP client, and the link is irrevocable. If you need to [link your project to a different UDP client](#linking-project), you’ll need a new project ID.
 
 <a name="starting-from-editor"></a>
 ## Starting from the Unity Editor
@@ -64,11 +68,13 @@ If you have not created your game on the UDP console; it has no UDP client ID. Y
 
 1. To create a **UDP Settings** file, select **Window** > **Unity Distribution Portal** > **Settings**:<br/>
    ![](Images/4-CreatingGame_02.png)
-2. Select **Generate new UDP client**:
+2. If your project doesn’t already have a Unity Project ID, select an organization in the **Organizations** field. You can then choose to
+    * Use an existing Unity project ID. This links the project to an existing cloud project.
+    * Create project ID. This creates a new cloud project.
+3. Select **Generate new UDP client**:<br/>
+   ![](Images/4-CreatingGame_04.png)
 
-![](Images/4-CreatingGame_04.png)
-
-Your game is also created on the UDP console when you generate your UDP client.
+When you generate your UDP client, your game is automatically created in the UDP console.
 
 <a name="udp-settings"></a>
 ## UDP Settings
@@ -83,7 +89,7 @@ Once your Unity project is linked to a UDP client, the **UDP Settings** inspecto
 |Push|Saves (pushes) your changes to the UDP server. The following information is synced:<br/>Game Title Settings UDP Sandbox Test Accounts IAP Catalog (if using the UDP package)|
 |Game Title|Input the title of your game, and press Push to save. This field syncs with the UDP console. <br/>By default and on first load, Game Title is populated with Game ID (see Settings).|
 |Unity Project ID|Your Unity project ID, which is now linked to your UDP client ID. This field is not editable.|
-|IAP Catalog|For UDP package implementations, the [IAP catalog](games-with-iap.html#iap-catalog) fields are displayed.<br/> For Unity IAP implementations, the [Open Catalog](#iap-catalog) button is displayed.|
+|IAP Catalog|For UDP package implementations, the [IAP catalog](games-with-iap.html#iap-catalog) fields are displayed.<br/> For Unity IAP implementations, the [Open Catalog](#iap-catalog) button is displayed. <br/>From Unity Editor version 2020.1, the IAP Catalog is available in a separate window.|
 |Settings|Contains additional game [settings](#settings).|
 |UDP Sandbox Test Accounts|Contains settings for [UDP Sandbox Test Accounts](#udp-sandbox).|
 
@@ -120,11 +126,9 @@ See [UDP in the Unity Editor](best-practices.html#udp-in-editor) for a more exte
 
 You can create test accounts for designated users to test your game in the UDP Sandbox environment. Sandbox test accounts only work with the generic UDP build - the one you create from your Unity project after you’ve implemented UDP.
 
-The UDP Sandbox acts as a virtual "Store" where you can verify that your IAP implementation is correct before preparing your game for submission to the real stores. 
+The UDP Sandbox acts as a virtual "Store" where you can verify that your IAP implementation is correct before preparing your game for submission to the real stores. For games with IAP, you must verify that your game initializes and purchases IAP items properly. This is required to release your first game revision on UDP.
 
 Sandbox mode also supports server-side validation.
-
-You should only generate repacked builds when your IAP implementation has cleared Sandbox testing. For more information, see [Test your IAPs in the Sandbox environment](best-practices.html#test). 
 
 **Note:** Sandbox test accounts do not work with repacked builds.
 

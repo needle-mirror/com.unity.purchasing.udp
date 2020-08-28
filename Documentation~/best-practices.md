@@ -39,32 +39,32 @@ If you do not maintain an IAP Catalog in your game client (for instance, your IA
 
 You will have to create an IAP Catalog on the UDP Console, as all stores maintain an IAP Catalog on their back-end and UDP must pass them the corresponding information. See [In-App Purchases](managing-and-publishing-your-game.html#iap) to understand how to create this setup.
 
-<a name="dont-mix"></a>
-## Don’t mix the implementations
+<a name="udp-implementation"></a>
+## UDP implementation
 
-There are two different ways to implement UDP in your game:
+From the following package versions and above, you can use the UDP and Unity IAP packages together:
+
+* UDP - 2.0.0
+* Unity IAP - 2.0.0 (Asset Store version)
+
+If you are using older package versions, you cannot use both packages. In this case, implement UDP in one of the following ways:
 
 * [Using Unity IAP](getting-started.html#using-iap)
 * [Using the UDP Package](getting-started.html#using-udp)
 
 **Note:** Choose one implementation method only.<br />
 Do not install the UDP Package in your project if you are already using Unity IAP.<br />
-Do not enable Unity IAP, if you decided to implement using the UDP Package.<br />
+Do not enable Unity IAP, if you decided to implement using the UDP Package.
 
-While this would not necessarily break your implementation, you expose yourself to edge cases where your game client would ultimately fail to sync its IAP items with the stores’ servers.
+You will receive errors (either in the Unity Editor console or as a popup) if:
 
-Keep it simple: choose one implementation in the Unity Editor and stick to it.
+* You have the UDP package installed and then try to install Unity IAP.
+* You have the Unity IAP package installed and then try to install the UDP package from the Package Manager.
+* You have the Unity IAP or UDP package installed from the Package Manager and then try to install the UDP package from the Asset Store.
 
-If your project already has a UDP set up and you try to install another one on top, expect the following errors:
+This can cause your game client to fail to sync its IAP items with the stores' servers.
 
-* if trying to install Unity IAP (whilst for instance already having installed the UDP Package), an Installer error is surfaced via a pop-up
-* if trying to install the UDP package from the Package Manager (whilst for instance already having installed Unity IAP) an error is surfaced via the Unity Editor console 
-* if trying to install the UDP package from the Asset Store (whilst already having installed either Unity IAP or the UDP Package from Package Manager), an Installer error is surfaced via a pop-up
-
-If you find out you mixed the two UDP implementations:
-
-* Decide which one you want to keep
-* Remove the other
+If you find out you have mixed the two UDP implementations, decide which one you want to keep and remove the other.
 
 If you choose to implement with the UDP Package, disable Unity IAP.
 
@@ -75,16 +75,14 @@ If you choose to implement via Unity IAP, you must
 
 See [UDP in the Unity Editor](#udp-in-editor) to double-check you’re getting the correct UI elements for the implementation of your choice.
 
-**Note:** if you’re **implementing UDP via Unity IAP**, it is normal to have both "Unity IAP" and “Unity Distribution Portal” in the **Window** menu:
+**Note:** The Unity IAP package (1.22.0-1.23.5) contains a UDP DLL. If you implement UDP in this way, the **Window** menu displays both **Unity IAP** and **Unity Distribution Portal**.
 
 ![](Images/14-BestPractices_02.png)
-
-This is because Unity IAP includes a UDP implementation (from version 1.22 and above); the UDP item surfaces in the **Window** menu when Unity IAP is installed.
 
 <a name="udp-in-editor"></a>
 ## UDP in the Unity Editor
 
-There are two different ways to implement UDP in your game:
+You can implement UDP in your game:
 
 * [Using Unity IAP](getting-started.html#using-iap)
 * [Using the UDP Package](getting-started.html#using-udp)
@@ -92,7 +90,7 @@ There are two different ways to implement UDP in your game:
 This section shows how the Editor UI looks in each case.
 
 <a name="editor-ui"></a>
-### Editor UI for the UDP Package
+### Editor UI for the UDP Package (up to 2019.4)
 
 So you [installed the UDP Package](setting-up-udp.html#install).
 
@@ -100,9 +98,7 @@ You should only have **Unity Distribution Portal** in the **Window** menu (that 
 
 ![](Images/14-BestPractices_03.png)
 
-Everything you need is in the **UDP Settings** inspector window:
-
-**Window > Unity Distribution Portal > Settings**
+To open the **UDP Settings** window, select **Window > Unity Distribution Portal > Settings**
 
 ![](Images/4-CreatingGame_05.png)
 
@@ -110,7 +106,7 @@ The **IAP Catalog** for UDP is directly included in the **UDP Settings** window:
 
 ![](Images/5-GamesWithIAP_06.png)
 
-When you add / change IAP Products, make sure you save them to the UDP Console by using the PUSH functions:
+When you add / change IAP Products, use the **Push** buttons to save them to the UDP Console.
 
 ![](Images/5-GamesWithIAP_07.png)
 
@@ -120,22 +116,36 @@ The Product-specific **Push** only syncs the information about that IAP Product.
 
 The top **Pull** button retrieves the latest UDP Settings that were saved on the UDP Console (all IAP Products, Game Title, Settings, Test Accounts). It also overrides any unsaved inputs in your Editor window.
 
-Don’t forget to PUSH your IAP Product changes when you’re done, and before you go on to build your game client.
+Make sure you [push your IAP Product](#save) changes when you’re done, and before you build your game client.
 
-Keep an eye out for any unsaved changes:
+For implementations via the UDP Package, you need to explicitly implement in your game the methods explained in [Game client implementation with the UDP Package](setting-up-udp.html#packman-install).
 
-![](Images/14-BestPractices_04.png)
+### Editor UI for the UDP package (2020.1 and above)
+In Unity Editor versions 2020.1 and above, the UDP package contains separate windows for:
 
-The "edited" label disappears when you’ve synced your IAP Product.
+* IAP Catalog
+* Settings
 
-Remember that in the case of an implementation via the UDP Package, you need to explicitly implement in your game the methods explained in [Game client implementation with the UDP Package](setting-up-udp.html#packman-install).
+#### UDP Settings
+The UDP Settings are displayed in the **Project Settings** window, under **Services**.
+To access the UDP settings, select **Window** > **Unity Distribution Portal** > **Settings**.
+Use the **Settings** window to configure the UDP settings.
+
+Use the **Push** and **Pull** buttons to push and pull changes to your settings to and from the UDP console. This does not push changes made in the IAP Catalog.
+
+#### IAP Catalog
+
+Use the **IAP Catalog** window to add and modify IAP items, and push them to the UDP console.
+To push changes for individual items, select the **Push** button for the specific item.
+To push all changes you make in the window, select the **Push** button at the top of the **IAP Catalog** window.
+
 
 <a name="editor-ui-iap"></a>
 ### Editor UI for UDP with Unity IAP
 
-So you have [Unity IAP 1.22 or above installed](setting-up-udp.html#install-with-iap).
+So you have [Unity IAP 1.22.0-1.23.5 installed](setting-up-udp.html#install-with-iap). These versions include a version of the UDP package.
 
-It is normal to have both "Unity IAP" and “Unity Distribution Portal” in the **Window** menu, as Unity IAP includes a UDP implementation from version 1.22.
+The **Window** menu displays both **Unity IAP** and **Unity Distribution Portal**.
 
 ![](Images/14-BestPractices_02.png)
 
@@ -143,9 +153,9 @@ It is normal to have both "Unity IAP" and “Unity Distribution Portal” in the
 
 * **Unity IAP >** gives you access to the regular Unity IAP features, including the IAP Catalog.
 
-However make sure you are getting the following.
+#### UDP Settings
 
-**Window > Unity Distribution Portal > Settings** opens the UDP Settings inspector window:
+To open the **UDP Settings** window, select **Window > Unity Distribution Portal > Settings**.
 
 ![](Images/14-BestPractices_05.png)
 
@@ -153,31 +163,17 @@ The **UDP Settings** window, for Unity IAP, looks like this:
 
 ![](Images/14-BestPractices_06.png)
 
-In the **UDP Settings** window, you can only set Game Title, Test Account Settings, and view/copy some the UDP client settings.
+In the **UDP Settings** window, you can only set Game Title, Test Account Settings, and view/copy some the UDP client settings. This also contains the **Open Catalog** button, to open the IAP Catalog window.
+
+#### IAP Catalog
 
 The IAP Catalog is in a separate window, accessed via the **Open Catalog** button, or via the menu  **Window > Unity IAP > IAP Catalog**:
 
 ![](Images/14-BestPractices_07.png)
 
-In the Unity IAP Catalog, there is a dedicated UDP section. You must enter your IAP Products in this section for them to become part of the UDP Catalog:
+The Unity IAP Catalog has a dedicated UDP section. You must enter your IAP Products here and click **Sync to UDP** for each product to add them to the UDP Catalog:
 
 ![](Images/5-GamesWithIAP_09.png)
-
-Remember to **Sync to UDP** every IAP Product that you add to the catalog under the **UDP Configuration** section, using the button immediately below the price field:
-
-![](Images/5-GamesWithIAP_10.png)
-
-Otherwise your IAP Product is not synced with the IAP Catalog on the UDP Console.
-
-This would result in this IAP Product not being synced with the store.
-
-Before you build, make sure you set **UDP as Build Target**:
-
-![](Images/5-GamesWithIAP_08.png)
-
-**Note**: UDP is only compatible with **Unity 5.6.1** and above.
-
-If you are using Unity IAP with a lower version of Unity, you will encounter problems.
 
 <a name="save"></a>
 ## Save / Sync / Push your IAP Catalog
@@ -223,17 +219,19 @@ In the **IAP Catalog** in the **UDP Settings** window, when you add / change IAP
 
 ![](Images/5-GamesWithIAP_07.png)
 
-The top **Push** button syncs everything with the UDP console (all IAP Products, Game Title, Settings, Test Accounts)
+The top **Push** button syncs everything with the UDP console (all IAP Products, Game Title, Settings, Test Accounts).
+
+**Note**: For Unity Editor version 2020.1 and above, the IAP Catalog is available in a separate window. In this case, the **Push** button in the UDP Settings window only pushes the UDP settings.
 
 The Product-specific **Push** only syncs the information about that IAP Product.
 
 The top **Pull** button retrieves the latest UDP Settings that were saved on the UDP Console (all IAP Products, Game Title, Settings, Test Accounts). It also overrides any unsaved inputs in your Editor window.
 
-Keep an eye out for any unsaved changes:
+If you have any unsaved changes, an **edited** label is displayed.
 
 ![](Images/14-BestPractices_04.png)
 
-The "edited" label disappears once your IAP Product is synced.
+The **edited** label disappears once your IAP Product is synced.
 
 **Warning:** closing the UDP Settings inspector window without pushing the changes doesn’t pop any warning message, so make sure to push your IAP Products diligently.
 
@@ -271,73 +269,17 @@ UDP stores will reject your game if a Product ID is invalid; in such cases you w
 <a name="test"></a>
 ## Test your IAPs in the Sandbox environment 
 
-If you have a problem upstream, it will not solve itself downstream. Test that your in-app purchases work in your generic UDP build, before you push it to UDP and have it repacked and submitted to the stores.
+Test that your in-app purchases work in your generic UDP build before you repack and submit it to the stores.
 
-Once you have built your APK, run it in the emulator or on a real Android device, using the UDP Sandbox Test Environment. 
+To ensure the UDP SDK is implemented in games that are uploaded to UDP, [test in the Sandbox](managing-and-publishing-your-game.html#sandbox) to make sure:
 
-You can set Sandbox Test Accounts directly from inside the **UDP Settings** window:
+* The `Initialize()` method is called (for all games)
+* The `Purchase()` method is called (for IAP games only)
 
-*Sandbox Test Accounts in [UDP Settings] inspector, for UDP Package**:*
-
-![](Images/14-BestPractices_10.png)
-
-*Sandbox Test Accounts in [UDP Settings] inspector, for **Unity IAP:*
-
-![](Images/14-BestPractices_11.png)
+Games that don’t meet this criteria cannot be released. This applies to the first release of a game only.
+If the tests are successful, you can release your revision and move to the submission stages.
 
 Test your in-app purchases from the emulator or from a real device. If your purchase buttons are unresponsive, or generally if you cannot make a purchase work in the Sandbox environment, something has been implemented incorrectly in your game. Check your IAP / UDP implementation and fix it before pushing to the UDP console and then the stores.
-
-## Check your in-app purchase implementation
-
-### Implementation via the UDP Package:
-
-The UDP Package implementation requires that you explicitly: 
-
-* Initialize UDP 
-* Query the store’s IAP product inventory
-* Request to purchase a product
-* Consume the purchase
-
-as explained in [Game client implementation with the UDP Package](games-with-iap.html#udp).
-
-Please read carefully and ensure your implementation is compliant. Again, [test your in-app purchases in your generic UDP build](#test) before repacking it for submission to the stores.
-
-### Implementation via Unity IAP:
-
-You do not need to specifically implement the following steps for UDP because your game relies on the underlying Unity IAP implementation. The following is handled by Unity IAP:
-
-* Initialize UDP
-* Query the store’s IAP product inventory
-* Request to purchase a product
-* Consume the purchase
-
-However, your game needs to properly use Unity IAP’s similar functions (such as initialization and purchase) according to the [Unity IAP Documentation](https://docs.unity3d.com/Manual/UnityIAP.html).
-
-You can also control how you [query your IAP inventory](games-with-iap.html#query-iap).
-
-Note: that the steps involved differ between UDP and Unity IAP. For example, Unity IAP does the "consume" automatically, so there is no API in Unity IAP for the consumption.
-
-Again, [test your in-app purchases in your generic UDP build](#test) before repacking it for submission to the stores.
-
-## Check your Manifest
-
-Make sure your AndroidManifest.xml is compliant with the [Android developer guide](https://developer.android.com/guide/topics/manifest/manifest-intro), otherwise errors will appear when your game is repacked for submission to the UDP stores.
-
-Typically, if you get
-
-* *"Error: Unable to compile resources. Please make sure your AndroidManifest.xml is correct or contact support."*
-
-it means your AndroidManifest is malformed, and UDP is not able to analyze the APK file.
-
-This can, for instance, be due to elements such as \<service>, \<activity>, \<provider>, \<receiver> being outside the <application> class.
-
-## Check your Build Target (if using Unity IAP)
-
-Before you build your UDP game build, make sure the Unity IAP **build target** for Android is set to "Unity Distribution Portal":
-
-![](Images/5-GamesWithIAP_08.png)
-
-Failure to do so typically prompts errors such as *"Error: no UDP SDK detected"* when your game is repacked for submission to the stores.
 
 <a name="archive"></a>
 ## Archive games no longer needed

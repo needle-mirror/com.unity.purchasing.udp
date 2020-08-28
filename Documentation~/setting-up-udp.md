@@ -17,11 +17,9 @@ You can install the UDP package from:
 <a name="packman-install"></a>
 ### Installing the UDP package from the Package Manager
 
-1. In the Unity Editor, select **Window** > **Package Manager**:<br/>
-    ![](Images/3-SettingUp_01.png)
-2. Select the tab **All** and look for Unity Distribution Portal:<br/>
-    ![](Images/3-SettingUp_02.png)
-3. Select the Unity Distribution Portal package and install it in your project.
+1. In the Unity Editor, select **Window** > **Package Manager**.
+2. In the Packages filter select **All Packages**.
+3. Select the Unity Distribution Portal package and select **Install**.
 
 Learn more about the [Unity Package Manager](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@2.1/manual/index.html).
 
@@ -32,20 +30,14 @@ If you don’t have access to Unity Package Manager, download the **UDP Package*
 <a name="install-with-iap"></a>
 ## Installing UDP via Unity IAP
 
-Follow these steps to install the latest **Unity IAP** version and check you have 1.22 or above installed (which has UDP).
+Unity IAP versions 1.22.0-1.23.5 include the UDP package. If using these versions of the Unity IAP package, you just need to [enable Unity IAP](https://docs.unity3d.com/Manual/UnityIAPSettingUp.html).
 
-From the **Unity Services** window:
+To check which Unity IAP version is installed, go to **Window** \> **Unity IAP** \> **IAP Updates**.
 
-1.  [Enable Unity IAP from the Services Window](https://docs.unity3d.com/Manual/UnityIAPSettingUp.html).
-2.  To import the latest package, select **Import** / **Reimport**.<br/>
-    ![](Images/3-SettingUp_03.png)
-3. Go to **Window** > **Unity IAP** > **IAP Updates**:
+## Installing the UDP package and the Unity IAP package
 
-![](Images/3-SettingUp_04.png)
+The Unity IAP package version 2.0.0 and above does not contain the UDP DLL. This requires the UDP package version 2.0.0 and above. From these versions on, [install the UDP package](#install) and install the Unity IAP package from the Asset Store.
 
-UDP is included in version 1.22 and above.
-
-![](Images/3-SettingUp_05.png)
 
 <a name="navigate"></a>
 ## Navigating the UDP console
@@ -68,6 +60,7 @@ The UDP console contains a navigation bar that lets you navigate between the fol
 * **My Games**
 * **Reporting**
 * **Partner Stores**
+* **Resources**
 
 ### My Games 
 
@@ -75,13 +68,11 @@ The **My Games** tab displays your UDP projects. From here you can switch betwee
 
 To view the **Game Info** page for a game, select the card in the **My Games** tab. The **Game Info** page lets you [edit your game information](managing-and-publishing-your-game.html#edit-info), and [publish your game and view its status](managing-and-publishing-your-game.html#publish).
 
-![](Images/3-SettingUp_06.png)
-
-A game card has a status "Published" if it has been submitted to - and accepted by - at least one store.
+Each game card displays the status of the game. The **Published** status indicates the game has completed all of the available steps to be repacked and submitted to the store.
 
 ### Reporting
 
-The **Reporting** tab displays performance information for your published games. For more information, see [Reporting Dashboard](reporting-dashboard.md).
+The [**Reporting**]((reporting-dashboard.md)) tab displays performance information for your published games.
 
 <a name="partner"></a>
 ### Partner Stores
@@ -91,3 +82,11 @@ The **Partner Stores** tab displays information about the stores you can distrib
 ![](Images/3-SettingUp_07.png)
 
 Click on the **More** link for more information on a store, such as overview, FAQs, and other useful links specific to each store.
+
+## Resources
+
+The **Resources** tab displays useful information to help you get started, including:
+
+* A link to the UDP documentation
+* A Get Started guide
+* Guides to different app stores

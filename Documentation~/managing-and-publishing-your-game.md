@@ -26,7 +26,7 @@ You can view and edit the following sections:
 * [Premium Price](#premium)
 * [In-App Purchases](#iap)
 * [Sandbox Testing](#sandbox)
-* [App Signature](#appsign)
+* [App Signature](#app-sign)
 * [Integration Information](#integrate)
 
 In the **Game Info** page, select the **EDIT INFO** button to enter edit mode. To save changes select **SAVE**. To discard your changes, select **CANCEL**.
@@ -266,7 +266,7 @@ Alternately, import all this information in bulk using the [Bulk IAP Import](bul
 
 1. Select **EDIT INFO** on the **Game Information** page.
 2. Click **IMPORT CATALOG** in the top-right corner of the In-App Purchases panel.
-3. See [Bulk IAP Import](#bulk-iap-import.md) for full coverage of this function.
+3. See [Bulk IAP Import](bulk-iap-import.md) for full coverage of this function.
 4. Select **SAVE** to save your changes.
 
 <a name="sandbox"></a>

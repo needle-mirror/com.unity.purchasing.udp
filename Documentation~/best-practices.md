@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The purpose of this section is to help you verify your UDP implementation is correct, and identify, avoid, or extract yourself from implementation problems. This goes deeper than the [FAQs ](#faq.md)and you should read this before beginning your implementation.
+The purpose of this section is to help you verify your UDP implementation is correct, and identify, avoid, or extract yourself from implementation problems. This goes deeper than the [FAQs ](faq.md)and you should read this before beginning your implementation.
 
 <a name="notion"></a>
 ## Notion of IAP Catalog

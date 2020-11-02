@@ -1,29 +1,89 @@
 ﻿<UXML xmlns="UnityEngine.UIElements">
-       <VisualElement class="project-settings-header-container">
-            <VisualElement class="project-settings-service-specific-container">
-                <VisualElement class="project-settings-title-container main-title">
-                    <VisualElement class="service-data-container">
-                        <VisualElement class="service-title-container">
-                            <TextElement class="service-title" text="Unity Distribution Portal"/>
-                        </VisualElement>
+    <VisualElement class="project-settings-header-container">
+        <VisualElement class="project-settings-service-specific-container">
+            <VisualElement class="project-settings-title-container main-title">
+                <VisualElement class="service-data-container">
+                    <VisualElement class="service-title-container">
+                        <TextElement class="service-title" text="Unity Distribution Portal"/>
                     </VisualElement>
                 </VisualElement>
             </VisualElement>
         </VisualElement>
-
-    <VisualElement class="udp-description udp-block">
-      <Label text="Your project must be linked to a UDP client." class="note-tag"/>
-      <Label text="If you're starting your UDP project here, generate a new UDP client now." class="note-tag"/>
-      <Label text="If your game client was created from the UDP portal, link it to your project using the client ID." class="note-tag"/>
     </VisualElement>
 
-  <VisualElement class="separator"/>
+    <!--    <VisualElement class="udp-description udp-block">-->
+    <!--      <Label text="Your project must be linked to a UDP client." class="note-tag"/>-->
+    <!--      <Label text="If you're starting your UDP project here, generate a new UDP client now." class="note-tag"/>-->
+    <!--      <Label text="If your game client was created from the UDP portal, link it to your project using the client ID." class="note-tag"/>-->
+    <!--    </VisualElement>-->
 
-  <VisualElement name="LinkClientIdBlock" class="udp-block">
-    <Button text="Generate new UDP client" class="submit-button-large" name="GenerateNewClientBtn"/>
-    <Label text="or" class="or"/>
-    <TextField name="UdpClientIdToBeLinked" text="UDP Client ID" multiline="false"/>
-    <Button text="Link to existing UDP client" class="submit-button-large" name="LinkExistingClientBtn"/>
-  </VisualElement>
+    <!--  hints block  -->
+    <VisualElement class="udp-description udp-block">
+        <Label text="Your Unity Project must be linked to your UDP game. You need your UDP game's Client ID to do this." class="note-tag"/>
+        <Label text="Follow these steps:" class="note-tag"/>
+
+        <VisualElement class="hint-li row-container" name="GoToPortalLi">
+            <Label text="-  On the" class="hint-li note-tag"/>
+            <VisualElement name="GoToPortalBtn" class="field-block link-button" >
+                <TextElement text="UDP Console" class="link-text" style="-unity-font-style: bold;"/>
+                <VisualElement class="external-link-icon"/>
+            </VisualElement>
+            <Label text=", select your game." class="hint-li note-tag"/>
+        </VisualElement>
+
+        <Label text="-  Go to its Game Info page." class="hint-li note-tag"/>
+        <Label text="-  Go to the Integration Information section and copy the Client ID." class="hint-li note-tag"/>
+        <Label text="-  Paste the Client ID below to link your UDP game to your Unity Project." class="hint-li note-tag"/>
+    </VisualElement>
+
+    <!--  linking block  -->
+    <VisualElement class="row-container">
+        <VisualElement name="LinkClientIdBlock" class="udp-block">
+            <TextField name="UdpClientIdToBeLinked" text="Enter client ID" multiline="false"/>
+            <Button text="Link Project to this UDP game" class="submit-button-large" name="LinkExistingClientBtn"/>
+        </VisualElement>
+    </VisualElement>
+
+
+    <!--    <VisualElement name="GenerateNewClientBlock" class="udp-block">-->
+    <!--        <Foldout text="Create your UDP game directly from inside the Unity Editor"-->
+    <!--                 class="udp-foldout"-->
+    <!--                 value="false"-->
+    <!--        >-->
+    <!--            <VisualElement class="row-container" name="generate-client-foldout">-->
+    <!--                <Image name="note-icon" />-->
+    <!--                <VisualElement class="udp-block" name="generate-client-group">-->
+    <!--                    <Label text="Creating a new UDP game from here will generate a new Client ID and automatically link it to this Unity Project." class="folder-li note-tag"/>-->
+    <!--                    <Label text="Your new game will also appear on the UDP Console, under your current Unity organization." class="folder-li note-tag" />-->
+    <!--                    <Label text="Consider carefully whether you or your team mates have created a game on the UDP Console already." class="folder-li note-tag"/>-->
+    <!--                    <Label text="Be aware that once a Unity Project ID and a UDP Client ID are linked, only organization Managers and Owners can unlink them. In general, we recommend you create new games from the UDP Console."-->
+    <!--                           class="folder-li note-tag"-->
+    <!--                    />-->
+
+    <!--                    <Button text="Generate new UDP client" class="submit-button-large" name="GenerateNewClientBtn"/>-->
+    <!--                </VisualElement>-->
+    <!--            </VisualElement>-->
+    <!--        </Foldout>-->
+    <!--    </VisualElement>-->
+
+    <!--  generating block  -->
+    <VisualElement name="GenerateNewClientBlock" class="udp-block">
+        <Toggle value="false" name="GenerateToggleBox" style="margin-left: 4px;">
+            <Label text="Create your UDP game directly from inside the Unity Editor" />
+        </Toggle>
+        <VisualElement class="row-container" name="GenerateClientFoldoutContainer">
+            <Image name="note-icon" />
+            <VisualElement class="udp-block" name="generate-client-group">
+                <Label text="Creating a new UDP game from here will generate a new Client ID and automatically link it to this Unity Project." class="folder-li note-tag"/>
+                <Label text="Your new game will also appear on the UDP Console, under your current Unity organization." class="folder-li note-tag" />
+                <Label text="Consider carefully whether you or your team mates have created a game on the UDP Console already." class="folder-li note-tag"/>
+                <Label text="Be aware that once a Unity Project ID and a UDP Client ID are linked, only organization Managers and Owners can unlink them. In general, we recommend you create new games from the UDP Console."
+                       class="folder-li note-tag"
+                />
+
+                <Button text="Generate new UDP client" class="submit-button-large" name="GenerateNewClientBtn"/>
+            </VisualElement>
+        </VisualElement>
+    </VisualElement>
 
 </UXML>

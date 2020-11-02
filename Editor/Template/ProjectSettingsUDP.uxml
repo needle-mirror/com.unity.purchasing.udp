@@ -13,15 +13,21 @@
     </VisualElement>
 
     <VisualElement class="udp-op-block udp-block">
-      <VisualElement class="udp-description">
-        <Label text="UDP settings are saved on the server side; changes are not saved locally." class="note-tag"/>
-        <Label text="'Push' will save your changes to the UDP server." class="note-tag"/>
-        <Label text="'Pull' will retrieve your settings from the UDP server." class="note-tag"/>
-      </VisualElement>
-      <VisualElement class="button-container" name="UDPOperationBlock">
-        <Button name="PullBtn" text="Pull" class="submit-button"/>
-        <Button name="PushBtn" text="Push" class="submit-button"/>
-      </VisualElement>
+        <VisualElement class="udp-description">
+            <Label text="UDP settings are saved on the server; not locally." class="note-tag"/>
+            <Label text="'Pull' retrieves your last-saved settings from the UDP server." class="note-tag"/>
+            <Label text="'Push' saves your changes to the UDP server." class="note-tag"/>
+        </VisualElement>
+
+        <VisualElement class="sync-status-group" name="syncStatusGroupBlock">
+            <Label text="Pulling..." name="PullingLabel" style="align-self: center;"/>
+            <Label text="Pushing..." name="PushingLabel" style="align-self: center;"/>
+        </VisualElement>
+        
+        <VisualElement class="button-container" name="UDPOperationBlock">
+            <Button name="PullBtn" text="Pull" class="submit-button"/>
+            <Button name="PushBtn" text="Push" class="submit-button"/>
+        </VisualElement>
     </VisualElement>
 
     <VisualElement class="separator"/>
@@ -61,7 +67,7 @@
     <VisualElement class="separator"/>
 
     <VisualElement class="udp-player-block udp-block" name="UDPPlayerBlock">
-      <Foldout text="UDP Sandbox Text Accounts" value="true">
+      <Foldout text="UDP Sandbox Test Accounts" value="true">
         <VisualElement class="players" name="UDPPlayers">
         </VisualElement>
           <Button text="Add new test account" class="submit-button-medium" name="AddNewPlayerBtn"/>
@@ -74,7 +80,7 @@
   
   <VisualElement class="udp-link-block udp-block" name="UDPExternalLinkBlock">
       <VisualElement name="GoToUDPDashboard" class="field-block link-button">
-        <TextElement text="Go to Console" class="link-text"/>
+        <TextElement text="Go to UDP Console" class="link-text"/>
         <VisualElement class="external-link-icon"/>
       </VisualElement>
       <VisualElement name="GoToIAPCatalog" class="field-block link-button">

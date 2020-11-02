@@ -11,6 +11,7 @@
 .udp-description{
 	margin-top:10px;
 	white-space:normal;
+	padding-left: 13px;
 }
 
 .submit-button{
@@ -19,6 +20,69 @@
 
 .note-tag{
 	font-size: 12px;
+}
+
+.row-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.column-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.sync-status-group {
+	height: 20px;
+	flex-direction: row;
+	justify-content:flex-end;
+}
+
+.hint-li {
+	/*background-color: initial;*/
+	-unity-text-align: middle-center;
+	padding-left: initial;
+	padding-right: initial;
+}
+
+#GoToPortalLi {
+	margin-top: 30px;
+	align-items: center;
+}
+
+#GoToPortalBtn {
+	/*width: 30px;*/
+	align-self: center;
+}
+
+#GenerateClientFoldoutContainer {
+	align-items: initial;
+	padding-left: 6px;
+}
+
+#generate-client-group {
+	padding-top: 15px;
+}
+
+#GenerateNewClientBtn {
+	margin-top: 20px;
+	margin-left: initial;
+}
+
+#note-icon {
+	/*--unity-image: resource(--unity-icons-console_entry_info);*/
+	--unity-image: resource("Icons/d_console.infoicon.png");
+	width: 20px;
+	height: 20px;
+	margin-top: 20px;
+}
+
+.folder-li {
+	font-size: 12px;
+	/*height: 30px;*/
+	/*background-color: initial;*/
+	padding: initial;
 }
 
 .udp-input-submit{
@@ -56,9 +120,9 @@
 }
 
 .submit-button-large{
-	width:240px;
+	width:220px;
 	height:24px;
-	align-self: center;
+	/*align-self: center;*/
 }
 
 .link-text{
@@ -67,6 +131,7 @@
 
 #LinkClientIdBlock{
 	margin-top:16px;
+	margin-bottom: 40px;
 }
 
 #LinkClientIdBlock > .or{
@@ -76,16 +141,21 @@
 }
 
 #LinkClientIdBlock > #UdpClientIdToBeLinked{
-	width:240px;
+	width: 400px;
 	height:24px;
-	align-self:center;
-	margin-bottom:4px;
+	/*align-self:center;*/
+	margin-bottom:10px;
 }
 
 .udp-can-not-oauth{
 	flex:1;
-    flex-wrap:wrap;
+	flex-wrap:wrap;
 	margin: 80px 20px;
 	white-space:normal;
 	font-size:16px;
+}
+
+#GenerateToggleBox > VisualElement {
+	flex-grow: 0;
+	margin-right: 10px;
 }

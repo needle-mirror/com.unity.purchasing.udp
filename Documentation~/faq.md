@@ -114,7 +114,7 @@ No. If you change them in the general Game Info section of the UDP console, the 
 
 #### Can I submit Premium games?
 
-Yes. There is a Premium Price field in the Game Information section for the pay-to-download price of your game; for more details see [Premium Games](#premium-games). Note that not all stores accept Premium games; the stores which do, carry a "Pay-to-Download" label (in the **Publish** tab). If you try to submit a Premium game to a store which doesn’t support them, you will be warned before the submission can go through. 
+Yes. There is a Premium Price field in the Game Information section for the pay-to-download price of your game; for more details see [Premium Games](premium-games.md). Note that not all stores accept Premium games; the stores which do, carry a "Pay-to-Download" label (in the **Publish** tab). If you try to submit a Premium game to a store which doesn’t support them, you will be warned before the submission can go through. 
 
 #### We use several Organizations within our studio. How will that work?
 

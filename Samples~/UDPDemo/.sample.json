@@ -1,0 +1,4 @@
+{
+  "displayName": "UDP sample",
+  "description": "Sample scene that lets you see how UDP methods are implemented and called."
+}

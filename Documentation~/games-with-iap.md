@@ -360,7 +360,7 @@ foreach (var product in catalog.allValidProducts)
 }
 ```
 
-`ProductCatalog.LoadDefaultCatalog()` does not fetch IAP products added with the [Bulk IAP Import](#bulk-iap-import.md) feature or [directly from the UDP Console](managing-and-publishing-your-game.html#create-iap).
+`ProductCatalog.LoadDefaultCatalog()` does not fetch IAP products added with the [Bulk IAP Import](bulk-iap-import.md) feature or [directly from the UDP Console](managing-and-publishing-your-game.html#create-iap).
 
 If you know that your game’s IAP Catalog will be modified on the UDP Console, prepare your game to fetch IAP product information from the UDP Console.
 

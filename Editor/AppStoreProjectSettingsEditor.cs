@@ -43,6 +43,10 @@ namespace UnityEngine.UDP.Editor
             internal static readonly string k_UDPPlayerBlock = "UDPPlayerBlock";
             internal static readonly string k_UDPExternalLinkBlock = "UDPExternalLinkBlock";
             internal static readonly string k_UDPLinkClientBlock = "LinkClientIdBlock";
+            internal static readonly string k_UDPGenerateNewClientBlock = "GenerateNewClientBlock";
+            internal static readonly string k_UDPGoToPortalLiBlock = "GoToPortalLi";
+            internal static readonly string k_UDPSyncStatusGroupBlock = "syncStatusGroupBlock";
+            internal static readonly string k_UDPGenerateClientFoldoutBlock = "GenerateClientFoldoutContainer";
 
             internal static readonly string k_UDPPullButton = "PullBtn";
             internal static readonly string k_UDPPushButton = "PushBtn";
@@ -67,6 +71,11 @@ namespace UnityEngine.UDP.Editor
             internal static readonly string k_GenNewClientButton = "GenerateNewClientBtn";
             internal static readonly string k_UdpClientIdToBeLinked = "UdpClientIdToBeLinked";
             internal static readonly string k_LinkExistingClientButton = "LinkExistingClientBtn";
+            internal static readonly string k_UDPGoToPortalBtn = "GoToPortalBtn";
+            internal static readonly string k_UDPToggleBtn = "GenerateToggleBox";
+
+            internal static readonly string k_UDPPullingLabel = "PullingLabel";
+            internal static readonly string k_UDPPushingLabel = "PushingLabel";
         }
 
         private static class UssStrings
@@ -92,6 +101,14 @@ namespace UnityEngine.UDP.Editor
         VisualElement m_UDPPlayersContainer;
         VisualElement m_UDPExternalLinkBlock;
         VisualElement m_UDPLinkClientIdBlock;
+        VisualElement m_UDPGenerateNewClientBlock;
+        VisualElement m_UDPGoToPortalLiBlock;
+        VisualElement m_UDPSyncStatusGroupBlock;
+        VisualElement m_UDPGenerateClientFoldoutBlock;
+        
+        VisualElement m_UDPPullingLabel;
+        VisualElement m_UDPPushingLabel;
+        // private List<Dictionary<string, VisualElement>> _containerList = new List<Dictionary<string, VisualElement>>();
 
         #region local field
 
@@ -230,7 +247,6 @@ namespace UnityEngine.UDP.Editor
             //            m_UDPOpenIapCatalogButton = rootVisualElement.Q<Button>(k);
 
 //            RestoreTestAccount();
-            SetUpServiceWindow();
 
             EditorApplication.update -= CheckUserState;
             EditorApplication.update += CheckUserState;
@@ -244,23 +260,25 @@ namespace UnityEngine.UDP.Editor
             HideVisualElement(m_ServiceCannotOAuthContainer);
             HideVisualElement(m_ServiceCannotGetProjectIdContainer);
             HideVisualElement(m_ServiceGeneralErrorContainer);
-
-            if (m_ServiceWindowContainer != null && rootVisualElement.Contains(m_ServiceWindowContainer))
+            var root = rootVisualElement;
+            if (m_ServiceWindowContainer != null && root.Contains(m_ServiceWindowContainer))
             {
-                rootVisualElement.Remove(m_ServiceWindowContainer);
+                root.Remove(m_ServiceWindowContainer);
             }
 
             m_ServiceWindowContainer = new VisualElement();
             m_ServiceWindowContainer.Add(m_MainTemplateAssets.CloneTree().contentContainer);
-            rootVisualElement.Add(m_ServiceWindowContainer);
+            root.Add(m_ServiceWindowContainer);
 
-            m_UDPSettingsWindow = rootVisualElement.Q(UxmlStrings.k_UDPSettingsWindow);
-            m_UDPOperationBlock = rootVisualElement.Q(UxmlStrings.k_UDPOperationBlock);
-            m_UDPBasicInfoBlock = rootVisualElement.Q(UxmlStrings.k_UDPBasicInfoBlock);
-            m_UDPClientSettingsBlock = rootVisualElement.Q(UxmlStrings.k_UDPClientSettingsBlock);
-            m_UDPPlayerBlock = rootVisualElement.Q(UxmlStrings.k_UDPPlayerBlock);
-            m_UDPExternalLinkBlock = rootVisualElement.Q(UxmlStrings.k_UDPExternalLinkBlock);
-
+            m_UDPSettingsWindow = root.Q(UxmlStrings.k_UDPSettingsWindow);
+            m_UDPSyncStatusGroupBlock = root.Q(UxmlStrings.k_UDPSyncStatusGroupBlock);
+            m_UDPOperationBlock = root.Q(UxmlStrings.k_UDPOperationBlock);
+            m_UDPBasicInfoBlock = root.Q(UxmlStrings.k_UDPBasicInfoBlock);
+            m_UDPClientSettingsBlock = root.Q(UxmlStrings.k_UDPClientSettingsBlock);
+            m_UDPPlayerBlock = root.Q(UxmlStrings.k_UDPPlayerBlock);
+            m_UDPExternalLinkBlock = root.Q(UxmlStrings.k_UDPExternalLinkBlock);
+            
+            SetUpSyncStatusGroup();
             SetUpOperationsPart();
             SetUpBasicInfoPart();
             SetUpClientSettingsPart();
@@ -275,25 +293,38 @@ namespace UnityEngine.UDP.Editor
             HideVisualElement(m_ServiceCannotGetProjectIdContainer);
             HideVisualElement(m_ServiceGeneralErrorContainer);
 
-            if (m_ServiceLinkProjectContainer != null && rootVisualElement.Contains(m_ServiceLinkProjectContainer))
+            var root = rootVisualElement;
+
+            if (m_ServiceLinkProjectContainer != null && root.Contains(m_ServiceLinkProjectContainer))
             {
-                rootVisualElement.Remove(m_ServiceLinkProjectContainer);
+                root.Remove(m_ServiceLinkProjectContainer);
             }
 
             m_ServiceLinkProjectContainer = new VisualElement();
             m_ServiceLinkProjectContainer.Add(m_LinkProjectTemplateAssets.CloneTree().contentContainer);
-            rootVisualElement.Add(m_ServiceLinkProjectContainer);
+            root.Add(m_ServiceLinkProjectContainer);
 
-            m_UDPLinkClientIdBlock = rootVisualElement.Q(UxmlStrings.k_UDPLinkClientBlock);
-            m_UDPLinkClientIdBlock.Q<Button>(UxmlStrings.k_GenNewClientButton).clicked -=
-                OnGenerateNewClientButtonClick;
-            m_UDPLinkClientIdBlock.Q<Button>(UxmlStrings.k_GenNewClientButton).clicked +=
-                OnGenerateNewClientButtonClick;
-
+            m_UDPLinkClientIdBlock = root.Q(UxmlStrings.k_UDPLinkClientBlock);
             m_UDPLinkClientIdBlock.Q<Button>(UxmlStrings.k_LinkExistingClientButton).clicked -=
                 OnLinkToExitingClientButtonClick;
             m_UDPLinkClientIdBlock.Q<Button>(UxmlStrings.k_LinkExistingClientButton).clicked +=
                 OnLinkToExitingClientButtonClick;
+
+            Action onGoToPortalClick = () => Application.OpenURL(k_UDPDashboardLink);
+            m_UDPGoToPortalLiBlock = root.Q(UxmlStrings.k_UDPGoToPortalLiBlock);
+            m_UDPGoToPortalLiBlock.Q(UxmlStrings.k_UDPGoToPortalBtn).AddManipulator(new Clickable(onGoToPortalClick));
+
+
+            m_UDPGenerateNewClientBlock = root.Q(UxmlStrings.k_UDPGenerateNewClientBlock);
+            m_UDPGenerateNewClientBlock.Q<Button>(UxmlStrings.k_GenNewClientButton).clicked -= OnGenerateNewClientButtonClick;
+            m_UDPGenerateNewClientBlock.Q<Button>(UxmlStrings.k_GenNewClientButton).clicked += OnGenerateNewClientButtonClick;
+
+            m_UDPGenerateClientFoldoutBlock = m_UDPGenerateNewClientBlock.Q(UxmlStrings.k_UDPGenerateClientFoldoutBlock);
+            HideVisualElement(m_UDPGenerateClientFoldoutBlock);
+            m_UDPGenerateNewClientBlock.Q<Toggle>(UxmlStrings.k_UDPToggleBtn).RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                m_UDPGenerateClientFoldoutBlock.style.display = evt.newValue ? DisplayStyle.Flex : DisplayStyle.None;
+            });
         }
 
         private void SetUpGeneralErrorWindow(string errorMsg)
@@ -443,6 +474,8 @@ namespace UnityEngine.UDP.Editor
             m_UDPPlayerBlock?.SetEnabled(!m_IsTestAccountUpdating);
 
             m_UDPLinkClientIdBlock?.SetEnabled(!m_IsGeneratingOrLinking);
+            
+            m_UDPGenerateNewClientBlock?.SetEnabled(!m_IsGeneratingOrLinking);
 
             if (k_RequestQueue.Count == 0)
             {
@@ -614,7 +647,7 @@ namespace UnityEngine.UDP.Editor
                                 "[UDP] " + errMsg,
                                 "OK");
                         }
-
+                        HideVisualElement(m_UDPPushingLabel);
                         Repaint();
                     }
                     else if (resp.GetType() == typeof(PlayerDeleteResponse))
@@ -800,20 +833,34 @@ namespace UnityEngine.UDP.Editor
             LoginRequired(Step.InitData);
         }
 
+        private void SetUpSyncStatusGroup()
+        {
+            var container = m_UDPSyncStatusGroupBlock;
+            
+            m_UDPPullingLabel = container.Q<Label>(UxmlStrings.k_UDPPullingLabel);
+            HideVisualElement(m_UDPPullingLabel);
+            
+            m_UDPPushingLabel = container.Q<Label>(UxmlStrings.k_UDPPushingLabel);
+            HideVisualElement(m_UDPPushingLabel);   
+        }
+
         private void SetUpOperationsPart()
         {
-            m_UDPOperationBlock.Q<Button>(UxmlStrings.k_UDPPullButton).clicked -= OnPullButtonClick;
-            m_UDPOperationBlock.Q<Button>(UxmlStrings.k_UDPPullButton).clicked += OnPullButtonClick;
+            var container = m_UDPOperationBlock;
+            
+            container.Q<Button>(UxmlStrings.k_UDPPullButton).clicked -= OnPullButtonClick;
+            container.Q<Button>(UxmlStrings.k_UDPPullButton).clicked += OnPullButtonClick;
 
-            m_UDPOperationBlock.Q<Button>(UxmlStrings.k_UDPPushButton).clicked -= OnPushButtonClick;
-            m_UDPOperationBlock.Q<Button>(UxmlStrings.k_UDPPushButton).clicked += OnPushButtonClick;
+            container.Q<Button>(UxmlStrings.k_UDPPushButton).clicked -= OnPushButtonClick;
+            container.Q<Button>(UxmlStrings.k_UDPPushButton).clicked += OnPushButtonClick;
         }
 
         private void SetUpBasicInfoPart()
         {
             m_UDPBasicInfoBlock.Q<TextField>(UxmlStrings.k_UDPGameTitle).SetValueWithoutNotify(m_AppName.stringValue);
-            m_UDPBasicInfoBlock.Q<TextField>(UxmlStrings.k_UDPProjectId)
-                .SetValueWithoutNotify(Application.cloudProjectId);
+            var m_ProjectId = m_UDPBasicInfoBlock.Q<TextField>(UxmlStrings.k_UDPProjectId);
+            m_ProjectId.SetValueWithoutNotify(Application.cloudProjectId);
+            m_ProjectId.SetEnabled(false);
 
             m_UDPBasicInfoBlock.Q<Button>(UxmlStrings.k_CopyProjectIdButton).clicked -= OnCopyProjectIdButtonClick;
             m_UDPBasicInfoBlock.Q<Button>(UxmlStrings.k_CopyProjectIdButton).clicked += OnCopyProjectIdButtonClick;
@@ -831,17 +878,22 @@ namespace UnityEngine.UDP.Editor
                 m_UDPClientSettingsBlock.Q<Label>(UxmlStrings.k_UDPClientErrorMessage).text = m_UpdateClientErrorMsg;
             }
 
-            m_UDPClientSettingsBlock.Q<TextField>(UxmlStrings.k_UDPGameId).SetValueWithoutNotify(m_AppSlug.stringValue);
-            m_UDPClientSettingsBlock.Q<TextField>(UxmlStrings.k_UDPClientId)
-                .SetValueWithoutNotify(m_UnityClientId.stringValue);
-            m_UDPClientSettingsBlock.Q<TextField>(UxmlStrings.k_UDPClientKey)
-                .SetValueWithoutNotify(m_UnityClientKey.stringValue);
-            m_UDPClientSettingsBlock.Q<TextField>(UxmlStrings.k_UDPRSAPublicKey)
-                .SetValueWithoutNotify(m_UnityClientRsaPublicKey.stringValue);
-            m_UDPClientSettingsBlock.Q<TextField>(UxmlStrings.k_UDPClientSecret)
-                .SetValueWithoutNotify(m_ClientSecretInMemory);
-            m_UDPClientSettingsBlock.Q<TextField>(UxmlStrings.k_UDPClientCallbackUrl)
-                .SetValueWithoutNotify(m_CallbackUrlInMemory);
+            var container = m_UDPClientSettingsBlock;
+
+            Action<string, string> setDisabledTextFields = (k, v) =>
+            {
+                var ele = container.Q<TextField>(k);
+                ele.SetValueWithoutNotify(v);
+                ele.SetEnabled(false);
+            };
+
+            setDisabledTextFields(UxmlStrings.k_UDPGameId, m_AppSlug.stringValue);
+            setDisabledTextFields(UxmlStrings.k_UDPClientId, m_UnityClientId.stringValue);
+            setDisabledTextFields(UxmlStrings.k_UDPClientKey, m_UnityClientKey.stringValue);
+            setDisabledTextFields(UxmlStrings.k_UDPRSAPublicKey, m_UnityClientRsaPublicKey.stringValue);
+            setDisabledTextFields(UxmlStrings.k_UDPClientSecret, m_ClientSecretInMemory);
+
+            container.Q<TextField>(UxmlStrings.k_UDPClientCallbackUrl).SetValueWithoutNotify(m_CallbackUrlInMemory);
         }
 
         private void SetUpSinglePlayer(int index)
@@ -1135,18 +1187,27 @@ namespace UnityEngine.UDP.Editor
         private void OnPullButtonClick()
         {
             GUI.FocusControl(null);
+            Action pulling = () =>
+            {
+                Debug.Log("Pulling...");
+                ShowVisualElement(m_UDPPullingLabel);
+                RefreshAllInformation();
+            };
+           
             if (AnythingChanged())
             {
-                if (EditorUtility.DisplayDialog("Local changes may be overwritten",
-                    "There are pending local edits that will be lost if you pull.",
-                    "Pull anyway", "Cancel"))
+                if (EditorUtility.DisplayDialog(
+                    title:   "Local changes may be overwritten",
+                    message: "There are pending local edits that will be lost if you pull.",
+                    ok:      "Pull anyway",
+                    cancel:  "Cancel"))
                 {
-                    RefreshAllInformation();
+                    pulling();
                 }
             }
             else
             {
-                RefreshAllInformation();
+                pulling();
             }
         }
 
@@ -1224,6 +1285,8 @@ namespace UnityEngine.UDP.Editor
                 if (!req.IsEmpty())
                 {
                     m_IsOperationRunning = true;
+                    ShowVisualElement(m_UDPPushingLabel);
+                    Debug.Log("Pushing...");
                     k_RequestQueue.Enqueue(req);
                 }
             }
@@ -1328,6 +1391,14 @@ namespace UnityEngine.UDP.Editor
             if (visualElement != null)
             {
                 visualElement.style.display = DisplayStyle.None;
+            }
+        }
+        
+        private void ShowVisualElement(VisualElement visualElement)
+        {
+            if (visualElement != null)
+            {
+                visualElement.style.display = DisplayStyle.Flex;
             }
         }
 

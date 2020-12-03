@@ -72,7 +72,7 @@ public class UDPSampleScript : MonoBehaviour
          * should get these information from the UDP portal and fill the AppInfo manually.
          *
          * AppInfo appInfo = new AppInfo();
-         * appInfo.AppSlug = "app slug from the portal";
+         * appInfo.AppSlug = "game id from the portal";
          * appInfo.ClientId = "client id from the portal";
          * appInfo.ClientKey = "client key from the portal";
          * appInfo.RSAPublicKey = "rsa public key from the portal";
@@ -146,7 +146,7 @@ public class UDPSampleScript : MonoBehaviour
          * initialization succeeds.
          *
          * StoreService.QueryInventory() will return two things:
-         * 1) Un-consumed purchase.
+         * 1) Un-consumed purchase (unconsumed consumable products & non-consumable products).
          * 2) Queried products information.
          */
         GetButton("QueryButton").onClick.AddListener(() =>

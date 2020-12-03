@@ -659,6 +659,8 @@ namespace UnityEngine.UDP.Editor
                         Repaint();
                     }
                 }
+
+                request.Dispose();
             }
             else
             {
@@ -1098,7 +1100,8 @@ namespace UnityEngine.UDP.Editor
             return req;
         }
 
-
+        // NOTICE: If you want to modify the format of the settings file.
+        // Remember to check through the methods that are using it.  
         private void SaveGameSettingsProps(String clientId)
         {
             Log("save game settings");

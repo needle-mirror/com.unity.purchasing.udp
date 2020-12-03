@@ -55,6 +55,7 @@ namespace UnityEngine.UDP.Editor.Analytics
         }
 
         // clientCreate or clientUpdate
+        // deprecated
         public static UnityWebRequest ClientEvent(string eventName, string clientId, string failedReason)
         {
             var parameters = Common.GetCommonParams();
@@ -80,6 +81,7 @@ namespace UnityEngine.UDP.Editor.Analytics
         }
 
         // iapCreate && iapUpdate
+        // deprecated
         public static UnityWebRequest IapEvent(string eventName, string clientId, IapItem item, string failedReason)
         {
             var parameters = Common.GetCommonParams();
@@ -115,6 +117,7 @@ namespace UnityEngine.UDP.Editor.Analytics
             return AssembleAndSendWebRequest(request);
         }
 
+        // deprecated
         public static UnityWebRequest AppEvent(string eventName, string clientId, AppItemResponse appItem,
             string failedReason)
         {

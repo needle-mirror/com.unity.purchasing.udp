@@ -1,117 +1,127 @@
-# Getting Started
+# Getting Started with the UDP package
 
-## UDP Journey
+This section explains how to install and start using the UDP package in your Unity project.
 
-A typical UDP implementation consists of the following steps:
+**Note**: If you want to use the UDP package and the Unity IAP package, see [UDP implementation](https://docs.unity3d.com/Manual/udp-getting-started.html#how-to-implement).
 
-1. **Implement UDP in your Unity project**.<br/>
-Set up and configure UDP in the Unity Editor, implement UDP in your game project, and populate your **IAP Catalog** with your in-app purchase products (if any).
-2. **Build and deploy your game to UDP**.<br/>
-Build your UDP Android package (apk), test it in the UDP Sandbox environment, and deploy it to the UDP console where you’ll begin preparing your game for submission to the stores.
-3. **Edit your game information**.<br/>
-On the [UDP console](https://distribute.dashboard.unity.com), provide app store listing information and resources for your game, such as multi-language descriptions, multi-currency price points, screenshots, video trailers, and create releases for distribution.
-4. **Prepare your game for submission**.<br/>
-Sign up with the stores using your UnityID, and register your game with the app stores directly from inside the UDP console.
-5. **Publish to stores**.<br/>
-Select the stores you want to submit your game to. UDP automatically repacks your game into store-specific builds and submits them to the stores along with the relevant game descriptions. 
-6. **Track game performance**.<br/>
-When your game is published, monitor its performance across the different stores from the UDP reporting dashboard.
+<a name="install"></a>
+## Installing the UDP package
 
-<a name="how-to-implement"></a>
-## How to implement UDP
+You can install the UDP package from:
+* The [Package Manager](https://docs.unity3d.com/Manual/Packages.html)
+* The [Asset Store](https://assetstore.unity.com/packages/add-ons/services/billing/unity-distribution-portal-138507)
 
-You can implement UDP in your game in one of the following ways.
+### Installing the UDP package from the Package Manager
 
-* Using Unity IAP only (for Unity IAP package versions 1.22.0-1.23.5)
-* Using the UDP Package only
-* Using the UDP package and Unity IAP package (for Unity IAP package versions 2.0.0+)
+To install the UDP package via the Package Manager:
 
-**Note**: Prior to Unity IAP 2.0.0, the package contained a UDP DLL. This meant that installing the Unity IAP package also installed the UDP package. From Unity IAP version 2.0.0, the UDP DLL is not included. Unity recommends using the UDP package along with the Unity IAP package version 2.0.0+, available from the [Asset Store](https://assetstore.unity.com/packages/add-ons/services/billing/unity-iap-68207).
+1. In the Unity Editor, select **Window** > **Package Manager**.
+1. In the Packages filter select **All Packages**.
+1. Select the Unity Distribution Portal package and select **Install**.
 
-<a name="using-iap"></a>
-### Using Unity IAP
+### Installing the UDP package from the Asset Store
 
-If your game already uses Unity IAP, this should be the obvious choice. 
+To install the UDP package from the Asset Store:
 
-UDP is included in Unity IAP from version 1.22.0-1.23.5. If you use the Unity IAP package (1.22.0-1.23.5) do not install the UDP package separately.
+1. Download the UDP package from the [Asset Store](https://assetstore.unity.com/packages/add-ons/services/billing/unity-distribution-portal-138507).
+1. In the Unity Editor, select **Assets** > **Import Package** > **Custom Package**.
+1. Select the package and select **Open** > **Import**.
 
-Follow the general implementation guidance of [Unity IAP’s Documentation](https://docs.unity3d.com/Manual/UnityIAP.html) before you begin [Game client implementation with Unity IAP](games-with-iap.html#with-unity-iap).
+<a name="linking"></a>
+## Linking your Unity project to UDP
 
-<a name="using-udp"></a>
-### Using the UDP Package
+To be able to use the UDP Settings window, you need to link your Unity project to a UDP Client. 
 
-This implementation is similar to the Google Play In-App Billing implementation, so if your game was originally wired that way then porting it to UDP should be straightforward. 
+Prerequisites
 
-The UDP package is available from Unity Package Manager or from the Unity Asset Store. 
+You have:
 
-Implementation guidance is given in [Game client implementation with the UDP Package](games-with-iap.html#with-udp).
+* [Created a game in the UDP console](https://docs.unity3d.com/Manual/udp-distribution.html)
+* [Set up your project for Unity Services](https://docs.unity3d.com/Manual/SettingUpProjectServices.html)
 
-## Ownership
+To link your Unity project to a UDP client:
 
-UDP games belong to a [Unity Organization](https://docs.unity3d.com/Manual/OrgsManagingyourOrganization.html) and not to any individual user. All users of an Organization have access to its UDP games. Permissions vary depending on the User / Manager / Owner role of a given user within the Organization.
+1. In the Unity Editor, select **Window** > **Unity Distribution Portal** > **Settings**.
+1. In the UDP Client ID field, enter your UDP Client ID.
+<br/> The Client ID is displayed in the Integration Information section of the Game Info page in the UDP console.
+1. Select **Link project to this UDP game**.
+<br/>This creates a link between the Unity project and the UDP client.
 
-You can also add users, who aren't in the Organization, to specific projects. Add users in the Unity Dashboard under **Project** > **Settings** > **Users**.
+Your project is now set up to use UDP. The relevant settings from the UDP console are included in the UDP Settings window. These settings are stored in the UDPSettings.asset file. 
 
-You can divide tasks within a Unity Organization between users and non-users of the Unity Editor; for example:
+### Creating a UDP client ID from the Unity Editor
 
-* **Publishing Manager** (not an Editor user) 
-    * Creates a new game on the UDP console 
-    * Passes **Developer** the parameters needed to carry out the UDP implementation
-    * Consolidates the material required for distribution
-    * Begins signing up with the stores the Organization wants to distribute its games to
-* **Developer** (Editor user)
-    * Implements UDP in the project
-    * Builds and tests the game APK
-    * Deploys the game build to the UDP console
-* **Publishing Manager** 
-    * Creates game releases
-    * Finalizes the submissions to the stores
+Unity recommends creating your UDP client in the UDP console and linking it to your project, as described above.
+Alternatively, to create a UDP client from the Unity Editor:
 
-### Project-related permissions
-Members of an organization and individuals granted access to a project can both work on Unity projects.
+1. In the Unity Editor, select **Window** > **Unity Distribution Portal** > **Settings**. 
+1. Select **Create your UDP game directly from inside the Unity Editor**.
+1. Select **Generate new UDP client**.
 
-Project-related permissions relate to what UDP features you have access to on a specific Unity project, both in the Unity Editor and in the UDP console. This applies to:
+When you generate your UDP client, your game is automatically created in the UDP console. This also creates a UDP settings file for your project.
 
-* Members of the organization that the project belongs to (with organization-level permissions)
-* Individuals granted access to the project only (with project-level permissions)
+<a name="init"></a>
+## Initialize the UDP SDK
+To access the UDP SDK, declare the UDP namespace in your game manager script.
 
-The table below lists the project-related UDP permissions for Users, Managers and Owners in the Unity Editor. These are the same for both project-level and organization-level permissions.
+```
+using UnityEngine.UDP;
+```
 
-||User|Manager|Owner|
-|---|---|---|---|
-|Generate a new UDP client|Yes|Yes|Yes|
-|Link a Unity project to the UDP client|Yes|Yes|Yes|
-|Modify UDP settings|Yes|Yes|Yes|
-|Create or modify IAPs|Yes|Yes|Yes|
+To initialize the UDP SDK, your game needs to have a UDPSettings.asset file linked to a UDP client.
 
-The table below lists the project-related UDP permissions for Users, Managers and Owners in the UDP console. These are the same for both project-level and organization-level permissions.
 
-||User|Manager|Owner|
-|---|---|---|---|
-|Generate a new UDP client|Yes|Yes|Yes|
-|Archive a game in game list|No|Yes|Yes|
-|Edit a game revision|Yes|Yes|Yes|
-|Link a Unity project with a UDP client|Yes|Yes|Yes|
-|Release a game revision|No|Yes|Yes|
-|Register a game to a store|No|Yes|Yes|
-|Publish a game to a store|No|Yes|Yes|
-|Advanced page operation|No|Yes|Yes|
-|Status page access and operation|No|Yes|Yes|
+![Initializing game integration with UDP](Images/5-GamesWithIAP_01.png)<br/>
 
-### Organization-related permissions
-Organization-related permissions relate to what UDP features you have access to in the Organization. These features are generally restricted to Organization members only, that is, individuals granted access only to specific projects do not have organization-level permissions. The exceptions to this are:
+In your game manager script, define the initialization listener:
 
-* the project Owner can view the Reporting dashboard
-* any project role can view the projects they have access to in the game list
+```
+IInitListener listener = new InitListener();
+```
 
-The table below lists additional Organization-related permissions for Users, Managers and Owners.
+In the Start() function, call the `Initialize` method.
 
-||Project-level|||Org-level|||
-|---|---|---|---|---|---|---|
-||User|Manager|Owner|User|Manager|Owner|
-|View the Reporting dashboard|No|No|Yes|No|Yes|Yes|
-|Access the game list|Yes*|Yes*|Yes*|Yes|Yes|Yes|
-|Edit the Company profile|No|No|No|No|Yes|Yes|
-|Sign up the Organization to a store|No|Yes|Yes|No|Yes|Yes|
+```
+StoreService.Initialize(listener);
+```
 
-**Note**: Project-level users can assess the games within the host organization that owns the project, and any other projects they have access to within their own Organizations.
+**Note**: This is required to be able to publish your game to app stores via UDP.
+
+The InitListener then returns a success or failure message to inform your game if the initialization was successful.
+
+```
+using UnityEngine;
+using UnityEngine.UDP;
+  
+public class InitListener : IInitListener
+    {
+    public void OnInitialized(UserInfo userInfo)
+    {
+        Debug.Log("Initialization succeeded");
+        // You can call the QueryInventory method here
+        // to check whether there are purchases that haven’t been consumed.       
+    }
+
+    public void OnInitializeFailed(string message)
+    {
+        Debug.Log("Initialization failed: " + message);
+    }
+}
+```
+
+<a name="sample"></a>
+## Sample scene
+
+The UDP package contains a sample scene, which provides example methods to help you implement and test UDP in your game. The table below describes these example methods.
+
+If you installed UDP from the Asset Store, the sample is included in the package.
+
+If you installed UDP from the Package Manager, the sample is supported in Unity Editor version 2019.1 and above. To import the sample scene, go to Package Manager > Unity Distribution Portal and select **Samples** > **Import**.
+
+|Method|Description|
+|---|---|
+|Init|Initializes the UDP SDK. On successful initialization, you will be asked to login with your sandbox credentials. This simulates a player opening the game.|
+|Buy|Attempts to purchase an IAP product in the game. Returns whether the purchase succeeded or failed.|
+|Buy & consume|Purchases a product and consumes it. Returns whether or not the IAP product was consumed.|
+|Query inventory|Queries the IAPs configured in the game, and the IAPs you’ve |urchased but not consumed.|
+|Query & consume|Consumes all unconsumed IAPs. This lets you return to the riginal status after the game is initialized.|

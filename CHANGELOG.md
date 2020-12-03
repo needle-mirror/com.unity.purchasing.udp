@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.4] - 2020-12-03
+- Minor fix
+
+## [2.1.3] - 2020-12-03
+- Bug fix
+
+## [2.1.2] - 2020-11-30
+- Bug fix
+
+## [2.1.1] - 2020-11-24
+- Update documentation; bug fix
+
 ## [2.1.0] - 2020-10-28
 - UI and UX refinement in the UDP screens
 - Sandbox environment improvements: more instructions, confirmation screens, method call notifications 

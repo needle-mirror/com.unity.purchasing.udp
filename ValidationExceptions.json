@@ -1,0 +1,9 @@
+{
+  "Exceptions":
+  [
+    {
+      "ValidationTest": "API Validation",
+      "PackageVersion": "2.1.4"
+    }
+  ]
+}

@@ -347,7 +347,7 @@ namespace UnityEngine.UDP.Editor
             EditorApplication.update -= CheckRequestUpdate;
             EditorApplication.update -= CheckUserState;
         }
-
+           
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -623,6 +623,7 @@ namespace UnityEngine.UDP.Editor
                         Repaint();
                     }
                 }
+                request.Dispose();
             }
             else
             {

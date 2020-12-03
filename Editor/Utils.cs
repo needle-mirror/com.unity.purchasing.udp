@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Linq;
 
 namespace UnityEngine.UDP.Editor
 {

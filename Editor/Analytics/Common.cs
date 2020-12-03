@@ -39,6 +39,7 @@ namespace UnityEngine.UDP.Editor.Analytics
         private static string s_OrganizationId;
         private static string s_UserId;
         private static object s_UnityConnectInstance;
+        private static string s_ClientId;
 
         internal static IDictionary<string, object> GetCommonParams()
         {

@@ -1,9 +1,10 @@
 fileFormatVersion: 2
 guid: 400c4ee54cab40c41819c6825bdac508
 ScriptedImporter:
-  internalIDToNameTable: []
+  fileIDToRecycleName:
+    11400000: tree
+    11400002: inlineStyle
   externalObjects: {}
-  serializedVersion: 2
   userData: 
   assetBundleName: 
   assetBundleVariant: 

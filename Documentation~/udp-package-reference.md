@@ -128,9 +128,10 @@ IPurchaseListener provides the following listeners that tell you the result of a
 |OnQueryInventoryFailed|The query failed.|
 
 <a name="order-query"></a>
-## Order Query parameters
+## QueryOrder parameters
 
-Parameters in the request:
+To query UDP about orders, call an HTTP GET request.
+The table below describes the parameters in the QueryOrder request:
 
 <table>
   <tr>
@@ -176,7 +177,8 @@ Sign:
   </tr>
 </table>
 
-Parameters in the response：
+The store where your game is published returns the QueryOrder response to UDP. UDP forwards these parameters to your game.
+The table below describes the parameters in the QueryOrder response：
 
 <table>
   <tr>
@@ -200,6 +202,13 @@ Parameters in the response：
     <td>The order ID assigned by your game, or Unity if the game does not generate it.</td>
     <td>66mea52wne</td>
   </tr>
+    <tr>
+    <td>storeOrderId</td>
+    <td>String</td>
+    <td>Optional</td>
+    <td>The order ID that the store returns.</td>
+    <td>Stores have their own Order ID format</td>
+  </tr>
   <tr>
     <td>channelType</td>
     <td>String</td>
@@ -212,7 +221,7 @@ CLOUDMOOLAH</td>
     <td>status </td>
     <td>String</td>
     <td>Required</td>
-    <td>Indicates the status of the order.  </td>
+    <td>Indicates the status of the order.</td>
     <td>SUCCESS, FAILED, UNCONFIRMED, STORE_NOT_SUPPORT</td>
   </tr>
   <tr>

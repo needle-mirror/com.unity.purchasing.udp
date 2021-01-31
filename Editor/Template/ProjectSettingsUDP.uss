@@ -49,10 +49,11 @@
 #GoToPortalLi {
 	margin-top: 30px;
 	align-items: center;
+	flex-wrap: wrap;
 }
 
 #GoToPortalBtn {
-	/*width: 30px;*/
+	min-width: 110px;
 	align-self: center;
 }
 

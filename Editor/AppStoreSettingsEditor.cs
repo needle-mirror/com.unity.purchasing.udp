@@ -281,25 +281,27 @@ namespace UnityEngine.UDP.Editor
         SerializedProperty m_AppSlug;
         SerializedProperty m_AppItemId;
 
+#if(UNITY_2018_1_OR_NEWER)
         static bool WantsToQuit()
         {
             AppStoreSettingsEditor.showInspectorCloseDialog = false;
             return true;
         }
+#endif
 
         private void OnEnable()
         {
             Log("enabled");
-            ActivateInspectorWindow();
             RetrieveLocalSettings();
             InitParameters();
             EditorApplication.update -= CheckRequestUpdate;
             EditorApplication.update += CheckRequestUpdate;
             EditorApplication.update -= CheckUserState;
             EditorApplication.update += CheckUserState;
+#if(UNITY_2018_1_OR_NEWER)
             EditorApplication.wantsToQuit -= WantsToQuit;
             EditorApplication.wantsToQuit += WantsToQuit;
-
+#endif
             if (!OAuthEnabled)
             {
                 currentState = State.NoOauth;
@@ -772,33 +774,33 @@ namespace UnityEngine.UDP.Editor
 
         public void RenderLinkProjectView()
         {
-            Func<float, GUIStyle> stretchHinterStyle = w =>
+            Func<float, float, GUIStyle> stretchHinterStyle = (minViewWidth, fixedWidth) =>
             {
                 var ret = new GUIStyle(GUI.skin.label) {wordWrap = true};
-                if (EditorGUIUtility.currentViewWidth < 320)
+                if (EditorGUIUtility.currentViewWidth < minViewWidth)
                 {
                     ret.stretchWidth = false;
                     ret.stretchHeight = false;
-                    ret.fixedWidth = w;
+                    ret.fixedWidth = fixedWidth;
                 }
 
                 return ret;
             };
 
-            Action<string> headerHinter = HinterFn(stretchHinterStyle(300));
+            Action<string> headerHinter = HinterFn(stretchHinterStyle(320, 300));
             Action<string> hinter = HinterFn(new GUIStyle(GUI.skin.label) {wordWrap = true});
 
             Action goToPortalLabel = () => HorizontalGroup(() =>
             {
-                Action<string> _hinter = HinterFn(stretchHinterStyle(125));
-                _hinter("-  On the UDP Console");
+                
+                HinterFn(stretchHinterStyle(320, 130))("-  On the UDP Console");
                 if (GUILayout.Button("Go",  new GUIStyle(EditorStyles.miniButton) {alignment = TextAnchor.MiddleCenter}))
                 {
                     Application.OpenURL(BuildConfig.UDP_ENDPOINT);
                 }
 
                 ;
-                _hinter(", select your game.");
+                HinterFn(stretchHinterStyle(320, 125))(", select your game.");
                 SpaceHolder();
             });
 
@@ -862,7 +864,8 @@ namespace UnityEngine.UDP.Editor
                                 {
                                     fixedWidth = labelWidth,
                                     fixedHeight = 20,
-                                    fontSize = 13
+                                    fontSize = 13,
+                                    wordWrap = true
                                 });
 
                             SpaceHolder();

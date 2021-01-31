@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.6] - 2021-01-31
+- Remove useless file
+
+## [2.1.5] - 2021-01-31
+- Minor fix
+- UI and UX refinement in the UDP screens
+
 ## [2.1.4] - 2020-12-03
 - Minor fix
 

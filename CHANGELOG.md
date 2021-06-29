@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.2.2] - 2021-06-29
+- Misc bugfixes and optimization
+
+## [2.2.1] - 2021-05-26
+- Misc bugfixes and optimization
+
+## [2.2.0] - 2021-05-06
+- Support of Editor Play mode (Uses IAP products defined locally; UDP methods are stubbed: Purchase and Consume will always be successful; Editor console outputs)
+- New Purchase() callback status: onPurchasePending
+- Scripting API documentation update
+- Inclusion of an Implementation Guide that uses the In-Editor Tutorial framework (in Unity Editor 2019.4 and above)
+- Information architecture changes to comply with the centralization of Services in the Package Manager
+- Misc bugfixes and optimization
+
 ## [2.1.6] - 2021-01-31
 - Remove useless file
 

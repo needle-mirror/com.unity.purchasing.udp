@@ -1,10 +1,22 @@
 {
     "name": "com.unity.purchasing.udp.Editor",
-    "references": [],
+    "references": [
+        "Unity.Services.Core",
+        "Unity.Services.Core.Editor"
+    ],
     "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
+    "overrideReferences": false,
+    "autoReferenced": false,
     "excludePlatforms": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.services.core",
+            "expression": "1.0.0-pre",
+            "define": "SERVICES_SDK_CORE_ENABLED"
+        }
+    ],
     "allowUnsafeCode": false
 }

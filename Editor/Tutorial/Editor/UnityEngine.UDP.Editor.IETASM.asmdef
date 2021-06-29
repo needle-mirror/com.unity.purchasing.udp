@@ -1,0 +1,32 @@
+{
+    "name": "UnityEngine.UDP.Editor.IETASM",
+    "references": [
+        "com.unity.purchasing.udp.Editor",
+        "Unity.Tutorials.Core",
+        "Unity.Tutorials.Core.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_2019_4_OR_NEWER"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.learn.iet-framework",
+            "expression": "",
+            "define": "IET_FRAMEWORK_ENABLED"
+        },
+       {
+          "name": "com.unity.services.core",
+          "expression": "1.0.0-pre",
+          "define": "SERVICES_SDK_CORE_ENABLED"
+       }
+    ],
+    "noEngineReferences": false
+}

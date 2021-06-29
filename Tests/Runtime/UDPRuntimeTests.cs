@@ -52,6 +52,11 @@ public class UDPRuntimeTests
               Assert.Pass();
         }
 
+        public void OnPurchasePending(string message, PurchaseInfo purchaseInfo)
+        {
+            Assert.Pass();
+        }
+
         public void OnPurchaseConsume(PurchaseInfo purchaseInfo)
         {
               Assert.Pass();

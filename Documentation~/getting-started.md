@@ -1,4 +1,4 @@
-# Getting Started with the UDP package
+# Getting started with the UDP package
 
 This section explains how to install and start using the UDP package in your Unity project.
 
@@ -30,7 +30,7 @@ To install the UDP package from the Asset Store:
 <a name="linking"></a>
 ## Linking your Unity project to UDP
 
-To be able to use the UDP Settings window, you need to link your Unity project to a UDP Client. 
+To enable the Unity Distribution Portal settings in the Project Settings window, you need to link your Unity project to a UDP Client. 
 
 Prerequisites
 
@@ -41,20 +41,20 @@ You have:
 
 To link your Unity project to a UDP client:
 
-1. In the Unity Editor, select **Window** > **Unity Distribution Portal** > **Settings**.
+1. In the Unity Editor, select **Services** > **Unity Distribution Portal** > **Configure**.
 1. In the UDP Client ID field, enter your UDP Client ID.
 <br/> The Client ID is displayed in the Integration Information section of the Game Info page in the UDP console.
 1. Select **Link project to this UDP game**.
 <br/>This creates a link between the Unity project and the UDP client.
 
-Your project is now set up to use UDP. The relevant settings from the UDP console are included in the UDP Settings window. These settings are stored in the UDPSettings.asset file. 
+Your project is now set up to use UDP. The relevant settings from the UDP console are included in the Unity Distribution Portal settings. These settings are stored in the UDPSettings.asset file. 
 
 ### Creating a UDP client ID from the Unity Editor
 
 Unity recommends creating your UDP client in the UDP console and linking it to your project, as described above.
 Alternatively, to create a UDP client from the Unity Editor:
 
-1. In the Unity Editor, select **Window** > **Unity Distribution Portal** > **Settings**. 
+1. In the Unity Editor, select **Services** > **Unity Distribution Portal** > **Configure**. 
 1. Select **Create your UDP game directly from inside the Unity Editor**.
 1. Select **Generate new UDP client**.
 
@@ -79,7 +79,7 @@ In your game manager script, define the initialization listener:
 IInitListener listener = new InitListener();
 ```
 
-In the Start() function, call the `Initialize` method.
+In the `Start` or `OnEnable` function, call the `Initialize` method.
 
 ```
 StoreService.Initialize(listener);

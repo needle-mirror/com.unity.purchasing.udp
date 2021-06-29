@@ -125,5 +125,11 @@ namespace UnityEngine.UDP.Editor
             var api = "/v2/player/" + playerId;
             return AsyncRequest(UnityWebRequest.kHttpVerbDELETE, udpUrl, api, tokenInfo.token, null);
         }
+
+        public static UnityWebRequest GetAppTestProgress(string clientId)
+        {
+            var api = "/v2/store/testProgress?clientId=" + clientId;
+            return AsyncRequest(UnityWebRequest.kHttpVerbGET, udpUrl, api, tokenInfo.token, null);
+        }
     }
 }

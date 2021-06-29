@@ -368,4 +368,10 @@ namespace UnityEngine.UDP.Editor
     {
         public string clientId;
     }
+
+    public class SdkTestProgressResponse
+    {
+        public bool sdkInitialized;
+        public bool iapPurchased;
+    }
 }

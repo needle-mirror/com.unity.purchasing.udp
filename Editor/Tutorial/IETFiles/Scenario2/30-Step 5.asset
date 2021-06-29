@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff771ccdf4150419d9ff4d342b069aae, type: 3}
+  m_Name: 30-Step 5
+  m_EditorClassIdentifier: 
+  m_Paragraphs:
+    m_Items:
+    - m_Type: 6
+      Title:
+        m_Untranslated: 
+      Text:
+        m_Untranslated: 
+      m_Tutorial: {fileID: 0}
+      m_Image: {fileID: 0}
+      m_Video: {fileID: 0}
+      m_CriteriaCompletion: 0
+      m_Criteria:
+        m_Items: []
+      m_MaskingSettings:
+        m_MaskingEnabled: 0
+        m_UnmaskedViews: []
+      m_Summary: 
+      m_Description: 
+      m_InstructionBoxTitle: 
+      m_InstructionText: 
+      m_TutorialButtonText: 
+    - m_Type: 0
+      Title:
+        m_Untranslated: Step 5
+      Text:
+        m_Untranslated: 'Implement Helper Classes : Purchase Listener'
+      m_Tutorial: {fileID: 0}
+      m_Image: {fileID: 0}
+      m_Video: {fileID: 0}
+      m_CriteriaCompletion: 0
+      m_Criteria:
+        m_Items: []
+      m_MaskingSettings:
+        m_MaskingEnabled: 0
+        m_UnmaskedViews: []
+      m_Summary: 
+      m_Description: 
+      m_InstructionBoxTitle: 
+      m_InstructionText: 
+      m_TutorialButtonText: 
+    - m_Type: 1
+      Title:
+        m_Untranslated: Purchase Listener
+      Text:
+        m_Untranslated: "\nCreate a new class called PurchaseListener and use :\n<i>\n\nusing
+          UnityEngine;\nusing UnityEngine.UDP;\n\npublic class PurchaseListener :
+          IPurchaseListener\n{\n    public void OnPurchase(PurchaseInfo purchaseInfo)\n   
+          {\n        // The purchase has succeeded.\n        // If the purchased
+          product is consumable, you should consume it here.\n        // Otherwise,
+          deliver the product.\n    }\n\n    public void OnPurchaseFailed(string
+          message, PurchaseInfo purchaseInfo)\n    {\n        Debug.Log(\"\"Purchase
+          Failed: \"\" + message);\n    }\n\n    public void OnPurchaseRepeated(string
+          productCode)\n    {\n        // Some stores don't support queryInventory.\n\n   
+          }\n\n    public void OnPurchaseConsume(PurchaseInfo purchaseInfo)\n   
+          {\n        // The consumption succeeded.\n        // You should deliver
+          the product here.        \n    }\n\n    public void OnPurchaseConsumeFailed(string
+          message, PurchaseInfo purchaseInfo)\n    {\n        // The consumption
+          failed.\n    }\n\n    public void OnQueryInventory(Inventory inventory)\n   
+          {\n        // Querying inventory succeeded.\n    }\n\n    public void OnQueryInventoryFailed(string
+          message)\n    {\n        // Querying inventory failed.\n    }\n\n    public
+          void OnPurchasePending(string message, PurchaseInfo purchaseInfo)\r\n   
+          {\r\n        // The Purchase is pending\r\n    }\n}\n\n</i>\n\nLink to
+          <a href=\"https://docs.unity3d.com/Packages/com.unity.purchasing.udp@2.1/manual/games-with-iap.html\">UDP
+          Documentation</a>\n\n\n"
+      m_Tutorial: {fileID: 0}
+      m_Image: {fileID: 0}
+      m_Video: {fileID: 0}
+      m_CriteriaCompletion: 0
+      m_Criteria:
+        m_Items: []
+      m_MaskingSettings:
+        m_MaskingEnabled: 0
+        m_UnmaskedViews: []
+      m_Summary: 
+      m_Description: 
+      m_InstructionBoxTitle: 
+      m_InstructionText: 
+      m_TutorialButtonText: 
+  m_CameraSettings:
+    m_CameraMode: 0
+    m_FocusMode: 0
+    m_Orthographic: 0
+    m_Size: 0
+    m_Pivot: {x: 0, y: 0, z: 0}
+    m_Rotation: {x: 0, y: 0, z: 0, w: 0}
+    m_FrameObject:
+      m_SceneGuid: 
+      m_GameObjectGuid: 
+      m_SerializedComponentType:
+        m_TypeName: 
+      m_ComponentIndex: 0
+      m_AssetObject: {fileID: 0}
+      m_Prefab: {fileID: 0}
+    m_Enabled: 0
+  NextButton:
+    m_Untranslated: Next
+  DoneButton:
+    m_Untranslated: Done
+  m_NextButton: Next
+  m_DoneButton: Done
+  m_CompletedSound: {fileID: 0}
+  m_autoAdvance: 0
+  m_OnBeforePageShown:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnAfterPageShown:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnBeforeTutorialQuit:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnTutorialPageStay:
+    m_PersistentCalls:
+      m_Calls: []

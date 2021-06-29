@@ -47,6 +47,9 @@ Implement [listeners](udp-package-reference.html#listener) for events that are r
 Here is an example:
 
 ```
+using UnityEngine;
+using UnityEngine.UDP;
+
 public class PurchaseListener : IPurchaseListener
 {
     public void OnPurchase(PurchaseInfo purchaseInfo)
@@ -87,6 +90,11 @@ public class PurchaseListener : IPurchaseListener
     {
         // Querying inventory failed.
     }
+
+    public void OnPurchasePending(string message, PurchaseInfo purchaseInfo)
+    {
+        // The Purchase is pending
+    }
 }
 ```
 
@@ -116,7 +124,7 @@ The UDP returns information to your game when the purchase is complete.
 
 Some partner stores' payment gateways can't get payment callbacks in real-time. This can prevent UDP quickly receiving payment SUCCESS or FAILED callbacks. In this case, UDP regards the callback as FAILED. To handle this issue, Unity recommends you [query orders](#query-order) on the server to get the latest status.
 
-For online games, you can verify the purchase on your game server via a callback notification. UDP sends the callback notification to the URL that you specify in the [UDP Settings](udp-package-reference.html#settings)).
+For online games, you can verify the purchase on your game server via a callback notification. UDP sends the callback notification to the URL that you specify in the [Unity Distribution Portal settings](udp-package-reference.html#settings)).
 
  ![](Images/5-GamesWithIAP_04.png)
 
@@ -240,8 +248,8 @@ However, Unity recommends you still create at least one IAP in the Editor to tes
 
 **Note:** If you don’t use an [IAP Catalog](https://docs.unity3d.com/Manual/udp.html#iap-catalog) in your game client (for example, your IAP items are maintained solely on your game server) you must still [create your IAP Catalog on the UDP console](https://docs.unity3d.com/Manual/udp-implementing-iap.html).
 
-1. For Unity Editor versions 2019.4 and below, open the **UDP Settings** inspector window.<br/>For Unity Editor versions 2020.1 and above, open the **IAP Catalog** window.<br/>
-2. In the **IAP Catalog** section, enter your product information for each IAP product.
+1. For Unity Editor versions 2020.1 and above, open the Unity Distribution Portal settings in the Project Settings window, and select **Go to IAP Catalog**.<br/>For Unity Editor versions 2019.4 and below, open the **UDP Settings** inspector window.<br/>
+2. In the **IAP Catalog**, enter your product information for each IAP product.
     1. Follow the requirements for Product IDs to make sure they're valid for app stores.
     1. Make sure the IAP products you define in your game use the same **Product ID** that is set in the IAP Catalog.
 3. To save an individual IAP product to the UDP console, select **Push** in the drop-down next to the product.

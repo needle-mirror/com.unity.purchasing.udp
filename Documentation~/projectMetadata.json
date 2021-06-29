@@ -1,0 +1,5 @@
+{
+    "includeAssembliesInSrc":[
+        "**/Runtime/UDP.dll"
+    ]
+}

@@ -284,6 +284,12 @@ public class UDPSampleScript : MonoBehaviour
             Show("Consume Failed: " + message);
         }
 
+        public void OnPurchasePending(string message, PurchaseInfo purchaseInfo)
+        {
+            Debug.Log("Purchase in pending: " + message);
+            Show("Purchase in pending: " + message);
+        }
+
         public void OnQueryInventory(Inventory inventory)
         {
             Debug.Log("OnQueryInventory");

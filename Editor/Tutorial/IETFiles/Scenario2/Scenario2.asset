@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f107dc6d4c984c45bdafd3bb15f98f0, type: 3}
+  m_Name: Scenario2
+  m_EditorClassIdentifier: 
+  TutorialTitle:
+    m_Untranslated: Game with In-App Purchases (using only UDP package)
+  m_TutorialTitle: 
+  m_LessonId: 0
+  m_Version: 1
+  m_Scene: {fileID: 0}
+  m_DefaultSceneCameraSettings:
+    m_CameraMode: 0
+    m_FocusMode: 0
+    m_Orthographic: 0
+    m_Size: 0
+    m_Pivot: {x: 0, y: 0, z: 0}
+    m_Rotation: {x: 0, y: 0, z: 0, w: 0}
+    m_FrameObject:
+      m_SceneGuid: 
+      m_GameObjectGuid: 
+      m_SerializedComponentType:
+        m_TypeName: 
+      m_ComponentIndex: 0
+      m_AssetObject: {fileID: 0}
+      m_Prefab: {fileID: 0}
+    m_Enabled: 0
+  m_SkipTutorialBehavior: 0
+  m_WindowLayout: {fileID: 0}
+  m_Pages:
+    m_Items:
+    - {fileID: 11400000, guid: 58b221eae31e8fc499d7095c96b1aa28, type: 2}
+    - {fileID: 11400000, guid: 53b0c003ef90c524b89654b177b45c62, type: 2}
+    - {fileID: 11400000, guid: 593a297524bafcd429e936c29bc41134, type: 2}
+    - {fileID: 11400000, guid: 20f4115aeba71e84a87b3e7d6babc707, type: 2}
+    - {fileID: 11400000, guid: 001580623df9d594da81fd7db8653693, type: 2}
+    - {fileID: 11400000, guid: d97e9f1f765f26b4abc945cffda60fe8, type: 2}
+    - {fileID: 11400000, guid: 3ec1285cbd91e6f4280621b7607a3658, type: 2}
+    - {fileID: 11400000, guid: 0939423ee4ee8004da7a81334887f9f0, type: 2}
+    - {fileID: 11400000, guid: 755b6d3f10848a24e87fdfc7f8ec16ff, type: 2}
+    - {fileID: 11400000, guid: e210f7a2c576c8349a372a62e1a24067, type: 2}
+    - {fileID: 11400000, guid: 43ce088cfbacd024e8bcf12e70f5da77, type: 2}

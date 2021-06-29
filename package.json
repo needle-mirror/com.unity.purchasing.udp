@@ -1,13 +1,27 @@
 {
   "name": "com.unity.purchasing.udp",
   "displayName": "Unity Distribution Portal",
-  "version": "2.1.6",
+  "version": "2.2.2",
+  "unity": "2018.4",
   "description": "This is the package for the Unity Distribution Portal, a platform that makes it easier to build for, and submit to multiple Android app stores.\n\nThis package is for Android games only. It lets you implement a single set of methods that can address the In-App Purchases of all the app stores accessible via UDP. Please see our documentation for a more thorough overview of the package.\n\nOnce your APK file is built with UDP, upload it to the UDP Console and submit your game to the app stores of your choice.",
   "keywords": [
     "android",
     "purchasing",
     "iap"
   ],
+  "_upm": {
+    "gameService": {
+      "groupIndex": 5,
+      "groupName": "Growth",
+      "genericDashboardUrl": "https://docs.unity3d.com/Packages/com.unity.purchasing.udp@latest/index.html",
+      "projectDashboardUrl": "https://dashboard.unity3d.com/organizations/{0}/udp/get-started",
+      "projectDashboardUrlType": "OrganizationKey",
+      "configurePath": ""
+    },
+    "supportedPlatforms": [
+      "Android"
+    ]
+  },
   "samples": [
     {
       "displayName": "UDP sample",
@@ -17,11 +31,11 @@
   ],
   "documentation": "https://docs.unity3d.com/Packages/com.unity.purchasing.udp@latest/index.html",
   "upmCi": {
-    "footprint": "65d61f2140f321795b229546387ae00e16f0c226"
+    "footprint": "68fe4efe67e1f4d59e75109814d402e41d0d8601"
   },
   "repository": {
     "url": "https://github.cds.internal.unity3d.com/unity/com.unity.purchasing.udp.git",
     "type": "git",
-    "revision": "7f96da81a3c6ddd6c5f7cb3e4acd375899eec81d"
+    "revision": "9c2dcb6df4cdb1b6eaa06c53f6c4beb54684c619"
   }
 }

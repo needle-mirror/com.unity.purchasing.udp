@@ -1,0 +1,27 @@
+{
+    "name": "UnityEngine.UDP.Editor.DevX",
+    "references": [
+        "Unity.Services.Core",
+        "Unity.Services.Core.Editor",
+        "com.unity.purchasing.udp.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_2019_4_OR_NEWER"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.services.core",
+            "expression": "1.0.0-pre",
+            "define": "SERVICES_SDK_CORE_ENABLED"
+        }
+    ],
+    "noEngineReferences": false
+}

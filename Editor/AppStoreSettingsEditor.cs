@@ -17,7 +17,7 @@ namespace UnityEngine.UDP.Editor
             public abstract void Icon();
             public abstract GUILayoutOption[] ButtonStyle();
         }
-        
+
         public class v_2017Before : IMGUIAdaptor
         {
             private readonly GUILayoutOption[] _buttonStyles = {GUILayout.Width(180), GUILayout.Height(30)};
@@ -25,10 +25,10 @@ namespace UnityEngine.UDP.Editor
             {
                 foldOutLeftMargin = 18;
             }
-            
+
             public override void Icon()
             {
-                GUILayout.Button(EditorGUIUtility.IconContent("d_console.infoicon"), 
+                GUILayout.Button(EditorGUIUtility.IconContent("d_console.infoicon"),
                     EditorStyles.label, GUILayout.Width(35));
             }
 
@@ -37,7 +37,7 @@ namespace UnityEngine.UDP.Editor
                 return _buttonStyles;
             }
         }
-        
+
         public class v_2018 : IMGUIAdaptor
         {
             private readonly GUILayoutOption[] _buttonStyles = {GUILayout.Width(200), GUILayout.Height(30)};
@@ -48,7 +48,7 @@ namespace UnityEngine.UDP.Editor
 
             public override void Icon()
             {
-                GUILayout.Button(EditorGUIUtility.IconContent("d_console.infoicon"), 
+                GUILayout.Button(EditorGUIUtility.IconContent("d_console.infoicon"),
                     EditorStyles.label, GUILayout.Width(35));
             }
 
@@ -57,11 +57,11 @@ namespace UnityEngine.UDP.Editor
                 return _buttonStyles;
             }
         }
-        
+
         public class v_2019After : IMGUIAdaptor
         {
             private readonly GUILayoutOption[] _buttonStyles = {GUILayout.Width(200), GUILayout.Height(30)};
-           
+
             public v_2019After()
             {
                 foldOutLeftMargin = 9;
@@ -81,95 +81,17 @@ namespace UnityEngine.UDP.Editor
                 return _buttonStyles;
             }
         }
-        
-#if (UNITY_2020_1_OR_NEWER)
-        [MenuItem("Window/Unity Distribution Portal/IAP Catalog", false, 111)]
-        public static void ActivateSettingsWindow()
-        {
-            if (Utils.UnityIapExists())
-            {
-                // Unity IAP + UDP, then open the iap catalog window of Uni directly.
-                EditorApplication.ExecuteMenuItem("Window/Unity IAP/IAP Catalog");
-                return;
-            }
-
-            ActivateInspectorWindow();
-
-            if (File.Exists(AppStoreSettings.appStoreSettingsAssetPath))
-            {
-                var existedAppStoreSettings = (AppStoreSettings) AssetDatabase.LoadAssetAtPath(
-                    AppStoreSettings.appStoreSettingsAssetPath,
-                    typeof(AppStoreSettings));
-                EditorUtility.FocusProjectWindow();
-                Selection.activeObject = existedAppStoreSettings;
-                return;
-            }
-
-            if (!Directory.Exists(AppStoreSettings.appStoreSettingsAssetFolder))
-                Directory.CreateDirectory(AppStoreSettings.appStoreSettingsAssetFolder);
-
-            var appStoreSettings = CreateInstance<AppStoreSettings>();
-            AssetDatabase.CreateAsset(appStoreSettings, AppStoreSettings.appStoreSettingsAssetPath);
-            EditorUtility.FocusProjectWindow();
-            Selection.activeObject = appStoreSettings;
-        }
-
-
-        [MenuItem("Window/Unity Distribution Portal/Settings", false, 111)]
-        public static void GoToUDPSettings()
-        {
-			SettingsService.OpenProjectSettings("Project/Services/Unity Distribution Portal");
-        }
-
-        [MenuItem("Window/Unity Distribution Portal/IAP Catalog", true)]
-        [MenuItem("Window/Unity Distribution Portal/Settings", true)]
-        public static bool CheckUnityOAuthValidation()
-        {
-            return OAuthEnabled;
-        }
-#else
-        [MenuItem("Window/Unity Distribution Portal/Settings", false, 111)]
-        public static void ActivateSettingsWindow()
-        {
-            ActivateInspectorWindow();
-
-            if (File.Exists(AppStoreSettings.appStoreSettingsAssetPath))
-            {
-                var existedAppStoreSettings = (AppStoreSettings) AssetDatabase.LoadAssetAtPath(
-                    AppStoreSettings.appStoreSettingsAssetPath,
-                    typeof(AppStoreSettings));
-                EditorUtility.FocusProjectWindow();
-                Selection.activeObject = existedAppStoreSettings;
-                return;
-            }
-
-            if (!Directory.Exists(AppStoreSettings.appStoreSettingsAssetFolder))
-                Directory.CreateDirectory(AppStoreSettings.appStoreSettingsAssetFolder);
-
-            var appStoreSettings = CreateInstance<AppStoreSettings>();
-            AssetDatabase.CreateAsset(appStoreSettings, AppStoreSettings.appStoreSettingsAssetPath);
-            EditorUtility.FocusProjectWindow();
-            Selection.activeObject = appStoreSettings;
-        }
-
-        [MenuItem("Window/Unity Distribution Portal/Settings", true)]
-        public static bool CheckUnityOAuthValidation()
-        {
-            return OAuthEnabled;
-        }
-
-#endif
 
         private const bool debugEnabled = true;
         private const string defaultClientId = "Enter client ID";
         private string _clientIdToBeLinked = defaultClientId;
         private readonly string[] m_IapItemTypeOptions = {"Consumable", "Non consumable"};
         private static readonly bool OAuthEnabled = Utils.FindTypeByName("UnityEditor.Connect.UnityOAuth") != null;
-        
+
 
 #if(UNITY_2019_1_OR_NEWER)
         private IMGUIAdaptor UIAdaptor = new  v_2019After();
-#elif(UNITY_2018_1_OR_NEWER) 
+#elif(UNITY_2018_1_OR_NEWER)
         private IMGUIAdaptor UIAdaptor = new v_2018();
 #else
         private IMGUIAdaptor UIAdaptor =  new v_2017Before();
@@ -196,7 +118,7 @@ namespace UnityEngine.UDP.Editor
         private string syncingStatus;
         private bool m_GenerateNewClientFoldOut;
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
         private bool m_GameTitleChanged;
         private bool m_CallbackUrlChanged;
         private bool m_IsTestAccountUpdating;
@@ -212,7 +134,7 @@ namespace UnityEngine.UDP.Editor
         // user state no need to check every frame, so we do checking every some seconds.
         private float checkTimer = 0.0f;
         private const float checkDuration = 100.0f;
-        
+
         // switch the inspector window to save data
         private static bool refreshData = true;
         private static bool showInspectorCloseDialog = false;
@@ -225,7 +147,7 @@ namespace UnityEngine.UDP.Editor
         private static List<bool> static_m_IapItemDirty;
         private static List<string> static_m_IapValidationMsg;
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
         private static List<TestAccount> static_m_TestAccounts;
         private static List<bool> static_m_TestAccountsDirty;
         private static List<string> static_m_TestAccountsValidationMsg;
@@ -260,7 +182,7 @@ namespace UnityEngine.UDP.Editor
             public GeneralResponse response;
             public int arrayPos;
             public IapItem curIapItem;
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             public TestAccount testAccount;
 #endif
             public Step currentStep;
@@ -291,6 +213,7 @@ namespace UnityEngine.UDP.Editor
 
         private void OnEnable()
         {
+
             Log("enabled");
             RetrieveLocalSettings();
             InitParameters();
@@ -337,19 +260,20 @@ namespace UnityEngine.UDP.Editor
                     AppStoreSettingsEditor.static_m_IapItemDirty = m_IapItemDirty;
                     AppStoreSettingsEditor.static_m_IapValidationMsg = m_IapValidationMsg;
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
                     AppStoreSettingsEditor.static_m_TestAccounts = m_TestAccounts;
                     AppStoreSettingsEditor.static_m_TestAccountsDirty = m_TestAccountsDirty;
                     AppStoreSettingsEditor.static_m_TestAccountsValidationMsg = m_TestAccountsValidationMsg;
 #endif
-                    AppStoreSettingsEditor.ActivateSettingsWindow();
+                    Utils.FocusOnUDPSettingsFile();
+                    Utils.ActivateInspectorWindow();
                 }
             }
             Log("destroy");
             EditorApplication.update -= CheckRequestUpdate;
             EditorApplication.update -= CheckUserState;
         }
-           
+
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -521,6 +445,7 @@ namespace UnityEngine.UDP.Editor
                     {
                         isUpdatingIap = false;
                         RemoveIapItemLocally(currentRequestStruct.arrayPos);
+                        SaveIapCatalogToFile();
                     }
                     else if (response.GetType() == typeof(FullUpdateResponse))
                     {
@@ -535,7 +460,7 @@ namespace UnityEngine.UDP.Editor
                             }
                             else
                             {
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
                                 m_GameTitleChanged = false;
                                 m_UpdateGameTitleErrorMsg = "";
 #endif
@@ -548,7 +473,7 @@ namespace UnityEngine.UDP.Editor
                             }
                             else
                             {
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
                                 m_CallbackUrlChanged = false;
                                 m_UpdateClientErrorMsg = "";
 #endif
@@ -578,7 +503,7 @@ namespace UnityEngine.UDP.Editor
                                 }
                             }
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
                             LocalSavePlayerFromServerResponse(res.allDataResponse.players);
                             var pushedPlayers = currentRequestStruct.fullUpdatePayload.testAccounts;
                             if (res.testAccountSuccess != null)
@@ -616,7 +541,7 @@ namespace UnityEngine.UDP.Editor
                     }
                     else if (response.GetType() == typeof(PlayerDeleteResponse))
                     {
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
                         m_IsTestAccountUpdating = false;
                         EditorUtility.DisplayDialog("Success",
                             "TestAccount " + currentRequestStruct.testAccount.email + " has been Deleted.", "OK");
@@ -655,7 +580,7 @@ namespace UnityEngine.UDP.Editor
         private void Initialize()
         {
             Log("initialize");
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             m_UpdateGameTitleErrorMsg = "";
             m_UpdateClientErrorMsg = "";
             m_GameTitleChanged = false;
@@ -674,7 +599,7 @@ namespace UnityEngine.UDP.Editor
             m_IapValidationMsg = new List<string>();
         }
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
         private void ClearTestAccounts()
         {
             m_TestAccounts = new List<TestAccount>();
@@ -753,8 +678,8 @@ namespace UnityEngine.UDP.Editor
 
             if (GUILayout.Button("Go to the Services Window"))
             {
-#if (UNITY_2020_1_OR_NEWER)
-                SettingsService.OpenProjectSettings("Project/Services/Unity Distribution Portal");
+#if (UNITY_2018_3_OR_NEWER)
+                SettingsService.OpenProjectSettings("Project/Services");
 #elif UNITY_2018_2_OR_NEWER
                 EditorApplication.ExecuteMenuItem("Window/General/Services");
 #else
@@ -792,7 +717,7 @@ namespace UnityEngine.UDP.Editor
 
             Action goToPortalLabel = () => HorizontalGroup(() =>
             {
-                
+
                 HinterFn(stretchHinterStyle(320, 130))("-  On the UDP Console");
                 if (GUILayout.Button("Go",  new GUIStyle(EditorStyles.miniButton) {alignment = TextAnchor.MiddleCenter}))
                 {
@@ -919,7 +844,7 @@ namespace UnityEngine.UDP.Editor
 
                         VerticalGroupWithStyle()(() =>
                         {
-                            // toggle hints  	
+                            // toggle hints
                             generateClientHints.ForEach(s =>
                             {
                                 SpaceHolder(10);
@@ -954,9 +879,9 @@ namespace UnityEngine.UDP.Editor
         // {
         //     EditorGUI.BeginDisabledGroup(signal);
         //     f();
-        //     EditorGUI.EndDisabledGroup();   
+        //     EditorGUI.EndDisabledGroup();
         // }
-        
+
         private Action<Action> HorizontalGroupWithStyle(params GUILayoutOption[] options)
         {
             return f =>
@@ -969,7 +894,7 @@ namespace UnityEngine.UDP.Editor
                 EditorGUILayout.EndHorizontal();
             };
         }
-        
+
         private void HorizontalGroup(Action f)
         {
             EditorGUILayout.BeginHorizontal();
@@ -977,7 +902,7 @@ namespace UnityEngine.UDP.Editor
             {
                 f();
             }
-            EditorGUILayout.EndHorizontal(); 
+            EditorGUILayout.EndHorizontal();
         }
 
         private Action<Action> VerticalGroupWithStyle(params GUILayoutOption[] options)
@@ -995,7 +920,7 @@ namespace UnityEngine.UDP.Editor
 
         private List<string> headerHints()
         {
-#if(UNITY_2020_1_OR_NEWER)
+#if (SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES)
             return new List<string>{
                 "The IAP Catalog lives on the server. Your game always fetches the IAP catalog that’s set on the server side.",
                 "",
@@ -1004,7 +929,7 @@ namespace UnityEngine.UDP.Editor
                 "",
                 "Note: the UDP Console offers more IAP Catalog management features, such as CSV import of your entire catalog. Prices in local currencies and localized product descriptions are managed from the UDP Console."
             };
-#else    
+#else
             return new List<string>{
                 "UDP settings are saved on the server; not locally.",
                 "'Pull' retrieves your last-saved settings from the UDP server.",
@@ -1019,14 +944,14 @@ namespace UnityEngine.UDP.Editor
             EditorGUI.BeginDisabledGroup(isOperationRunning);
 
             Action<string> hinter = HinterFn(new GUIStyle(GUI.skin.label) {wordWrap = true});
-            
+
             headerHints().ForEach(s=> hinter(s));
 
             HorizontalGroup(() => {
                 SpaceHolder();
                 hinter(syncingStatus);
             });
-            
+
             HorizontalGroup(() => {
                 SpaceHolder();
                 RenderHeader();
@@ -1034,13 +959,13 @@ namespace UnityEngine.UDP.Editor
 
             GuiLine();
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             RenderTitleProjectId();
 #endif
 
             RenderIapSection();
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
 
             RenderClientSettings();
 
@@ -1118,7 +1043,7 @@ namespace UnityEngine.UDP.Editor
                     }
                 }
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
                 // Update UDP Client Settings
                 if (m_CallbackUrlChanged)
                 {
@@ -1189,7 +1114,7 @@ namespace UnityEngine.UDP.Editor
         {
             #region Title & ProjectID
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             {
                 EditorGUILayout.LabelField("Game Title");
                 if (!string.IsNullOrEmpty(m_UpdateGameTitleErrorMsg))
@@ -1234,7 +1159,7 @@ namespace UnityEngine.UDP.Editor
         private void RenderIapSection()
         {
             #region In App Purchase Configuration
-            
+
                 EditorGUI.BeginDisabledGroup(isUpdatingIap);
                 var currentRect = EditorGUILayout.BeginVertical();
                 m_InAppPurchaseFoldout = EditorGUILayout.Foldout(m_InAppPurchaseFoldout, "IAP Catalog", true,
@@ -1389,7 +1314,7 @@ namespace UnityEngine.UDP.Editor
         {
             #region UDP Client Settings
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             m_UdpClientSettingsFoldout = EditorGUILayout.Foldout(m_UdpClientSettingsFoldout, "Settings", true,
                 AppStoreStyles.KAppStoreSettingsHeaderGuiStyle);
             if (m_UdpClientSettingsFoldout)
@@ -1434,7 +1359,7 @@ namespace UnityEngine.UDP.Editor
         {
             #region Test Accounts
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             EditorGUI.BeginDisabledGroup(m_IsTestAccountUpdating);
 
             m_TestAccountFoldout = EditorGUILayout.Foldout(m_TestAccountFoldout, "UDP Sandbox Test Accounts",
@@ -1537,7 +1462,7 @@ namespace UnityEngine.UDP.Editor
         {
             #region Go to Portal
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             {
                 EditorGUILayout.BeginHorizontal();
 
@@ -1574,7 +1499,7 @@ namespace UnityEngine.UDP.Editor
             syncingStatus = "";
             m_GenerateNewClientFoldOut = false;
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             m_GameTitleChanged = false;
             m_CallbackUrlChanged = false;
             m_IsTestAccountUpdating = false;
@@ -1625,12 +1550,12 @@ namespace UnityEngine.UDP.Editor
             }
             else
             {
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
                 m_GameTitleChanged = AppStoreSettingsEditor.static_appItemInMemory != null && AppStoreSettingsEditor.static_appItemInMemory.name != appItem.name;
 #endif
                 appItemInMemory = AppStoreSettingsEditor.static_appItemInMemory;
             }
-            
+
             serializedObject.ApplyModifiedProperties();
             AssetDatabase.SaveAssets();
         }
@@ -1657,7 +1582,7 @@ namespace UnityEngine.UDP.Editor
 
             if (!AppStoreSettingsEditor.refreshData)
             {
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
               m_CallbackUrlChanged = AppStoreSettingsEditor.static_callbackUrlInMemory != callbackUrlInMemory;
 #endif
                 callbackUrlInMemory = AppStoreSettingsEditor.static_callbackUrlInMemory;
@@ -1691,12 +1616,12 @@ namespace UnityEngine.UDP.Editor
                 m_IapItemsFoldout = AppStoreSettingsEditor.static_m_IapItemsFoldout;
                 m_IapValidationMsg = AppStoreSettingsEditor.static_m_IapValidationMsg;
             }
-            
+            SaveIapCatalogToFile();
         }
 
         private void LocalSavePlayerFromServerResponse(IEnumerable<PlayerResponse> players)
         {
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             if (players == null) return;
             ClearPlayersInMemory();
             if (AppStoreSettingsEditor.refreshData)
@@ -1714,7 +1639,7 @@ namespace UnityEngine.UDP.Editor
                 m_TestAccounts = AppStoreSettingsEditor.static_m_TestAccounts;
                 m_TestAccountsDirty = AppStoreSettingsEditor.static_m_TestAccountsDirty;
                 m_TestAccountsValidationMsg = AppStoreSettingsEditor.static_m_TestAccountsValidationMsg;
-            }    
+            }
 #endif
         }
 
@@ -1741,7 +1666,7 @@ namespace UnityEngine.UDP.Editor
 
         private void RemoveTestAccountLocally(int pos)
         {
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             m_TestAccounts.RemoveAt(pos);
             m_TestAccountsDirty.RemoveAt(pos);
             m_TestAccountsValidationMsg.RemoveAt(pos);
@@ -1750,7 +1675,7 @@ namespace UnityEngine.UDP.Editor
 
         private void DeleteTestAccount(TestAccount account, int pos)
         {
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             m_IsTestAccountUpdating = true;
 
             UnityWebRequest request = AppStoreOnBoardApi.DeleteTestAccount(account.playerId);
@@ -1782,6 +1707,7 @@ namespace UnityEngine.UDP.Editor
             m_IapItems[reqStruct.arrayPos] = reqStruct.curIapItem; // add id information
             isUpdatingIap = false;
             Repaint();
+            SaveIapCatalogToFile();
         }
 
         private ReqStruct BuildRequestFromStepName(Step targetStep)
@@ -1856,7 +1782,7 @@ namespace UnityEngine.UDP.Editor
 
                     var players = new List<SimplePlayerPayload>();
 
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
                     for (var i = 0; i < m_TestAccountsDirty.Count; i++)
                     {
                         var player = m_TestAccounts[i];
@@ -1876,7 +1802,7 @@ namespace UnityEngine.UDP.Editor
                         gameTitle = appItemInMemory.name,
                         iapItems = iapItems.ToArray(),
                     };
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
                     payload.testAccounts = players.ToArray();
 
 #endif
@@ -1931,7 +1857,7 @@ namespace UnityEngine.UDP.Editor
 
             if (reqStruct.currentStep == Step.DeletePlayer)
             {
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
                 m_IsTestAccountUpdating = false;
                 if (resErr != null && resErr.message != null)
                 {
@@ -1963,7 +1889,7 @@ namespace UnityEngine.UDP.Editor
             isUpdatingIap = false;
             isOperationRunning = false;
             isGeneratingOrLinking = false;
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             m_IsTestAccountUpdating = false;
 #endif
         }
@@ -1978,7 +1904,7 @@ namespace UnityEngine.UDP.Editor
 
         private void ClearPlayersInMemory()
         {
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             m_TestAccounts.Clear();
             m_TestAccountsDirty.Clear();
             m_TestAccountsValidationMsg.Clear();
@@ -1991,22 +1917,22 @@ namespace UnityEngine.UDP.Editor
             float labelWidth = AppStoreStyles.kClientLabelWidth)
         {
             GUILayout.BeginHorizontal();
-            
+
             EditorGUILayout.LabelField(labelText, GUILayout.Width(labelWidth));
             InsertDisabledLabel(textValue);
-           
+
             GUILayout.EndHorizontal();
         }
 
         void InsertDisabledLabel(string labelText)
         {
             EditorGUI.BeginDisabledGroup(true);
-            
+
             EditorGUILayout.SelectableLabel(
                 text: labelText,
                 style: EditorStyles.textField,
                 options: GUILayout.Height(EditorGUIUtility.singleLineHeight));
-            
+
             EditorGUI.EndDisabledGroup();
         }
 
@@ -2063,7 +1989,7 @@ namespace UnityEngine.UDP.Editor
 
         private bool AnythingChanged()
         {
-#if (!UNITY_2020_1_OR_NEWER)
+#if (!(SERVICES_SDK_CORE_ENABLED && ENABLE_EDITOR_GAME_SERVICES))
             if (m_GameTitleChanged || m_CallbackUrlChanged)
             {
                 return true;
@@ -2087,6 +2013,24 @@ namespace UnityEngine.UDP.Editor
             }
 
             return false;
+        }
+
+        private void SaveIapCatalogToFile()
+        {
+            var cloudItems = new List<IapItem>();
+            foreach (var item in m_IapItems)
+            {
+                if (!string.IsNullOrEmpty(item.id))
+                {
+                    cloudItems.Add(item);
+                }
+            }
+
+            var catalog = new ProductCatalogPersistModel {products = Utils.IapListToProductInfoList(cloudItems)};
+            if (!Directory.Exists(AppStoreSettings.projectResourceFolder))
+                Directory.CreateDirectory(AppStoreSettings.projectResourceFolder);
+            File.WriteAllText(AppStoreSettings.productCatalogPath, ProductCatalogPersistModel.Serialize(catalog));
+            AssetDatabase.ImportAsset(AppStoreSettings.productCatalogPath);
         }
 
         private static void Log(string msg)

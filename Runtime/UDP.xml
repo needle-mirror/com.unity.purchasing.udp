@@ -1,0 +1,1156 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>UDP</name>
+    </assembly>
+    <members>
+        <member name="T:UnityEngine.UDP.Analytics.AnalyticsResult">
+            <summary>
+            Result of sending analytics data to server
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.Analytics.AnalyticsResult.kOk">
+            <summary>
+            status ok
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.Analytics.AnalyticsResult.kError">
+            <summary>
+            status error
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.Analytics.AnalyticsResult.kNotInitialized">
+            <summary>
+            when game is not initialized, get this error
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.Analytics.AnalyticsResult.kInvalidData">
+            <summary>
+            one or more data fields are invalid
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.Analytics.UdpAnalytics">
+            <summary>
+            Collect Runtime data and send to our server.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Analytics.UdpAnalytics.Transaction(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Collect purchase success data.
+            </summary>
+            <param name="productionId"></param>
+            <param name="price"></param>
+            <param name="currency"></param>
+            <param name="receipt"></param>
+            <param name="cpOrderId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Analytics.UdpAnalytics.TransactionFailed(System.String,System.String,System.String)">
+            <summary>
+            Collect purchase failed data.
+            </summary>
+            <param name="productionId"></param>
+            <param name="cpOrderId"></param>
+            <param name="reason"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Analytics.UdpAnalytics.PurchaseAttempt(System.String,System.String)">
+            <summary>
+            Collect purchase attempt data at the beginning of purchase method is invoked.
+            </summary>
+            <param name="productionId"></param>
+            <param name="uuid"></param>
+            <returns></returns>
+        </member>
+        <member name="T:UnityEngine.UDP.AppStoreSettings">
+            <summary>
+            Describes properties of the game, and saves them as a file.
+            If AppInfo is not passed on intialize, the UDP SDK retrieves the game info from this file.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.UnityProjectID">
+            <summary>
+            Current project ID.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.UnityClientID">
+            <summary>
+            Current game clientId.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.UnityClientKey">
+            <summary>
+            Current game client key.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.UnityClientRSAPublicKey">
+            <summary>
+            Current game RSA public key.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.AppName">
+            <summary>
+            Current game name.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.AppSlug">
+            <summary>
+            Current game slug.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.AppItemId">
+            <summary>
+            Current game itemID.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.Permission">
+            <summary>
+            Current game permission.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.appStoreSettingsAssetFolder">
+            <summary>
+            Path of the resource folder of current project.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.projectResourceFolder">
+            <summary>
+            Path of project resource folder.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.appStoreSettingsAssetPath">
+            <summary>
+            File path of the settings file.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.appStoreSettingsPropFolder">
+            <summary>
+            Path of the assets folder of current project.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.appStoreSettingsPropPath">
+            <summary>
+            File path of GameSetting.prop.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.udpPersistentDirectory">
+            <summary>
+            Directory of the UDP meta info stored in Android devices.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.udpIdentifierFileName">
+            <summary>
+            File name of UDP meta info stored in Android devices.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.productCatalogFileName">
+            <summary>
+            File name of the product catalog.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.AppStoreSettings.productCatalogPath">
+            <summary>
+            Local saved product catalog.
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.BuildConfig">
+            <summary>
+            Describe configs for current udp sdk, used in Unity editor and application runtime.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.BuildConfig.ID_ENDPOINT">
+            <summary>
+            Config: ID_ENDPOINT
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.BuildConfig.ENDPOINT_UDP_DOC">
+            <summary>
+            Config: ENDPOINT_UDP_DOC
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.BuildConfig.UDP_ENDPOINT">
+            <summary>
+            Config: UDP_ENDPOINT
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.BuildConfig.SDK_DIST">
+            <summary>
+            Config: SDK_DIST
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.BuildConfig.VERSION">
+            <summary>
+            Config: VERSION
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.BuildConfig.API_ENDPOINT">
+            <summary>
+            Config: API_ENDPOINT
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.BuildConfig.IAP_VERSION">
+            <summary>
+            Config: IAP_VERSION
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.Common.ApptuttiSdkManager">
+            <summary>
+            Helper functions for Apptutti store.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.ApptuttiSdkManager.OnCreate">
+            <summary>
+            Called on game awake, and pass this signal to Apptutti sdk
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.ApptuttiSdkManager.OnStart">
+            <summary>
+            Called on game start, and pass this signal to Apptutti sdk
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.ApptuttiSdkManager.OnPause">
+            <summary>
+            Called on game pause, and pass this signal to Apptutti sdk
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.ApptuttiSdkManager.OnResume">
+            <summary>
+            Called on game resume, and pass this signal to Apptutti sdk
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.ApptuttiSdkManager.OnDestory">
+            <summary>
+            Called on game destroy, and pass this signal to Apptutti sdk
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.ApptuttiSdkManager.OnQuit">
+            <summary>
+            Called on game quit, and pass this signal to Apptutti sdk
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.Common.MiniJSON.Json">
+            <summary>
+            Json helper functions.
+            [!code[Main](MiniJSON.cs#L40-L71 "This is Example usage")]
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.Json.Deserialize(System.String)">
+            <summary>
+            Json deserialize. Parse string to object.
+            </summary>
+            <param name="json"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.Json.Serialize(System.Object)">
+            <summary>
+            Json serialize. Parse object to string.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions">
+            <summary>
+            Json extension methods.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions.GetHash(System.Collections.Generic.Dictionary{System.String,System.Object},System.String)">
+            <summary>
+            Get dictionary from one dictionary by key.
+            </summary>
+            <param name="dic"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions.GetEnum``1(System.Collections.Generic.Dictionary{System.String,System.Object},System.String)">
+            <summary>
+            Get enum from one dictionary by key.
+            </summary>
+            <param name="dic"></param>
+            <param name="key"></param>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions.GetString(System.Collections.Generic.Dictionary{System.String,System.Object},System.String,System.String)">
+            <summary>
+            Get string from dictionary by key. If not found, return default.
+            </summary>
+            <param name="dic"></param>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions.GetLong(System.Collections.Generic.Dictionary{System.String,System.Object},System.String)">
+            <summary>
+            Get long from dictionary by key. If not found, return 0.
+            </summary>
+            <param name="dic"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions.GetStringList(System.Collections.Generic.Dictionary{System.String,System.Object},System.String)">
+            <summary>
+            Get string list from dictionary by key.
+            </summary>
+            <param name="dic"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions.GetBool(System.Collections.Generic.Dictionary{System.String,System.Object},System.String)">
+            <summary>
+            Get bool from dictionary by key. Default return false.
+            </summary>
+            <param name="dic"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions.Get``1(System.Collections.Generic.Dictionary{System.String,System.Object},System.String)">
+            <summary>
+            Get type T from dictionary by key.
+            </summary>
+            <param name="dic"></param>
+            <param name="key"></param>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions.toJson(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Parse string,object dictionary to json string.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions.toJson(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Parse string,string dictionary to json string.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions.toJson(System.String[])">
+            <summary>
+            Parse string list to json string.
+            </summary>
+            <param name="array"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJSON.MiniJsonExtensions.HashtableFromJson(System.String)">
+            <summary>
+            Parse json string to string,object dictionary.
+            </summary>
+            <param name="json"></param>
+            <returns></returns>
+        </member>
+        <member name="T:UnityEngine.UDP.Common.MiniJson">
+            <summary>
+            Adapter for MiniJson 2012
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJson.JsonEncode(System.Object)">
+            <summary>
+            json encode. Parse json object to string.
+            </summary>
+            <param name="json"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.MiniJson.JsonDecode(System.String)">
+            <summary>
+            json decode. Parse string to dictionary.
+            </summary>
+            <param name="json"></param>
+            <returns></returns>
+        </member>
+        <member name="T:UnityEngine.UDP.Common.OnestoreSdkManager">
+            <summary>
+            Helper functions for ONEStore.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Common.OnestoreSdkManager.OnDestroy">
+            <summary>
+            Called on game destroy, and pass this signal to ONEStore sdk
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.ResultCode">
+            <summary>
+            SDK result code. Aligned with Android ResultCode: android/ResultCode.java
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_INIT_SUCCESS">
+            <summary>
+            Result code: init success
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_INIT_ERROR">
+            <summary>
+            Result code: init failed
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_NOT_INIT">
+            <summary>
+            Result code: not init
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_PURCHASE_SUCCESS">
+            <summary>
+            Result code: purchase success
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_PURCHASE_FAILED">
+            <summary>
+            Result code: purchased failed
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_PURCHASE_CANCEL">
+            <summary>
+            Result code: purchase canceled
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_PURCHASE_REPEAT">
+            <summary>
+            Result code: purchase repeated
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_CONSUME_PURCHASE_SUCCESS">
+            <summary>
+            Result code: consume success
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_CONSUME_PURCHASE_FAILED">
+            <summary>
+            Result code: consume failed
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_QUERY_INVENTORY_SUCCESS">
+            <summary>
+            Result code: query inventory success
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_QUERY_INVENTORY_FAILED">
+            <summary>
+            Result code: query inventory failed
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ResultCode.SDK_SERVER_INVALID">
+            <summary>
+            Result code: internal server error
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.LicensingCode">
+            <summary>
+            Describes the status of the LicenseCheck API.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.LicensingCode.RETRY">
+            <summary>
+            Cannot currently obtain license information. Retry the LicenseCheck.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.LicensingCode.LICENSED">
+            <summary>
+            The application is licensed to the user. The user has purchased the application or is authorized to download and install the alpha or beta version of the application.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.LicensingCode.NOT_LICENSED">
+            <summary>
+            The application is not licensed to the user.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.LicensingCode.STORE_NOT_SUPPORT">
+            <summary>
+            The current store doesn't support LicenseCheck.
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.LicensingErrorCode">
+            <summary>
+            Describes the error status code during LicenseCheck.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.LicensingErrorCode.ERROR_INVALID_PACKAGE_NAME">
+            <summary>
+            Local error - the application requested a license check for a package that is not installed on the device.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.LicensingErrorCode.ERROR_NON_MATCHING_UID">
+            <summary>
+            Local error - the application requested a license check for a package whose UID (package, user ID pair) does not match that of the requesting application.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.LicensingErrorCode.ERROR_NOT_MARKET_MANAGED">
+            <summary>
+            Server error - the current store does not recognize the application (package name).
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.LicensingErrorCode.ERROR_CHECK_IN_PROGRESS">
+            <summary>
+            Another LicenseCheck is in progress for the application.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.LicensingErrorCode.ERROR_INVALID_PUBLIC_KEY">
+            <summary>
+            The public key passed is invalid.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.LicensingErrorCode.ERROR_MISSING_PERMISSION">
+            <summary>
+            The user doesn't have permission for the application.
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.ILicensingListener">
+            <summary>
+            Listener interface of the LicenseCheck API.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.ILicensingListener.allow(UnityEngine.UDP.LicensingCode,System.String)">
+            <summary>
+            The current user is allowed to access the application.
+            </summary>
+            <param name="code"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.ILicensingListener.dontAllow(UnityEngine.UDP.LicensingCode,System.String)">
+            <summary>
+            The current user is not allowed to access the application.
+            </summary>
+            <param name="code"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.ILicensingListener.applicationError(UnityEngine.UDP.LicensingErrorCode,System.String)">
+            <summary>
+            An error occurred during LicenseCheck.
+            </summary>
+            <param name="errorCode"></param>
+            <param name="message"></param>
+        </member>
+        <member name="T:UnityEngine.UDP.ProductCatalogPersistModel">
+            <summary>
+            Describe some fields to save product catalog as file.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ProductCatalogPersistModel.udpVersion">
+            <summary>
+            Current udp sdk version.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.UDP.ProductCatalogPersistModel.products">
+            <summary>
+            Product catalog.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.ProductCatalogPersistModel.Serialize(UnityEngine.UDP.ProductCatalogPersistModel)">
+            <summary>
+            Serialize method. object to string.
+            </summary>
+            <param name="catalog"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.ProductCatalogPersistModel.Deserialize(System.String)">
+            <summary>
+            Deserialize, string to object.
+            </summary>
+            <param name="catalogJson"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.ProductCatalogPersistModel.FromTextAsset(UnityEngine.TextAsset)">
+            <summary>
+            Deserialize from text asset.
+            </summary>
+            <param name="asset"></param>
+            <returns></returns>
+        </member>
+        <member name="T:UnityEngine.UDP.stores.FakeStore">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.#ctor">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.Initialize(UnityEngine.UDP.IInitListener,UnityEngine.UDP.AppInfo)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.LicenseCheck(UnityEngine.UDP.ILicensingListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.Purchase(System.String,System.String,System.String,UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.Purchase(System.String,System.String,UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.QueryInventory(UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.QueryInventory(System.Collections.Generic.List{System.String},UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.ConsumePurchase(UnityEngine.UDP.PurchaseInfo,UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.ConsumePurchase(System.Collections.Generic.List{UnityEngine.UDP.PurchaseInfo},UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.EnableDebugLogging(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.EnableDebugLogging(System.Boolean,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.FakeStore.GetStoreName">
+            <inheritdoc />
+        </member>
+        <member name="T:UnityEngine.UDP.stores.IUdpStore">
+            <summary>
+            UDP store's interface
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.IUdpStore.Initialize(UnityEngine.UDP.IInitListener,UnityEngine.UDP.AppInfo)">
+            <summary>
+            Initialize method.
+            </summary>
+            <param name="listener"></param>
+            <param name="appInfo"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.IUdpStore.LicenseCheck(UnityEngine.UDP.ILicensingListener)">
+            <summary>
+            CheckLicense method.
+            </summary>
+            <param name="licensingListener"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.IUdpStore.Purchase(System.String,System.String,System.String,UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            Obsolete.
+            </summary>
+            <param name="productId"></param>
+            <param name="gameOrderId"></param>
+            <param name="developerPayload"></param>
+            <param name="listener"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.IUdpStore.Purchase(System.String,System.String,UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            Purchase method.
+            </summary>
+            <param name="productId"></param>
+            <param name="developerPayload"></param>
+            <param name="listener"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.IUdpStore.QueryInventory(UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            QueryInventory method.
+            </summary>
+            <param name="listener"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.IUdpStore.QueryInventory(System.Collections.Generic.List{System.String},UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            QueryInventory with productIDs. It will return the information of queried products and not-consumed purchases.
+            </summary>
+            <param name="productIds"></param>
+            <param name="listener"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.IUdpStore.ConsumePurchase(UnityEngine.UDP.PurchaseInfo,UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            Consume a consumable products.
+            </summary>
+            <param name="purchaseInfo"></param>
+            <param name="listener"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.IUdpStore.ConsumePurchase(System.Collections.Generic.List{UnityEngine.UDP.PurchaseInfo},UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            Consume multiple purchases.
+            </summary>
+            <param name="purchaseInfos"></param>
+            <param name="listener"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.IUdpStore.EnableDebugLogging(System.Boolean)">
+            <summary>
+            EnableDebugLogging.
+            </summary>
+            <param name="enable"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.IUdpStore.EnableDebugLogging(System.Boolean,System.String)">
+            <summary>
+            EnableDebugLogging with tag.
+            </summary>
+            <param name="enable"></param>
+            <param name="tag"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.IUdpStore.GetStoreName">
+            <summary>
+            Current store name.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:UnityEngine.UDP.stores.JavaStore">
+            <summary>
+            Java stores implementation.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.JavaStore.Initialize(UnityEngine.UDP.IInitListener,UnityEngine.UDP.AppInfo)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.JavaStore.LicenseCheck(UnityEngine.UDP.ILicensingListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.JavaStore.Purchase(System.String,System.String,System.String,UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.JavaStore.Purchase(System.String,System.String,UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.JavaStore.QueryInventory(UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.JavaStore.QueryInventory(System.Collections.Generic.List{System.String},UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.JavaStore.ConsumePurchase(UnityEngine.UDP.PurchaseInfo,UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.JavaStore.ConsumePurchase(System.Collections.Generic.List{UnityEngine.UDP.PurchaseInfo},UnityEngine.UDP.IPurchaseListener)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.JavaStore.EnableDebugLogging(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.JavaStore.EnableDebugLogging(System.Boolean,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.UDP.stores.JavaStore.GetStoreName">
+            <inheritdoc />
+        </member>
+        <member name="T:UnityEngine.UDP.stores.StoreProvider">
+            <summary>
+            Store provider factory.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.stores.StoreProvider.GetStore">
+            <summary>
+            get store
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.Inventory">
+            <summary>
+            Describe the products that belong to the application and purchases made by the current user.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.Inventory.GetPurchaseInfo(System.String)">
+            <summary>
+            Retrieve PurchaseInfo for the given productId.
+            </summary>
+            <param name="productId">Product ID</param>
+            <returns>PurchaseInfo</returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Inventory.GetProductInfo(System.String)">
+            <summary>
+            Retrieve the product information for the given productId.
+            </summary>
+            <param name="productId">Product ID</param>
+            <returns>ProductInfo</returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Inventory.HasPurchase(System.String)">
+            <summary>
+            Check if any unconsumed purchase exists for given productId.
+            </summary>
+            <param name="productId">Product ID</param>
+            <returns>if purchase exists</returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Inventory.HasProduct(System.String)">
+            <summary>
+            Check if a specific product exists.
+            </summary>
+            <param name="productId">Product ID</param>
+            <returns>if product exists</returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Inventory.GetPurchaseDictionary">
+            <summary>
+            Retrieve purchases as a dictionary.
+            </summary>
+            <returns>dictionary of purchases</returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Inventory.GetProductDictionary">
+            <summary>
+            Retrieve products as a dictionary.
+            </summary>
+            <returns>dictionary of products</returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Inventory.GetProductList">
+            <summary>
+            Retrieve products as a list.
+            </summary>
+            <returns>list of products</returns>
+        </member>
+        <member name="M:UnityEngine.UDP.Inventory.GetPurchaseList">
+            <summary>
+            Retrieve purchases as a list.
+            </summary>
+            <returns>list of purchases</returns>
+        </member>
+        <member name="T:UnityEngine.UDP.IPurchaseListener">
+            <summary>
+            Listener of a result of purchase or an inventory query.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.IPurchaseListener.OnPurchase(UnityEngine.UDP.PurchaseInfo)">
+            <summary>
+            Called to notify that the purchase has succeeded.
+            </summary>
+            <param name="purchaseInfo"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.IPurchaseListener.OnPurchaseFailed(System.String,UnityEngine.UDP.PurchaseInfo)">
+            <summary>
+            Called to notify that the purchase has failed.
+            </summary>
+            <param name="message"></param>
+            <param name="purchaseInfo"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.IPurchaseListener.OnPurchaseRepeated(System.String)">
+            <summary>
+            Called to notify that a player has purchased a non-consumable product several times.
+            You can implement this listener when the partner store doesn’t support QueryInventory.
+            </summary>
+            <param name="productId"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.IPurchaseListener.OnPurchasePending(System.String,UnityEngine.UDP.PurchaseInfo)">
+            <summary>
+            Called to notify that the purchase is pending.
+            </summary>
+            <param name="message"></param>
+            <param name="purchaseInfo"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.IPurchaseListener.OnPurchaseConsume(UnityEngine.UDP.PurchaseInfo)">
+            <summary>
+            Called to notify that the consume has succeeded.
+            </summary>
+            <param name="purchaseInfo"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.IPurchaseListener.OnPurchaseConsumeFailed(System.String,UnityEngine.UDP.PurchaseInfo)">
+            <summary>
+            Called to notify that the consume has failed.
+            </summary>
+            <param name="message"></param>
+            <param name="purchaseInfo"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.IPurchaseListener.OnQueryInventory(UnityEngine.UDP.Inventory)">
+            <summary>
+            Called to notify that the query has succeeded.
+            </summary>
+            <param name="inventory"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.IPurchaseListener.OnQueryInventoryFailed(System.String)">
+            <summary>
+            Called to notify that the query has failed.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="T:UnityEngine.UDP.ProductInfo">
+            <summary>
+            Describes parameters of the product returned by QueryInventory.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.ProductInfo.ItemType">
+            <summary>
+            Type of product.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.ProductInfo.ProductId">
+            <summary>
+            Unique ID of product.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.ProductInfo.Consumable">
+            <summary>
+            Indicates whether or not the product is consumable.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.ProductInfo.Price">
+            <summary>
+            Price of product.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.ProductInfo.PriceAmountMicros">
+            <summary>
+            Micro price of product, defined as price * 1000000.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.ProductInfo.Currency">
+            <summary>
+            Currency of product.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.ProductInfo.Title">
+            <summary>
+            Product title.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.ProductInfo.Description">
+            <summary>
+            Description of product.
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.AppInfo">
+            <summary>
+            Describes some properties of your game, used during game init.
+            If this is null, the UDP SDK uses your game's default config.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.AppInfo.ClientId">
+            <summary>
+            Game's Client ID, found in Editor Settings or the UDP console.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.AppInfo.AppSlug">
+            <summary>
+            Game ID, found in Editor Settings or the UDP console.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.AppInfo.ClientKey">
+            <summary>
+            Client key, found in Editor Settings or the UDP console.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.AppInfo.RSAPublicKey">
+            <summary>
+            RSA public key, found in Editor Settings or the UDP console.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.PurchaseForwardCallback.ConvertPurchaseInfo(System.String)">
+            <summary>
+            Example:
+            {
+                "gameOrderId": "c05c109a-8197-41df-bb31-5b4849de0940",
+                "itemType": "inapp",
+                "orderQueryToken": "eyJjaGFubmVsUHJvZHVjdElkIjoiY29tLnVuaXR5LnNhbXBsZVByb2QucHJvZHVjdDEiLCJjaGFubmVsVHlwZSI6IlVEUCJ9",
+                "productId": "com.unity.sampleProd.product1",
+                "store": "UDP",
+                "developerPayload": "developer payload",
+                "storePurchaseJsonString": "{\"cpOrderId\":\"c05c109a-8197-41df-bb31-5b4849de0940\",\"currency\":\"USD\",\"orderId\":\"274878148740\",\"payload\":\"\",\"price\":\"1.0USD\",\"productId\":\"com.unity.sampleProd.product1\",\"purchaseToken\":\"\",\"signature\":\"\",\"totalAmount\":1}"
+            }
+            </summary>
+            <param name="purchaseInfoString">PurchaseInfo in Json String</param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.PurchaseForwardCallback.ConvertProductInfo(System.String)">
+            <summary>
+            Convert productInfo's json string to ProdcutInfo.
+            
+            Example: 
+            {
+                "consumable": true,
+                "currency": "USD",
+                "description": "desc 1",
+                "itemType": "inapp",
+                "price": "1.0USD",
+                "priceAmountMicros": 1000000,
+                "productId": "com.unity.sampleProd.product1",
+                "title": "Test Product"
+            }
+            </summary>
+            <param name="productInfoString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:UnityEngine.UDP.PurchaseForwardCallback.ConvertInventory(System.String)">
+             <summary>
+             Convert inventory json string into Inventory.
+             Example:
+            {
+                 "purchases": [
+                 {
+                     "gameOrderId": "c05c109a-8197-41df-bb31-5b4849de0940",
+                     "itemType": "inapp",
+                     "orderQueryToken": "eyJjaGFubmVsUHJvZHVjdElkIjoiY29tLnVuaXR5LnNhbXBsZVByb2QucHJvZHVjdDEiLCJjaGFubmVsVHlwZSI6IlVEUCJ9",
+                     "productId": "com.unity.sampleProd.product1",
+                     "store": "UDP",
+                     "storePurchaseJsonString": "{\"cpOrderId\":\"c05c109a-8197-41df-bb31-5b4849de0940\",\"currency\":\"USD\",\"orderId\":\"274878148740\",\"payload\":\"\",\"price\":\"1.0USD\",\"productId\":\"com.unity.sampleProd.product1\",\"purchaseToken\":\"\",\"signature\":\"\",\"totalAmount\":1}"
+                 }
+                 ],
+                 "products": [
+                 {
+                     "consumable": true,
+                     "currency": "USD",
+                     "description": "desc 1",
+                     "itemType": "inapp",
+                     "price": "1.0USD",
+                     "priceAmountMicros": 1000000,
+                     "productId": "com.unity.sampleProd.product1",
+                     "title": "Test Product"
+                 },
+                 {
+                     "consumable": true,
+                     "currency": "USD",
+                     "description": "desc 2",
+                     "itemType": "inapp",
+                     "price": "2.0USD",
+                     "priceAmountMicros": 2000000,
+                     "productId": "com.unity.sampleProd.product2",
+                     "title": "Test Product 2"
+                 }
+                 ]
+             }
+             </summary>
+             <param name="inventoryString"></param>
+             <returns></returns>
+        </member>
+        <member name="T:UnityEngine.UDP.PurchaseInfo">
+            <summary>
+            Represents an in-app billing purchase.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.PurchaseInfo.ItemType">
+            <summary>
+            Type of product purchased.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.PurchaseInfo.ProductId">
+            <summary>
+            Unique ID of product.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.PurchaseInfo.GameOrderId">
+            <summary>
+            Unique order ID for the transaction.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.PurchaseInfo.OrderQueryToken">
+            <summary>
+            String containing the signature of the purchase data that was signed with the developer's private key.
+            You can use this to query order status from the UDP server.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.PurchaseInfo.DeveloperPayload">
+            <summary>
+            Any string provided by the developer. UDP will pass this to PartnerStore in the ‘Purchase’ method.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.PurchaseInfo.StorePurchaseJsonString">
+            <summary>
+            JSON string containing additional information that the store provides to UDP.
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.StoreService">
+            <summary>
+            Main class for communication between the library and the application's code.It provides methods for in-app billing.
+            You can create one instance of this class for your application and use it to process in-app billing operations.
+            All methods can be called from the UI thread and asynchronous callbacks are returned on the UI thread.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.StoreService.Initialize(UnityEngine.UDP.IInitListener,UnityEngine.UDP.AppInfo)">
+            <summary>
+            Initialize UDP SDK. This method should be called in Awake() or Start().
+            </summary>
+            <param name="listener">IInitListener that will be triggered when initialization finishes</param>
+            <param name="appInfo">App information. This is normally automatically retrieved.</param>
+            <exception cref="T:System.InvalidOperationException">If the platform is not right</exception>
+        </member>
+        <member name="M:UnityEngine.UDP.StoreService.LicenseCheck(UnityEngine.UDP.ILicensingListener)">
+            <summary>
+            Query the current store at runtime to obtain the licensing status for the current user, then allow or prevent further use as appropriate.
+            </summary>
+            <param name="licensingListener"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.StoreService.Purchase(System.String,System.String,System.String,UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            Purchase API. (Obsolete)
+            </summary>
+            <param name="productId"></param>
+            <param name="gameOrderId"></param>
+            <param name="developerPayload"></param>
+            <param name="listener"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.StoreService.Purchase(System.String,System.String,UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            Purchase API.
+            </summary>
+            <param name="productId">The id of the product to be purchased</param>
+            <param name="developerPayload">developer's payload</param>
+            <param name="listener">Callback triggered when purchase finishes</param>
+        </member>
+        <member name="M:UnityEngine.UDP.StoreService.QueryInventory(UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            Returns the information of queried products and unconsumed purchases.
+            Some stores may not return unconsumed purchases.
+            </summary>
+            <param name="listener">IPurchaseListener that will be triggered when querying finishes</param>
+        </member>
+        <member name="M:UnityEngine.UDP.StoreService.QueryInventory(System.Collections.Generic.List{System.String},UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            Query inventory with product IDs. This returns the information of queried products and unconsumed purchases.
+            </summary>
+            <param name="productIds">a list of product IDs</param>
+            <param name="listener">IPurchaseListener that will be triggered when querying finishes</param>
+        </member>
+        <member name="M:UnityEngine.UDP.StoreService.ConsumePurchase(UnityEngine.UDP.PurchaseInfo,UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            Consume a purchase of a consumable product.
+            Users must consume the product before they can repurchase the same product.
+            </summary>
+            <param name="purchaseInfo"> the purchase information returned by <see cref="M:UnityEngine.UDP.IPurchaseListener.OnPurchase(UnityEngine.UDP.PurchaseInfo)"/></param>
+            <param name="listener">IPurchaseListener that will be triggered when consuming finishes</param>
+        </member>
+        <member name="M:UnityEngine.UDP.StoreService.ConsumePurchase(System.Collections.Generic.List{UnityEngine.UDP.PurchaseInfo},UnityEngine.UDP.IPurchaseListener)">
+            <summary>
+            Consume multiple purchases of consumable products.
+            </summary>
+            <param name="purchaseInfos">PurchaseInfo that needs to be consumed</param>
+            <param name="listener">IPurchaseListener that will be triggered when consuming finishes</param>
+        </member>
+        <member name="M:UnityEngine.UDP.StoreService.EnableDebugLogging(System.Boolean)">
+            <summary>
+            Enable debug log.
+            </summary>
+            <param name="enable">if debug log is enabled</param>
+        </member>
+        <member name="M:UnityEngine.UDP.StoreService.EnableDebugLogging(System.Boolean,System.String)">
+            <summary>
+            Enable debug log with custom tag.
+            </summary>
+            <param name="enable">if debug log is enabled</param>
+            <param name="tag">Tag will only works on Android part</param>
+        </member>
+        <member name="P:UnityEngine.UDP.StoreService.StoreName">
+            <summary>
+            Return the current store name.
+            </summary>
+        </member>
+        <member name="T:UnityEngine.UDP.IInitListener">
+            <summary>
+            IInitListener that is triggered when initialization finishes.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.UDP.IInitListener.OnInitialized(UnityEngine.UDP.UserInfo)">
+            <summary>
+            Init success callback to your game if the initialization was successful.
+            </summary>
+            <param name="userInfo"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.IInitListener.OnInitializeFailed(System.String)">
+            <summary>
+            Init failed callback to your game if the initalization was failed.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:UnityEngine.UDP.InitLoginForwardCallback.onInitFinished(System.Int32,System.String,UnityEngine.AndroidJavaObject)">
+            <summary>
+            
+            </summary>
+            <param name="resultCode"></param>
+            <param name="message"></param>
+            <param name="jo">Potential UserInfo</param>
+        </member>
+        <member name="T:UnityEngine.UDP.UserInfo">
+            <summary>
+            Describes user info returned by the store on successful initialization.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.UserInfo.Channel">
+            <summary>
+            PartnerStore name, generated by UDP.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.UserInfo.UserId">
+            <summary>
+            User ID returned from PartnerStore. Optional
+            </summary>
+        </member>
+        <member name="P:UnityEngine.UDP.UserInfo.UserLoginToken">
+            <summary>
+            User login token returned from PartnerStore. Optional
+            </summary>
+        </member>
+    </members>
+</doc>

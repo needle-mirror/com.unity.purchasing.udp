@@ -2,27 +2,26 @@
 
 ## Editor UI
 
-### UDP Settings
-The UDP Settings inspector manages the connection between your Unity project and the UDP client. To enable the UDP Settings window, you must [install the UDP package](getting-started.html#install) and [link your Unity project to a UDP client](getting-started.html#linking).
+### Unity Distribution Portal settings
+The Unity Distribution Portal settings in the Project Settings window manage the connection between your Unity project and the UDP client. To enable the Unity Distribution Portal settings, you must [install the UDP package](getting-started.html#install) and [link your Unity project to a UDP client](getting-started.html#linking).
 
-To access the UDP Settings window in the Unity Editor, select **Window** > **Unity Distribution Portal** > **Settings**.
+To access the Unity Distribution Portal settings in the Unity Editor, select **Services** > **Unity Distribution Portal** > **Configure**.
 
-|UDP Settings|Description|
+The table below describes the interface of the Unity Distribution Portal settings.
+
+|Field|Description|
 |---|---|
 |**Pull**|Retrieves (pulls) the information you last saved on the UDP server into the Editor.<br/>The following information is synced:<br/>- Game Title<br/>- Settings<br/>- UDP Sandbox Test Accounts<br/>- IAP Catalog (if using the UDP package only)<br/>This overrides any unsaved changes in the Editor.|
-|**Push**|Saves (pushes) your changes to the UDP server.<br/>The following information is synced:<br/>- Game Title<br/>- Settings<br/>- UDP Sandbox Test Accounts<br/>- IAP Catalog (if you defined the IAP Catalog directly in the UDP Settings window)|
+|**Push**|Saves (pushes) your changes to the UDP server.<br/>The following information is synced:<br/>- Game Title<br/>- Settings<br/>- UDP Sandbox Test Accounts<br/>- IAP Catalog (if you defined the IAP Catalog using the UDP package)|
 |**Game Title**|Input the title of your game, and press Push to save. This field syncs with the UDP console.<br/>By default and on first load, Game Title is populated with Game ID (see [Settings](#settings)).| 
 |**Unity Project ID**|Your Unity project ID, which is now linked to your UDP client ID. This field is not editable.|
-|**IAP Catalog**|For UDP package implementations, the IAP catalog fields are displayed.<br/>For Unity IAP implementations, the Open Catalog button is displayed.<br/>From Unity Editor version 2020.1, the IAP Catalog is available in a separate window.|
-|**Settings**|Contains additional game settings.|
+|**Settings**|Contains additional game [settings](#settings).|
 |**UDP Sandbox Test Accounts**|Contains settings for UDP Sandbox Test Accounts.|
+|**Go to UDP Console**|Opens the UDP console in a web browser.|
+|**Go to IAP Catalog**|Opens the IAP Catalog window.|
 
 ### IAP Catalog
-The IAP Catalog section lets you define IAP products for UDP. To add a new item, select **Add new IAP**.
-The image below shows the IAP Catalog section if using the UDP package.
-
-![](Images/AddNewIAP.png)
-
+The IAP Catalog section lets you define IAP products for UDP. It displays a list of your IAP products and a count for the total number of IAP products. To add a new item, select **Add new IAP Product**.
 
 The table below describes the fields of the IAP Catalog section.
 
@@ -34,11 +33,9 @@ The table below describes the fields of the IAP Catalog section.
 |**Price**|The price of the IAP product in USD. You can [set prices for additional currencies](https://docs.unity3d.com/Manual/udp.html#edit) in the UDP console.<br/>You must specify a price to enable players to purchase products in your game.|
 |**Description**|A short description of the IAP product.<br/>This field only supports a description in a single language (English). You can [add further languages](https://docs.unity3d.com/Manual/udp.html#edit) in the UDP console.|
 
-If you have any unsaved changes for your IAP products, an **edited** label is displayed. This disappears when you sync the IAP product.
+If you have any unsaved changes for your IAP products, an **edited** label is displayed next to the modified products and the total count. This disappears when you sync the IAP product.
 
-![](Images/14-BestPractices_04.png)
-
-**Note**: If you use the separate Unity IAP package, select **Window** > **Unity Distribution Portal** > **IAP Catalog** and define your IAP products in the separate IAP Catalog window.
+**Note**: If you use the separate Unity IAP package, select **Services** > **Unity Distribution Portal** > **IAP Catalog** > **Go to IAP Catalog**, and define your IAP products in the IAP Catalog window.
 
 <a name="settings"></a>
 ### Settings
@@ -63,69 +60,6 @@ The UDP Sandbox Test Accounts section lets you add login credentials for the UDP
 |---|---|---|
 |**Email**|The email address for the sandbox test account. It is used as the login name.|Yes|
 |**Password**|The password for the test account.|Yes|
-
-## UDP SDK
-
-### UDP SDK data structure
-This section describes the classes of the UDP SDK.
-
-#### UserInfo
-|field name|type|desc|
-|---|---|---|
-|Channel|string|PartnerStore name, generated by UDP|
-|UserId|string|optional, user ID returned from PartnerStore|
-|UserLoginToken|string|optional, user login token returned from PartnerStore|
-
-#### Inventory
-
-|public function|returns|desc|
-|---|---|---|
-|GetPurchaseInfo(string productId)|PurchaseInfo|get PurchaseInfo of given productId|
-|GetProductInfo(string productId)|ProductInfo|get ProductInfo of given productId|
-|HasPurchase(string productId)|bool|check if any unconsumed purchase exists for given productId|
-|HasProduct(string productId)|bool|check if product exists for given productId|
-|GetPurchaseDictionary()|Dictionary\<string, PurchaseInfo>|get purchases as productId - PurchaseInfo dictionary|
-|GetPurchaseList()|List\<PurchaseInfo>|get purchases as list|
-|GetProductDictionary()|Dictionary\<string, ProductInfo>|get products as productId - ProductInfo dictionary|
-|GetProductList()|List\<ProductInfo>|get products as list|
-
-#### PurchaseInfo
-
-|field name|type|desc|
-|---|---|---|
-|ItemType|string|fixed value “inapp”|
-|ProductId|string|product ID of IAP item|
-|GameOrderId|string|cpOrderId provided by UDP|
-|OrderQueryToken|string|token to query UDP server, generated by UDP|
-|DeveloperPayload|string|Any string provided by the developer. UDP will pass this to PartnerStore in the ‘Purchase’ method.|
-|StorePurchaseJsonString|string|any other additional info provided by PartnerStore|
-
-#### ProductInfo
-|field name|type|desc|
-|---|---|---|
-|ItemType|string|fixed value “inapp”|
-|ProductId|string|product ID of IAP item|
-|Consumable|bool|can be consumed or not|
-|Price|string|formatted price of the item, including its currency sign.|
-|PriceAmountMicros|long|price of IAP item in micros|
-|Currency|string|currency of IAP item|
-|Title|string|IAP item name|
-|Description|string|IAP item description|
-
-<a name="listener"></a>
-#### IPurchaseListener
-
-IPurchaseListener provides the following listeners that tell you the result of all purchase-related events:
-
-|Event|Description|
-|---|---|
-|OnPurchase|The purchase succeeded.|
-|OnPurchaseFailed|The purchase failed.|
-|OnPurchaseRepeated |Used when a player buys a non-consumable product several times. You can implement this listener when the partner store doesn’t support QueryInventory.|
-|OnPurchaseConsume|The consumption succeeded.|
-|OnPurchaseConsumeFailed|The consumption failed.
-|OnQueryInventory|The query succeeded.|
-|OnQueryInventoryFailed|The query failed.|
 
 <a name="order-query"></a>
 ## QueryOrder parameters

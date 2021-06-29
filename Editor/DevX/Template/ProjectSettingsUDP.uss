@@ -1,0 +1,162 @@
+.udp-block{
+	padding: 0px 10px;
+}
+
+.button-container{
+	margin-top: 5px;
+	flex-direction: row;
+	justify-content:flex-end;
+}
+
+.udp-description{
+	margin-top:10px;
+	white-space:normal;
+	padding-left: 13px;
+}
+
+.submit-button{
+	width:80px;
+}
+
+.note-tag{
+	font-size: 12px;
+}
+
+.row-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.column-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.sync-status-group {
+	height: 20px;
+	flex-direction: row;
+	justify-content:flex-end;
+}
+
+.hint-li {
+	/*background-color: initial;*/
+	-unity-text-align: middle-left;
+	padding-left: initial;
+	padding-right: initial;
+}
+
+#GoToPortalLi {
+	margin-top: 30px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+#GoToPortalBtn {
+	min-width: 110px;
+	align-self: center;
+}
+
+#GenerateClientFoldoutContainer {
+	align-items: initial;
+	padding-left: 6px;
+}
+
+#generate-client-group {
+	padding-top: 15px;
+}
+
+#GenerateNewClientBtn {
+	margin-top: 20px;
+	margin-left: initial;
+}
+
+#note-icon {
+	/*--unity-image: resource(--unity-icons-console_entry_info);*/
+	--unity-image: resource("Icons/d_console.infoicon.png");
+	width: 20px;
+	height: 20px;
+	margin-top: 20px;
+}
+
+.folder-li {
+	font-size: 12px;
+	/*height: 30px;*/
+	/*background-color: initial;*/
+	padding: initial;
+}
+
+.udp-input-submit{
+	flex-direction: row;
+	flex-grow: 1;
+	flex-shrink: 1;
+	justify-content:space-between;
+}
+
+.player-container{
+	margin-bottom:3px;
+}
+
+.player {
+	flex-direction: row;
+	display: flex;
+	flex:1 ;
+}
+
+.player > .player-email {
+	flex:1;
+}
+.player > .player-password {
+	flex:1;
+}
+
+#UdpUnityProjectId{
+	flex:1;
+}
+
+.submit-button-medium{
+	width:180px;
+	height:24px;
+	align-self: center;
+}
+
+.submit-button-large{
+	width:220px;
+	height:24px;
+	/*align-self: center;*/
+}
+
+.link-text{
+	margin-left:3px;
+}
+
+#LinkClientIdBlock{
+	margin-top:16px;
+	margin-bottom: 40px;
+}
+
+#LinkClientIdBlock > .or{
+	align-self:center;
+	padding: 8px 0;
+	font-size:14px;
+}
+
+#LinkClientIdBlock > #UdpClientIdToBeLinked{
+	width: 400px;
+	height:24px;
+	/*align-self:center;*/
+	margin-bottom:10px;
+}
+
+.udp-can-not-oauth{
+	flex:1;
+	flex-wrap:wrap;
+	margin: 80px 20px;
+	white-space:normal;
+	font-size:16px;
+}
+
+#GenerateToggleBox > VisualElement {
+	flex-grow: 0;
+	margin-right: 10px;
+}

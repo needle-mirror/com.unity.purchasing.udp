@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Label text="UDP Implementation Guide" style="-unity-text-align: upper-center; color: rgb(109, 217, 238); font-size: 15px; border-top-width: 10px;" />
+    <ui:Label text="&#10;&#10;Answer these quick questions so we can better guide you in your UDP implementation.&#10;&#10;&#10;" display-tooltip-when-elided="true" style="white-space: normal; border-left-width: 5px;" />
+    <ui:VisualElement style="display: flex; border-left-width: 10px;">
+        <ui:Label text="Does your game contain In-App Purchases?&#10;" display-tooltip-when-elided="true" style="font-size: 12px; color: rgb(255, 255, 255); height: 50px; white-space: normal;" />
+        <ui:Toggle label="Yes" value="false" name="IAPYes" />
+        <ui:Toggle label="No" name="IAPNo" value="false" style="white-space: normal;" />
+    </ui:VisualElement>
+    <ui:Label text="&#10;&#10;" display-tooltip-when-elided="true" style="border-left-width: 10px; display: flex; visibility: hidden;" />
+    <ui:VisualElement name="UIAP" style="display: flex; border-left-width: 10px;">
+        <ui:Label text="Do you use Unity IAP to implement your In-App Purchases?&#10;" display-tooltip-when-elided="true" style="font-size: 12px; color: rgb(255, 255, 255); height: 50px;" />
+        <ui:Toggle label="Yes" value="false" name="UIAPYes" />
+        <ui:Toggle label="No" name="UIAPNo" style="white-space: normal; border-left-width: 0;" />
+    </ui:VisualElement>
+    <ui:Label text="&#10;&#10;" display-tooltip-when-elided="true" style="visibility: hidden;" />
+    <ui:VisualElement name="UIAPCode" style="display: flex; border-left-width: 10px;">
+        <ui:Label text="How do you implement Unity IAP in this game?&#10;" display-tooltip-when-elided="true" style="font-size: 12px; color: rgb(255, 255, 255); height: 50px;" />
+        <ui:Toggle label="Codeless" value="false" name="UIAPCodelessYes" />
+        <ui:Toggle label="Code" name="UIAPCodelessNo" style="white-space: normal;" />
+    </ui:VisualElement>
+    <ui:Label text="&#10;&#10;&#10;&#10;" display-tooltip-when-elided="true" style="visibility: hidden;" />
+    <ui:Button name="Evaluate" text="Launch Tutorial" display-tooltip-when-elided="true" style="height: 50px; -unity-font-style: bold; font-size: 17px; color: rgb(255, 255, 255);" />
+</ui:UXML>

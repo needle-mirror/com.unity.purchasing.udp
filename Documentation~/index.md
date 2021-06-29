@@ -6,9 +6,9 @@ Unity Distribution Portal (UDP) lets you distribute your Android games to multip
 
 ## UDP package
 
-The UDP package contains an SDK for working with UDP. It also enables the [UDP Settings](udp-package-reference.html#udp-settings) window in the Unity Editor.
+The UDP package contains an SDK for working with UDP. It also enables the [Unity Distribution Portal](udp-package-reference.html#udp-settings) tab in the Project Settings window of the Unity Editor.
 
-You can use the UDP Settings window to:
+You can use the Unity Distribution Portal settings to:
 
 * [Link your Unity project to the UDP client](getting-started.html#linking)
 * [Create a catalog of IAP products](games-with-iap.html#iap-catalog) for your game
@@ -33,10 +33,10 @@ The overall steps required to [distribute a game with UDP]((https://docs.unity3d
     1. [Implement IAP](games-with-iap.md) (if applicable).
     1. [Implement LicenceCheck for premium games](premium-games.md) (optional).
 1. Build and test your game.
-    1. Build your game APK.
+    1. Build your game as an APK or AAB file.
     1. Ensure all your IAP products are listed in the UDP console (if applicable).
     1. Test your game in the Sandbox.
-1. Upload your game APK to the UDP console.
+1. Upload your game build to the UDP console.
 1. Finalize the game information page in the UDP console.
     1. Verify testing was successful.
     1. Upload your app signing private key.
@@ -57,20 +57,13 @@ You can implement UDP in your game in one of the following ways:
 
 * Using the UDP package only (see [Installing the UDP package](getting-started.html#install))
 * Using the UDP package and Unity IAP package
-* Using Unity IAP only
 
 The implementation you choose does not affect the UDP console.
 
 ## Using the UDP package and the Unity IAP package
 
-From the following package versions and above, you can use the UDP and Unity IAP packages together:
+Unity recommends using the UDP package with Unity IAP package version 3.0.0 and above, accessible from the Package Manager.
 
-* UDP - 2.0.0
-* Unity IAP - 2.0.0 (Asset Store version)
+If using Unity IAP package version &lt;3.0.0, you must also install the latest version of the Unity IAP plug-in from the Asset Store.
 
-The Unity IAP package version 2.0.0 and above does not contain the UDP DLL. This requires the UDP package version 2.0.0 and above. From these versions on, install both the UDP package and the Unity IAP package.
-
-## Using Unity IAP only
-
-Unity IAP versions 1.22.0 - 1.23.5  include the UDP package. If using these versions of the Unity IAP package, you just need to enable Unity IAP.
-To check which Unity IAP version is installed, go to **Window** > **Unity IAP** > **IAP Updates**.
+**Note**: The Unity IAP plug-in in the Asset Store is obsolete, and will be deprecated and no longer be supported after June 2021.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.IO;
-using System.Linq;
+using UnityEditor;
 
 namespace UnityEngine.UDP.Editor
 {
@@ -170,22 +170,63 @@ namespace UnityEngine.UDP.Editor
             }
 
             var instance = UnityConnectType.GetProperty("instance").GetValue(null, null);
-            return userId != GetUserId(instance) || orgId != GetOrganizationId(instance) || accessToken != GetAccessToken(instance);
+            return userId != GetUserId(instance) || orgId != GetOrganizationId(instance) ||
+                   accessToken != GetAccessToken(instance);
         }
 
-       public static bool UnityIapExists()
+        public static bool UnityIapExists()
         {
-                return IsIapPackmanInstalled() || IsIapAssetstoreInstalled();
+            return IsIapPackmanInstalled() || IsIapAssetstoreInstalled();
         }
 
-       private static bool IsIapAssetstoreInstalled()
+        public static List<ProductInfo> IapListToProductInfoList(List<IapItem> iapItems)
         {
-                return File.Exists("Assets/Plugins/UnityPurchasing/Bin/Purchasing.Common.dll");
+            var list = new List<ProductInfo>();
+            foreach (var item in iapItems)
+            {
+                var productInfo = new ProductInfo
+                {
+                    ItemType = item.type,
+                    ProductId = item.slug,
+                    Consumable = item.consumable,
+                    Price = ExtractUSDPrice(item).price,
+                    Currency = ExtractUSDPrice(item).currency,
+                    Title = item.name
+                };
+                productInfo.PriceAmountMicros = (long) (Convert.ToDouble(productInfo.Price) * 1000000);
+                productInfo.Description = item.properties?.description;
+                list.Add(productInfo);
+            }
+
+            return list;
         }
 
-       private static bool IsIapPackmanInstalled()
+        public static void ActivateInspectorWindow()
         {
-                return Directory.Exists("Packages/com.unity.purchasing/Runtime");
+#if UNITY_2018_2_OR_NEWER
+            EditorApplication.ExecuteMenuItem("Window/General/Inspector");
+#else
+            EditorApplication.ExecuteMenuItem("Window/Inspector");
+#endif
+        }
+
+        public static void FocusOnUDPSettingsFile()
+        {
+            var existedAppStoreSettings = (AppStoreSettings) AssetDatabase.LoadAssetAtPath(
+                AppStoreSettings.appStoreSettingsAssetPath,
+                typeof(AppStoreSettings));
+            EditorUtility.FocusProjectWindow();
+            Selection.activeObject = existedAppStoreSettings;
+        }
+
+        private static bool IsIapAssetstoreInstalled()
+        {
+            return File.Exists("Assets/Plugins/UnityPurchasing/Bin/Purchasing.Common.dll");
+        }
+
+        private static bool IsIapPackmanInstalled()
+        {
+            return Directory.Exists("Packages/com.unity.purchasing/Runtime");
         }
     }
 }

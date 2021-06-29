@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Label text="&#10;Legacy version of Unity IAP detected.&#10;&#10;Not all legacy versions of Unity IAP support UDP. If you must use an older version of Unity IAP, make sure you import its latest Asset Store plug-in. &#10;&#10;It&apos;s highly recommended to migrate to the latest Unity IAP package (3.x.x or above). Install it from the Package Manager. If needed, migration guidance is provided on the Unity IAP documentation site." style="white-space: normal; -unity-text-align: upper-center; border-left-width: 10px; border-right-width: 10px;" />
+    <ui:Button text="Close" display-tooltip-when-elided="true" name="Close" style="top: 5%; left: 28%; width: 150px;" />
+</ui:UXML>

@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.2.3] - 2021-10-15
+- Fix compilation error CS0103 when imported together with Tutorial Framework 2.0.0 package
+
 ## [2.2.2] - 2021-06-29
 - Misc bugfixes and optimization
 

@@ -19,14 +19,7 @@ MonoBehaviour:
         m_Untranslated: 
       Text:
         m_Untranslated: 
-      m_Summary: 
-      m_Description: 
-      m_InstructionBoxTitle: 
-      m_InstructionText: 
-      m_TutorialButtonText: 
       m_Tutorial: {fileID: 0}
-      m_Icons:
-        m_Items: []
       m_Image: {fileID: 0}
       m_Video: {fileID: 0}
       m_CriteriaCompletion: 0
@@ -35,19 +28,17 @@ MonoBehaviour:
       m_MaskingSettings:
         m_MaskingEnabled: 0
         m_UnmaskedViews: []
+      m_Summary: 
+      m_Description: 
+      m_InstructionBoxTitle: 
+      m_InstructionText: 
+      m_TutorialButtonText: 
     - m_Type: 0
       Title:
         m_Untranslated: Step 2
       Text:
         m_Untranslated: Install latest version of Unity IAP
-      m_Summary: 
-      m_Description: 
-      m_InstructionBoxTitle: 
-      m_InstructionText: 
-      m_TutorialButtonText: 
       m_Tutorial: {fileID: 0}
-      m_Icons:
-        m_Items: []
       m_Image: {fileID: 0}
       m_Video: {fileID: 0}
       m_CriteriaCompletion: 0
@@ -56,6 +47,11 @@ MonoBehaviour:
       m_MaskingSettings:
         m_MaskingEnabled: 0
         m_UnmaskedViews: []
+      m_Summary: 
+      m_Description: 
+      m_InstructionBoxTitle: 
+      m_InstructionText: 
+      m_TutorialButtonText: 
     - m_Type: 1
       Title:
         m_Untranslated: 
@@ -63,26 +59,24 @@ MonoBehaviour:
         m_Untranslated: "Ensure the latest version of Unity IAP is installed on the
           project.\n\n<b>We recommend using Unity IAP 3.x.x for best performance.
           \nInstall it from the Package Manager</b>.\n\n"
-      m_Summary: 
-      m_Description: 
-      m_InstructionBoxTitle: 
-      m_InstructionText: 
-      m_TutorialButtonText: 
       m_Tutorial: {fileID: 0}
-      m_Icons:
-        m_Items: []
       m_Image: {fileID: 0}
       m_Video: {fileID: 0}
       m_CriteriaCompletion: 0
       m_Criteria:
         m_Items:
-        - type:
-            m_TypeName: Unity.InteractiveTutorials.ArbitraryCriterion, Unity.InteractiveTutorials.Core,
+        - Type:
+            m_TypeName: Unity.Tutorials.Core.Editor.ArbitraryCriterion, Unity.Tutorials.Core.Editor,
               Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-          criterion: {fileID: 2662183963383794117}
+          Criterion: {fileID: 2662183963383794117}
       m_MaskingSettings:
         m_MaskingEnabled: 0
         m_UnmaskedViews: []
+      m_Summary: 
+      m_Description: 
+      m_InstructionBoxTitle: 
+      m_InstructionText: 
+      m_TutorialButtonText: 
   m_CameraSettings:
     m_CameraMode: 0
     m_FocusMode: 0
@@ -103,15 +97,13 @@ MonoBehaviour:
     m_Untranslated: Next
   DoneButton:
     m_Untranslated: Done
-  m_NextButton: Next
-  m_DoneButton: Done
   m_CompletedSound: {fileID: 0}
-  m_autoAdvance: 0
-  m_OnBeforePageShown:
+  m_AutoAdvance: 0
+  Showing:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11400000, guid: ca3e43aed7dd905409a275e0e3084c96, type: 2}
-        m_TargetAssemblyTypeName: TutorialCallbacks, Assembly-CSharp-Editor
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ResetDialogFlag
         m_Mode: 1
         m_Arguments:
@@ -122,15 +114,35 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
-  m_OnAfterPageShown:
+  Shown:
     m_PersistentCalls:
       m_Calls: []
-  m_OnBeforeTutorialQuit:
+  Staying:
+    m_PersistentCalls:
+      m_Calls: []
+  CriteriaValidated:
+    m_PersistentCalls:
+      m_Calls: []
+  MaskingSettingsChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  NonMaskingSettingsChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnBeforePageShown:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnAfterPageShown:
     m_PersistentCalls:
       m_Calls: []
   m_OnTutorialPageStay:
     m_PersistentCalls:
       m_Calls: []
+  m_OnBeforeTutorialQuit:
+    m_PersistentCalls:
+      m_Calls: []
+  m_NextButton: Next
+  m_DoneButton: Done
 --- !u!114 &2662183963383794117
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -143,12 +155,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7231e8df50e16c74c979c4a2affab91b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Completed:
+    m_PersistentCalls:
+      m_Calls: []
+  Invalidated:
+    m_PersistentCalls:
+      m_Calls: []
   m_Callback:
     _target: {fileID: 11400000, guid: ca3e43aed7dd905409a275e0e3084c96, type: 2}
     _methodName: PackmanCheck
     _args: []
     _dynamic: 0
-    _typeName: Unity.InteractiveTutorials.ArbitraryCriterion+BoolCallback, Unity.InteractiveTutorials.Core,
+    _typeName: Unity.Tutorials.Core.Editor.ArbitraryCriterion+BoolCallback, Unity.Tutorials.Core.Editor,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     dirty: 0
   m_AutoCompleteCallback:
@@ -156,6 +174,6 @@ MonoBehaviour:
     _methodName: 
     _args: []
     _dynamic: 0
-    _typeName: Unity.InteractiveTutorials.ArbitraryCriterion+BoolCallback, Unity.InteractiveTutorials.Core,
+    _typeName: Unity.Tutorials.Core.Editor.ArbitraryCriterion+BoolCallback, Unity.Tutorials.Core.Editor,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     dirty: 0

@@ -15,17 +15,21 @@ using System.Linq;
 /// <summary>
 /// Implement your Tutorial callbacks here.
 /// </summary>
-//[CreateAssetMenu(fileName = DefaultFileName, menuName = "Tutorials/" + DefaultFileName + " Instance")]
+//[CreateAssetMenu(fileName = DefaultFileName, menuName = "Tutorials/UDP" + DefaultFileName + " Instance")]
 public class TutorialCallbacks : ScriptableObject
 {
     public const string DefaultFileName = "TutorialCallbacks";
     static SearchRequest Request;
     public bool UIAPDialog;
 
-    public static ScriptableObject CreateInstance()
+    public static ScriptableObject CreateAndShowAsset(string assetPath = null)
     {
-        return ScriptableObjectUtils.CreateAsset<TutorialCallbacks>(DefaultFileName);
-        
+        assetPath = assetPath ?? $"{TutorialEditorUtils.GetActiveFolderPath()}/{DefaultFileName}.asset";
+        var asset = CreateInstance<TutorialCallbacks>();
+        AssetDatabase.CreateAsset(asset, AssetDatabase.GenerateUniqueAssetPath(assetPath));
+        EditorUtility.FocusProjectWindow(); // needed in order to make the selection of newly created asset to really work
+        Selection.activeObject = asset;
+        return asset;
     }
 
     public bool BillingModeCheck()

@@ -1,34 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8465994225110933620
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7231e8df50e16c74c979c4a2affab91b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Callback:
-    _target: {fileID: 11400000, guid: ca3e43aed7dd905409a275e0e3084c96, type: 2}
-    _methodName: UDPSandbox2
-    _args: []
-    _dynamic: 0
-    _typeName: Unity.Tutorials.Core.Editor.ArbitraryCriterion+BoolCallback, Unity.Tutorials.Core.Editor,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  m_AutoCompleteCallback:
-    _target: {fileID: 11400000, guid: ca3e43aed7dd905409a275e0e3084c96, type: 2}
-    _methodName: 
-    _args: []
-    _dynamic: 0
-    _typeName: Unity.Tutorials.Core.Editor.ArbitraryCriterion+BoolCallback, Unity.Tutorials.Core.Editor,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    dirty: 0
---- !u!114 &-417649751324021565
+--- !u!114 &-7640155721048136811
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,7 +89,7 @@ MonoBehaviour:
           test account from the UDP Project Settings (\u2018Push\u2019 to save it)
           or from the UDP Console, in your Game Info page (then \u2018Pull\u2019
           to sync it to your project settings). The Sandbox will always query the
-          IAP products that are defined on the UDP Console.</i>\n\n<a href=\"https://docs.unity3d.com/Packages/com.unity.purchasing.udp@2.1/manual/building-your-game.html\">[
+          IAP products that are defined on the UDP Console.</i>\n\n<a href=\"https://docs.unity3d.com/Packages/com.unity.purchasing.udp@latest?subfolder=/manual/building-your-game.html\">[
           More Info ]</a>"
       m_Tutorial: {fileID: 0}
       m_Image: {fileID: 0}
@@ -128,7 +100,7 @@ MonoBehaviour:
         - Type:
             m_TypeName: Unity.Tutorials.Core.Editor.ArbitraryCriterion, Unity.Tutorials.Core.Editor,
               Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-          Criterion: {fileID: -417649751324021565}
+          Criterion: {fileID: -7640155721048136811}
       m_MaskingSettings:
         m_MaskingEnabled: 0
         m_UnmaskedViews: []

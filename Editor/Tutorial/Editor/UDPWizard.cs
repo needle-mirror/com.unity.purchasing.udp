@@ -161,6 +161,7 @@ namespace UnityEngine.UDP.Editor
         {
             if (!_boolSelected)
             {
+                
                 WizardPopup window = ScriptableObject.CreateInstance<WizardPopup>();
                 float width = 250;
                 float height = 150;

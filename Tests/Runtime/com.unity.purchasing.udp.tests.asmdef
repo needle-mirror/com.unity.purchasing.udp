@@ -5,7 +5,9 @@
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Android"
+    ],
     "precompiledReferences": [
         "UDP.dll"
     ],

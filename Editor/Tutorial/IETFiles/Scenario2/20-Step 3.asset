@@ -63,7 +63,7 @@ MonoBehaviour:
           // to check whether there are purchases that haven\u2019t been consumed.      
           \n    }\n\n    public void OnInitializeFailed(string message)\n    {\n       
           Debug.Log(\"\"Initialization failed: \"\" + message);\n    }\n}\"\n</i>\n\n\nLink
-          to <a href=\"https://docs.unity3d.com/Packages/com.unity.purchasing.udp@2.1/manual/getting-started.html#initialize-the-udp-sdk\">UDP
+          to <a href=\"https://docs.unity3d.com/Packages/com.unity.purchasing.udp@latest?subfolder=/manual/getting-started.html%23initialize-the-udp-sdk\">UDP
           Documentation</a>\n\n"
       m_Tutorial: {fileID: 0}
       m_Image: {fileID: 0}

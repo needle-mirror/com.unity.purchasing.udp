@@ -15,7 +15,8 @@ MonoBehaviour:
   TutorialTitle:
     m_Untranslated: Game with In-App Purchases (implementing Unity IAP codeless)
   m_TutorialTitle: 
-  m_LessonId: 0
+  m_ProgressTrackingEnabled: 1
+  m_LessonId: 70818787-e005-4edd-9712-49b9481383d6
   m_Version: 1
   m_Scene: {fileID: 0}
   m_DefaultSceneCameraSettings:
@@ -34,7 +35,6 @@ MonoBehaviour:
       m_AssetObject: {fileID: 0}
       m_Prefab: {fileID: 0}
     m_Enabled: 0
-  m_SkipTutorialBehavior: 0
   m_WindowLayout: {fileID: 0}
   m_Pages:
     m_Items:
@@ -50,3 +50,21 @@ MonoBehaviour:
     - {fileID: 11400000, guid: fad9e25cd644a394fa0fac472af2c0ee, type: 2}
     - {fileID: 11400000, guid: 47bce2c33b93b6247b01bef0f6bc2d41, type: 2}
     - {fileID: 11400000, guid: bab99af6f29beb44e9962e1059c4d6a9, type: 2}
+  Modified:
+    m_PersistentCalls:
+      m_Calls: []
+  Initiated:
+    m_PersistentCalls:
+      m_Calls: []
+  PageInitiated:
+    m_PersistentCalls:
+      m_Calls: []
+  GoingBack:
+    m_PersistentCalls:
+      m_Calls: []
+  Completed:
+    m_PersistentCalls:
+      m_Calls: []
+  Quit:
+    m_PersistentCalls:
+      m_Calls: []

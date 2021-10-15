@@ -33,7 +33,7 @@ namespace UnityEngine.UDP.Editor
             if (EditorUtility.DisplayDialog("IET framework required", "The In-Editor Tutorial (IET) Framework will be imported from the Package Manager.", "Ok",
                 "Cancel"))
             {
-                Request = Client.Add(k_ietFrameworkPackageName+"@2.0.0-pre.4");
+                Request = Client.Add(k_ietFrameworkPackageName+"@2.0.0");
                 EditorApplication.update += Progress;
             }
 

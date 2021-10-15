@@ -74,7 +74,7 @@ MonoBehaviour:
           message)\n    {\n        // Querying inventory failed.\n    }\n\n    public
           void OnPurchasePending(string message, PurchaseInfo purchaseInfo)\r\n   
           {\r\n        // The Purchase is pending\r\n    }\n}\n\n</i>\n\nLink to
-          <a href=\"https://docs.unity3d.com/Packages/com.unity.purchasing.udp@2.1/manual/games-with-iap.html\">UDP
+          <a href=\"https://docs.unity3d.com/Packages/com.unity.purchasing.udp@latest/index.html?subfolder=/manual/games-with-iap.html\">UDP
           Documentation</a>\n\n\n"
       m_Tutorial: {fileID: 0}
       m_Image: {fileID: 0}

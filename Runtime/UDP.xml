@@ -915,7 +915,7 @@
             {
                 "gameOrderId": "c05c109a-8197-41df-bb31-5b4849de0940",
                 "itemType": "inapp",
-                "orderQueryToken": "eyJjaGFubmVsUHJvZHVjdElkIjoiY29tLnVuaXR5LnNhbXBsZVByb2QucHJvZHVjdDEiLCJjaGFubmVsVHlwZSI6IlVEUCJ9",
+                "orderQueryToken": "eyJjaGFubmVsUHJvZHVjdElkIjoiY29tLnVuaXR5LnNhbXBsZVByb2QucHJvZHVjdDEiLCJjaGFubmVsVHlwZSI6IlVEUCJ9", /* sf-whitelist-line */
                 "productId": "com.unity.sampleProd.product1",
                 "store": "UDP",
                 "developerPayload": "developer payload",

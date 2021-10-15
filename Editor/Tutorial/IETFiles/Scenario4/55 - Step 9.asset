@@ -145,31 +145,3 @@ MonoBehaviour:
   m_OnTutorialPageStay:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &742929996466857084
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7231e8df50e16c74c979c4a2affab91b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Callback:
-    _target: {fileID: 11400000, guid: ca3e43aed7dd905409a275e0e3084c96, type: 2}
-    _methodName: UDPSandbox2
-    _args: []
-    _dynamic: 0
-    _typeName: Unity.Tutorials.Core.Editor.ArbitraryCriterion+BoolCallback, Unity.Tutorials.Core.Editor,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  m_AutoCompleteCallback:
-    _target: {fileID: 11400000, guid: ca3e43aed7dd905409a275e0e3084c96, type: 2}
-    _methodName: 
-    _args: []
-    _dynamic: 0
-    _typeName: Unity.Tutorials.Core.Editor.ArbitraryCriterion+BoolCallback, Unity.Tutorials.Core.Editor,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    dirty: 0

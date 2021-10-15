@@ -15,7 +15,8 @@ MonoBehaviour:
   TutorialTitle:
     m_Untranslated: Game with In-App Purchases (using only UDP package)
   m_TutorialTitle: 
-  m_LessonId: 0
+  m_ProgressTrackingEnabled: 1
+  m_LessonId: 4b307da2-d818-4e31-a117-20a34fff7233
   m_Version: 1
   m_Scene: {fileID: 0}
   m_DefaultSceneCameraSettings:
@@ -34,7 +35,6 @@ MonoBehaviour:
       m_AssetObject: {fileID: 0}
       m_Prefab: {fileID: 0}
     m_Enabled: 0
-  m_SkipTutorialBehavior: 0
   m_WindowLayout: {fileID: 0}
   m_Pages:
     m_Items:
@@ -49,3 +49,21 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 755b6d3f10848a24e87fdfc7f8ec16ff, type: 2}
     - {fileID: 11400000, guid: e210f7a2c576c8349a372a62e1a24067, type: 2}
     - {fileID: 11400000, guid: 43ce088cfbacd024e8bcf12e70f5da77, type: 2}
+  Modified:
+    m_PersistentCalls:
+      m_Calls: []
+  Initiated:
+    m_PersistentCalls:
+      m_Calls: []
+  PageInitiated:
+    m_PersistentCalls:
+      m_Calls: []
+  GoingBack:
+    m_PersistentCalls:
+      m_Calls: []
+  Completed:
+    m_PersistentCalls:
+      m_Calls: []
+  Quit:
+    m_PersistentCalls:
+      m_Calls: []

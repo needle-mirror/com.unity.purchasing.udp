@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 187ba33a40cabb246a4640ac040b4dd4, type: 3}
   m_Name: TutorialCallbacks
   m_EditorClassIdentifier: 
+  UIAPDialog: 0

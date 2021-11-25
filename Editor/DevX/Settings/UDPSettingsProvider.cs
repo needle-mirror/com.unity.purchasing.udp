@@ -1068,14 +1068,18 @@ namespace UnityEngine.UDP.Editor
         {
             Log("save game settings");
 
-            if (!Directory.Exists(AppStoreSettings.appStoreSettingsPropFolder))
-                Directory.CreateDirectory(AppStoreSettings.appStoreSettingsPropFolder);
-            StreamWriter writter = new StreamWriter(AppStoreSettings.appStoreSettingsPropPath, false);
-            String warningMessage = "*** DO NOT DELETE OR MODIFY THIS FILE !! ***";
-            writter.WriteLine(warningMessage);
-            writter.WriteLine(clientId);
-            writter.WriteLine(warningMessage);
-            writter.Close();
+#if (UNITY_2021_1_OR_NEWER)
+           XmlHelper.PersistClientId(clientId);
+#else
+           if (!Directory.Exists(AppStoreSettings.appStoreSettingsPropFolder))
+               Directory.CreateDirectory(AppStoreSettings.appStoreSettingsPropFolder);
+           StreamWriter writter = new StreamWriter(AppStoreSettings.appStoreSettingsPropPath, false);
+           String warningMessage = "*** DO NOT DELETE OR MODIFY THIS FILE !! ***";
+           writter.WriteLine(warningMessage);
+           writter.WriteLine(clientId);
+           writter.WriteLine(warningMessage);
+           writter.Close();
+#endif
         }
 
         private void RemoveTestAccountLocally(int pos)

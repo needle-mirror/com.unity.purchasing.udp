@@ -1643,17 +1643,21 @@ namespace UnityEngine.UDP.Editor
 #endif
         }
 
-        private void saveGameSettingsProps(String clientId)
-        {
-            if (!Directory.Exists(AppStoreSettings.appStoreSettingsPropFolder))
-                Directory.CreateDirectory(AppStoreSettings.appStoreSettingsPropFolder);
-            StreamWriter writter = new StreamWriter(AppStoreSettings.appStoreSettingsPropPath, false);
-            String warningMessage = "*** DO NOT DELETE OR MODIFY THIS FILE !! ***";
-            writter.WriteLine(warningMessage);
-            writter.WriteLine(clientId);
-            writter.WriteLine(warningMessage);
-            writter.Close();
-        }
+       private void saveGameSettingsProps(String clientId)
+       {
+#if (UNITY_2021_1_OR_NEWER)
+           XmlHelper.PersistClientId(clientId);
+#else
+           if (!Directory.Exists(AppStoreSettings.appStoreSettingsPropFolder))
+               Directory.CreateDirectory(AppStoreSettings.appStoreSettingsPropFolder);
+           StreamWriter writter = new StreamWriter(AppStoreSettings.appStoreSettingsPropPath, false);
+           String warningMessage = "*** DO NOT DELETE OR MODIFY THIS FILE !! ***";
+           writter.WriteLine(warningMessage);
+           writter.WriteLine(clientId);
+           writter.WriteLine(warningMessage);
+           writter.Close();
+#endif
+       }
 
         private void AddIapItem(IapItem item, bool dirty = true, bool foldout = false)
         {

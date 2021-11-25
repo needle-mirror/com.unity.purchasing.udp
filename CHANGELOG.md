@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.2.4] - 2021-11-25
+- To remain compliant with Unity Editor rules (2021.2 and above,) the UDP package no longer drops its assets in the Android folder
+
 ## [2.2.3] - 2021-10-15
 - Fix compilation error CS0103 when imported together with Tutorial Framework 2.0.0 package
 

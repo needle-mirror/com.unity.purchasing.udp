@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.2.5] - 2022-03-01
+- Minor fix
+
 ## [2.2.4] - 2021-11-25
 - To remain compliant with Unity Editor rules (2021.2 and above,) the UDP package no longer drops its assets in the Android folder
 
